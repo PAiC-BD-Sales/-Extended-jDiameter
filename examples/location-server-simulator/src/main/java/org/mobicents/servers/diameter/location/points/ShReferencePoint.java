@@ -29,6 +29,9 @@ import org.mobicents.servers.diameter.location.data.SubscriberInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mobicents.servers.diameter.utils.TBCDUtil.parseTBCD;
+import static org.mobicents.servers.diameter.utils.TBCDUtil.toTBCDString;
+
 /**
  * @author <a href="mailto:aferreiraguido@gmail.com"> Alejandro Ferreira Guido </a>
  * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
@@ -104,6 +107,8 @@ public class ShReferencePoint extends ShSessionFactoryImpl implements NetworkReq
                     " and session-id [" + session.getSessionId() +"]");
             } catch (AvpDataException e) {
                 e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
@@ -111,18 +116,22 @@ public class ShReferencePoint extends ShSessionFactoryImpl implements NetworkReq
 
         if (udrAvpSet.getAvp(Avp.USER_IDENTITY) != null) {
             try {
+                byte[] msisdnByteArray = null;
                 if (udrAvpSet.getAvp(Avp.USER_IDENTITY).getGrouped().getAvp(Avp.MSISDN) != null)
-                    msisdn = udrAvpSet.getAvp(Avp.USER_IDENTITY).getGrouped().getAvp(Avp.MSISDN).getUTF8String();
+                    msisdnByteArray = udrAvpSet.getAvp(Avp.USER_IDENTITY).getGrouped().getAvp(Avp.MSISDN).getOctetString();
+                msisdn = toTBCDString(msisdnByteArray);
                 if (udrAvpSet.getAvp(Avp.USER_IDENTITY).getGrouped().getAvp(Avp.PUBLIC_IDENTITY) != null)
                     publicIdentity = udrAvpSet.getAvp(Avp.USER_IDENTITY).getGrouped().getAvp(Avp.PUBLIC_IDENTITY).getUTF8String();
             } catch (AvpDataException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
         if (logger.isInfoEnabled()) {
             if (publicIdentity != null)
-                logger.info("<> Generating [UDA] User-Data-Answer response data for MSISDN=" + msisdn + ", and/or IMSPublicIdentity= " + publicIdentity);
+                logger.info("<> Generating [UDA] User-Data-Answer response data for MSISDN=" + msisdn + ", and/or IMSPublicIdentity=" + publicIdentity);
             else
                 logger.info("<> Generating [UDA] User-Data-Answer response data for MSISDN=" + msisdn);
         }
@@ -135,6 +144,10 @@ public class ShReferencePoint extends ShSessionFactoryImpl implements NetworkReq
             else
                 resultCode = DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED;
         } catch (Exception e) {
+            if (e.getMessage().equals("OperationNotAllowed"))
+                resultCode = DIAMETER_ERROR_OPERATION_NOT_ALLOWED;
+            if (e.getMessage().equals("SubscriberIncoherentData"))
+                resultCode = DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED;
             if (e.getMessage().equals("SubscriberNotFound"))
                 resultCode = DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED;
             if (e.getMessage().equals("ApplicationUnsupported"))
@@ -155,7 +168,7 @@ public class ShReferencePoint extends ShSessionFactoryImpl implements NetworkReq
                 logger.info(">< Error generating UDA] User-Data-Answer", e);
             }
         }
-        if (resultCode == DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED) {
+        else if (resultCode == DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED) {
             try {
                 logger.info("<> Sending [UDA] User-Data-Answer to " + udr.getOriginHost() + "@" +udr.getOriginRealm() + " with result code:" + resultCode +
                     " (DIAMETER_ERROR_USER_DATA_NOT_RECOGNIZED)");
@@ -164,8 +177,13 @@ public class ShReferencePoint extends ShSessionFactoryImpl implements NetworkReq
             }
         }
         else if (resultCode == DIAMETER_ERROR_OPERATION_NOT_ALLOWED) {
+            udaAvpSet.removeAvp(Avp.RESULT_CODE);
+            udaAvpSet.addAvp(Avp.AUTH_SESSION_STATE, 0, 0, true, false, true);
+            AvpSet experimentalResult = udaAvpSet.addGroupedAvp(Avp.EXPERIMENTAL_RESULT, true, false);
+            experimentalResult.addAvp(Avp.EXPERIMENTAL_RESULT_CODE, DIAMETER_ERROR_OPERATION_NOT_ALLOWED, true, true);
+            experimentalResult.addAvp(Avp.VENDOR_ID, 10415, true, false);
             try {
-                logger.info("<> Sending [UDA] User-Data-Answer to " + udr.getOriginHost() + "@" +udr.getOriginRealm() + " with result code:" + resultCode +
+                logger.info("<> Sending [UDA] User-Data-Answer to " + udr.getOriginHost() + "@" +udr.getOriginRealm() + " with experimental result code:" + resultCode +
                     " (DIAMETER_ERROR_OPERATION_NOT_ALLOWED)");
             } catch (AvpDataException e) {
                 e.printStackTrace();

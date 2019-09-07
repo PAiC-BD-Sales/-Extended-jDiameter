@@ -17,6 +17,7 @@ import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.slh.ServerSLhSession;
 import org.jdiameter.api.slh.events.LCSRoutingInfoAnswer;
 import org.jdiameter.api.slh.events.LCSRoutingInfoRequest;
+import org.jdiameter.common.api.app.auth.ClientAuthSessionState;
 import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.slh.LCSRoutingInfoAnswerImpl;
 import org.jdiameter.common.impl.app.slh.SLhSessionFactoryImpl;
@@ -28,6 +29,9 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+
+import static org.mobicents.servers.diameter.utils.TBCDUtil.parseTBCD;
+import static org.mobicents.servers.diameter.utils.TBCDUtil.toTBCDString;
 
 /**
  * @author <a href="mailto:aferreiraguido@gmail.com"> Alejandro Ferreira Guido </a>
@@ -85,9 +89,8 @@ public class SLhReferencePoint extends SLhSessionFactoryImpl implements NetworkR
 
         int resultCode = ResultCode.SUCCESS;
 
-        Integer gmlcNumber = 0;
-        String msisdn = "";
-        String imsi = "";
+        Long gmlcNumber = null;
+        String msisdn = "", imsi = "";
 
         if (logger.isInfoEnabled()) {
             logger.info("<> Processing [RIR] Routing-Info-Request for request [" + rir + "] from " +rir.getOriginHost() + "@" +rir.getOriginRealm() +
@@ -97,32 +100,60 @@ public class SLhReferencePoint extends SLhSessionFactoryImpl implements NetworkR
         AvpSet rirAvpSet = rir.getMessage().getAvps();
 
         if (rirAvpSet.getAvp(Avp.USER_NAME) != null) {
-            imsi = rirAvpSet.getAvp(Avp.USER_NAME).getUTF8String();
+            try {
+                imsi = rirAvpSet.getAvp(Avp.USER_NAME).getUTF8String();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         if (rirAvpSet.getAvp(Avp.MSISDN) != null) {
-            msisdn = rirAvpSet.getAvp(Avp.MSISDN).getUTF8String();
+            try {
+                byte[] msisdnByteArray = rirAvpSet.getAvp(Avp.MSISDN).getOctetString();
+                msisdn = toTBCDString(msisdnByteArray);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         if (rirAvpSet.getAvp(Avp.GMLC_NUMBER) != null) {
-            gmlcNumber = rirAvpSet.getAvp(Avp.GMLC_NUMBER).getInteger32();
+            try {
+                byte[] gmlcNumberOctet = rirAvpSet.getAvp(Avp.GMLC_NUMBER).getOctetString();
+                gmlcNumber = Long.valueOf(toTBCDString(gmlcNumberOctet));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         if (logger.isInfoEnabled()) {
-            logger.info("<> Generating [RIA] Routing-Info-Answer response data");
+            if (msisdn != null && !msisdn.equals("")) {
+                if (gmlcNumber != null)
+                    logger.info("<> Generating [RIA] Routing-Info-Answer response data for MSISDN=" + msisdn + ", GMLC-Number=" + gmlcNumber);
+                else
+                    logger.info("<> Generating [RIA] Routing-Info-Answer response data for MSISDN=" + msisdn);
+            } else {
+                if (gmlcNumber != null)
+                    logger.info("<> Generating [RIA] Routing-Info-Answer response data for IMSI=" + imsi + ", GMLC-Number=" + gmlcNumber);
+                else
+                    logger.info("<> Generating [RIA] Routing-Info-Answer response data for IMSI=" + imsi);
+            }
         }
 
         SubscriberElement subscriberElement = null;
         try {
             subscriberElement = subscriberInformation.getElementBySubscriber(imsi, msisdn);
+            if (subscriberElement == null) {
+                logger.info("subscriberElement = subscriberInformation.getElementBySubscriber(imsi, msisdn) is NULL!!!");
+                resultCode = DIAMETER_ERROR_USER_UNKNOWN;
+            }
             if (subscriberElement.locationResult == 5490)
                 resultCode = DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK;
             if (subscriberElement.locationResult == 4201)
                 resultCode = DIAMETER_ERROR_ABSENT_USER;
         } catch (Exception e) {
             if (e.getMessage().equals("SubscriberIncoherentData"))
-                resultCode = ResultCode.CONTRADICTING_AVPS;
-            else if (e.getMessage().equals("SubscriberNotFound"))
+                resultCode = DIAMETER_ERROR_USER_UNKNOWN;
+            if (e.getMessage().equals("SubscriberNotFound"))
                 resultCode = DIAMETER_ERROR_USER_UNKNOWN;
             if (e.getMessage().equals("ApplicationUnsupported"))
                 resultCode = ResultCode.APPLICATION_UNSUPPORTED;
@@ -130,8 +161,9 @@ public class SLhReferencePoint extends SLhSessionFactoryImpl implements NetworkR
 
         LCSRoutingInfoAnswer ria = new LCSRoutingInfoAnswerImpl((Request) rir.getMessage(), resultCode);
 
+        AvpSet riaAvpSet = ria.getMessage().getAvps();
+
         if (resultCode == ResultCode.SUCCESS) {
-            AvpSet riaAvpSet = ria.getMessage().getAvps();
 
             riaAvpSet.addAvp(Avp.USER_NAME, subscriberElement.imsi, 10415, true, false, false);
             riaAvpSet.addAvp(Avp.MSISDN, subscriberElement.msisdn, 10415, true, false, true);
@@ -139,7 +171,7 @@ public class SLhReferencePoint extends SLhSessionFactoryImpl implements NetworkR
             riaAvpSet.addAvp(Avp.LMSI, subscriberElement.lmsi, 10415, true, false, true);
 
             AvpSet servingNode = riaAvpSet.addGroupedAvp(Avp.SERVING_NODE, 10415, false, false);
-            // contain the ISDN number of the serving MSC or MSC server in international number format
+            // contains the ISDN number of the serving MSC or MSC server in international number format
             servingNode.addAvp(Avp.SGSN_NUMBER, subscriberElement.servingNode.sgsnNumber, 10415, true, false, true);
             servingNode.addAvp(Avp.SGSN_NAME, subscriberElement.servingNode.sgsnName, 10415, false, false,false);
             servingNode.addAvp(Avp.SGSN_REALM, subscriberElement.servingNode.sgsnRealm, 10415, false, false,false);
@@ -181,6 +213,7 @@ public class SLhReferencePoint extends SLhSessionFactoryImpl implements NetworkR
             riaAvpSet.addAvp(Avp.GMLC_ADDRESS, subscriberElement.gmlcAddress, 10415, true, false, true);
             riaAvpSet.addAvp(Avp.PPR_ADDRESS, subscriberElement.pprAddress, 10415, true, false, true);
             riaAvpSet.addAvp(Avp.RIA_FLAGS, subscriberElement.riaFlags, 10415, true, false, true);
+            riaAvpSet.addAvp(Avp.AUTH_SESSION_STATE, 0, 0, true, false, true);
         }
 
         if (resultCode == DIAMETER_ERROR_USER_UNKNOWN) {
@@ -188,7 +221,13 @@ public class SLhReferencePoint extends SLhSessionFactoryImpl implements NetworkR
                 " (DIAMETER_ERROR_USER_UNKNOWN)");
         }
         else if (resultCode == DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK) {
-            logger.info("<> Sending [RIA] Routing-Info-Answer to " + rir.getOriginHost() + "@" + rir.getOriginRealm() + " with result code:" + resultCode +
+            riaAvpSet.removeAvp(Avp.RESULT_CODE);
+            riaAvpSet.addAvp(Avp.AUTH_SESSION_STATE, 0, 0, true, false, true);
+            AvpSet experimentalResult = riaAvpSet.addGroupedAvp(Avp.EXPERIMENTAL_RESULT, true, false);
+            experimentalResult.addAvp(Avp.EXPERIMENTAL_RESULT_CODE, DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK, true, true);
+            experimentalResult.addAvp(Avp.VENDOR_ID, 10415, true, false);
+
+            logger.info("<> Sending [RIA] Routing-Info-Answer to " + rir.getOriginHost() + "@" + rir.getOriginRealm() + " with experimental result code:" + resultCode +
                 " (DIAMETER_ERROR_UNAUTHORIZED_REQUESTING_NETWORK)");
         }
         else if (resultCode == DIAMETER_ERROR_ABSENT_USER) {

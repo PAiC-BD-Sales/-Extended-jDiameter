@@ -4,7 +4,8 @@
   <LocalPeer>
     <URI value="aaa://dra.simulator:23868" />
     <IPAddresses>
-      <IPAddress value="127.0.0.1" />
+      <IPAddress value="192.168.56.1" />
+      <IPAddress value="192.168.56.2" />
     </IPAddresses>
     <Realm value="epc.mnc000.mcc000.3gppnetwork.org" />
     <VendorID value="10415" />
@@ -30,7 +31,8 @@
 
   <Network>
     <Peers>
-      <Peer name="aaa://gmlc:3868" attempt_connect="false" rating="1" />
+      <Peer name="aaa://192.168.56.111:3868" attempt_connect="true" rating="1" host="192.168.56.1" />
+      <Peer name="aaa://192.168.56.121:3868" attempt_connect="true" rating="2" host="192.168.56.2" />
     </Peers>
     <Realms>
       <Realm name="restcomm.org" peers="gmlc" local_action="LOCAL" dynamic="true" exp_time="1">

@@ -231,7 +231,7 @@ public class PeerFSMImpl implements IStateMachine {
                   timeSumm.inc(System.currentTimeMillis() - ((FsmEvent) event).getCreatedTime());
                   timeCount.inc();
                 }
-                logger.debug("Process event [{}]. Peer State is [{}]", event, state);
+                logger.debug("Process event [{}]. Peer State is [{}]. FSM Thread [{}]", event, state, Thread.currentThread().getName());
                 getStates()[state.ordinal()].processEvent(event);
               }
               if (timer != 0 && timer < System.currentTimeMillis()) {

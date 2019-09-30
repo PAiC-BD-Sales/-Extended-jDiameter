@@ -91,6 +91,7 @@ import static org.jdiameter.client.impl.helpers.Parameters.OwnProductName;
 import static org.jdiameter.client.impl.helpers.Parameters.OwnRealm;
 import static org.jdiameter.client.impl.helpers.Parameters.OwnVendorID;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerFSMThreadCount;
+import static org.jdiameter.client.impl.helpers.Parameters.PeerHost;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerIp;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerLocalPortRange;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerName;
@@ -604,6 +605,9 @@ public class XMLConfiguration extends EmptyConfiguration {
     c.add(PeerName, name);
     if (node.getAttributes().getNamedItem("ip") != null) {
       c.add(PeerIp, node.getAttributes().getNamedItem("ip").getNodeValue());
+    }
+    if (node.getAttributes().getNamedItem("host") != null) {
+      c.add(PeerHost, node.getAttributes().getNamedItem("host").getNodeValue());
     }
     if (node.getAttributes().getNamedItem("portRange") != null) {
       c.add(PeerLocalPortRange, node.getAttributes().getNamedItem("portRange").getNodeValue());

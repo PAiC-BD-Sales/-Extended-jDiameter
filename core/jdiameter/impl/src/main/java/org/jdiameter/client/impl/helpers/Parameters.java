@@ -149,6 +149,11 @@ public class Parameters extends Ordinal {
   public static final Parameters PeerIp = new Parameters("PeerIp", String.class, "");
 
   /**
+   * Peer host property
+   */
+  public static final Parameters PeerHost = new Parameters("PeerHost", String.class, "");
+
+  /**
    * Peer local peer port range (format: 1345-1346) property
    */
   public static final Parameters PeerLocalPortRange = new Parameters("PeerLocalPortRange", String.class, "");

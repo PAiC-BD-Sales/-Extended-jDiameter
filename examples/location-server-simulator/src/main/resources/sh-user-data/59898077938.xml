@@ -13,5 +13,20 @@
         </MSCNumber>
         <CurrentLocationRetrieved>0</CurrentLocationRetrieved>
         <AgeOfLocationInformation>0</AgeOfLocationInformation>
+        <Extension>
+            <UserCSGInformation>
+                <CSGId>ODE5MQ==</CSGId>
+            </UserCSGInformation>
+            <Extension>
+                <E-UTRANCellGlobalId>BfKRAk4nFQ==</E-UTRANCellGlobalId>
+                <TrackingAreaId>BfKRAwY=</TrackingAreaId>
+                <Extension>
+                    <LocalTimeZone>
+                        <TimeZone>-5</TimeZone>
+                        <DaylightSavingTime>0</DaylightSavingTime>
+                    </LocalTimeZone>
+                </Extension>
+            </Extension>
+        </Extension>
     </CSLocationInformation>
 </Sh-Data>

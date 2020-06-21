@@ -70,23 +70,41 @@ public class SCTPClientConnection implements IConnection {
   }
 
   public SCTPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
-      int remotePort, InetAddress localAddress, int localPort, IMessageParser parser, String ref) {
+                              int remotePort, InetAddress localAddress, int localPort, IMessageParser parser, String ref) {
     this(parser);
 
-    logger.debug("SCTP Client constructor. Remote [{}:{}] Local [{}:{}]", new Object[] { remoteAddress, remotePort,
-        localAddress, localPort });
+    logger.debug("SCTP Client constructor. Remote [{}:{}] Local [{}:{}]", new Object[]{remoteAddress, remotePort,
+        localAddress, localPort});
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+
+    // temporary fix for local multi-home
+    if (ref != null) {
+      String[] extraHostAddresses = ref.split(",");
+      client.setExtraHostAddress(extraHostAddresses);
+    }
   }
 
   public SCTPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
-      int remotePort, InetAddress localAddress, int localPort, IConnectionListener listener, IMessageParser parser, String ref) {
+                              int remotePort, InetAddress localAddress, int localPort, IConnectionListener listener,
+                              IMessageParser parser, String ref) {
     this(parser);
-
-    logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}]", new Object[] { remoteAddress, remotePort,
-        localAddress, localPort });
+    logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}]",
+        new Object[]{remoteAddress, remotePort, localAddress, localPort});
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    listeners.add(listener);
+  }
+
+  public SCTPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
+                              int remotePort, InetAddress localAddress, int localPort, String[] extraHostAddresses,
+                              IConnectionListener listener, IMessageParser parser, String ref) {
+    this(parser);
+    logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (with extra host addresses)",
+        new Object[]{remoteAddress, remotePort, localAddress, localPort});
+    client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
+    client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    client.setExtraHostAddress(extraHostAddresses);
     listeners.add(listener);
   }
 
@@ -100,11 +118,9 @@ public class SCTPClientConnection implements IConnection {
     try {
       getClient().initialize();
       getClient().start();
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       throw new TransportException("Cannot init transport: ", TransportError.NetWorkError, e);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new TransportException("Cannot init transport: ", TransportError.Internal, e);
     }
   }
@@ -115,8 +131,7 @@ public class SCTPClientConnection implements IConnection {
       if (getClient() != null) {
         getClient().stop();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new InternalError("Error while stopping transport: " + e.getMessage());
     }
   }
@@ -127,11 +142,9 @@ public class SCTPClientConnection implements IConnection {
       if (getClient() != null) {
         getClient().release();
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new IOException(e.getMessage());
-    }
-    finally {
+    } finally {
       parser = null;
       buffer.clear();
       remAllConnectionListener();
@@ -144,8 +157,7 @@ public class SCTPClientConnection implements IConnection {
       if (getClient() != null) {
         getClient().sendMessage(parser.encodeMessage(message));
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new TransportException("Cannot send message: ", TransportError.FailedSendMessage, e);
     }
   }
@@ -183,15 +195,13 @@ public class SCTPClientConnection implements IConnection {
         for (Event e : buffer) {
           try {
             onEvent(e);
-          }
-          catch (AvpDataException e1) {
+          } catch (AvpDataException e1) {
             // ignore
           }
         }
         buffer.clear();
       }
-    }
-    finally {
+    } finally {
       lock.unlock();
     }
   }
@@ -201,8 +211,7 @@ public class SCTPClientConnection implements IConnection {
     lock.lock();
     try {
       listeners.clear();
-    }
-    finally {
+    } finally {
       lock.unlock();
     }
   }
@@ -212,8 +221,7 @@ public class SCTPClientConnection implements IConnection {
     lock.lock();
     try {
       listeners.remove(listener);
-    }
-    finally {
+    } finally {
       lock.unlock();
     }
   }
@@ -252,8 +260,7 @@ public class SCTPClientConnection implements IConnection {
   protected void onAvpDataException(AvpDataException e) {
     try {
       onEvent(new Event(EventType.DATA_EXCEPTION, e));
-    }
-    catch (AvpDataException e1) {
+    } catch (AvpDataException e1) {
       // ignore
     }
   }
@@ -261,8 +268,7 @@ public class SCTPClientConnection implements IConnection {
   protected void onConnected() {
     try {
       onEvent(new Event(EventType.CONNECTED));
-    }
-    catch (AvpDataException e1) {
+    } catch (AvpDataException e1) {
       // ignore
     }
   }
@@ -289,8 +295,7 @@ public class SCTPClientConnection implements IConnection {
           }
         }
       }
-    }
-    finally {
+    } finally {
       lock.unlock();
     }
   }
@@ -299,16 +304,14 @@ public class SCTPClientConnection implements IConnection {
     if (listeners.size() == 0) {
       try {
         buffer.add(event);
-      }
-      catch (IllegalStateException e) {
+      } catch (IllegalStateException e) {
         // FIXME : requires JDK6 : buffer.removeLast();
         Event[] tempBuffer = buffer.toArray(new Event[buffer.size()]);
         buffer.remove(tempBuffer[tempBuffer.length - 1]);
         buffer.add(event);
       }
       return false;
-    }
-    else {
+    } else {
       return true;
     }
   }

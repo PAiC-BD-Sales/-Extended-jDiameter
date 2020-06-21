@@ -299,6 +299,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
     if (connection == null) {
       String peerHost = peerConfig.getStringValue(PeerHost.ordinal(), null);
       String ref = peerConfig.getStringValue(SecurityRef.ordinal(), null);
+      String[] extraHostAddresses = null;
       InetAddress localAddress = null;
       try {
         if (peerHost != null) {
@@ -308,6 +309,12 @@ public class PeerImpl extends AbstractPeer implements IPeer {
           Peer local = metaData.getLocalPeer();
           if (local.getIPAddresses() != null && local.getIPAddresses().length > 0) {
             localAddress = local.getIPAddresses()[0];
+            if (local.getIPAddresses().length > 1) {
+              extraHostAddresses = new String[local.getIPAddresses().length - 1];
+              for (int i = 1; i < local.getIPAddresses().length; i++) {
+                extraHostAddresses[i - 1] = local.getIPAddresses()[i].getHostAddress();
+              }
+            }
           } else {
             localAddress = InetAddress.getByName(metaData.getLocalPeer().getUri().getFQDN());
           }
@@ -356,7 +363,8 @@ public class PeerImpl extends AbstractPeer implements IPeer {
         }
         logger.debug("Create connection with localAddress=[{}]; localPort=[{}]", localAddress, localPort);
       }
-      this.connection = trFactory.createConnection(remoteAddress, concurrentFactory, port, localAddress, localPort, connListener, ref);
+      this.connection = trFactory.createConnection(remoteAddress, concurrentFactory, port, localAddress, localPort,
+          extraHostAddresses, connListener, ref);
     } else {
       this.connection = connection;
       this.connection.addConnectionListener(connListener);

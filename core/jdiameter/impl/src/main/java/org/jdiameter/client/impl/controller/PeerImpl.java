@@ -169,7 +169,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
   protected IMessageParser parser;
   // Feature
   protected boolean useUriAsFQDN = false; // Use URI as origin host name into CER command
-  protected String useLocalAddr = "";
+  protected String useLocalAddr = null;
 
   //session store and data
   protected ISessionDatasource sessionDataSource;
@@ -810,7 +810,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
 
     @Override
     public void sendCerMessage() throws TransportException, OverloadException {
-      logger.debug("Send CER message");
+      logger.debug("Sending CER message");
       IMessage message = parser.createEmptyMessage(CAPABILITIES_EXCHANGE_REQUEST, 0);
       message.setRequest(true);
       message.setHopByHopIdentifier(getHopByHopIdentifier());

@@ -77,12 +77,6 @@ public class SCTPClientConnection implements IConnection {
         localAddress, localPort});
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
-
-    // temporary fix for local multi-home
-    if (ref != null) {
-      String[] extraHostAddresses = ref.split(",");
-      client.setExtraHostAddress(extraHostAddresses);
-    }
   }
 
   public SCTPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,

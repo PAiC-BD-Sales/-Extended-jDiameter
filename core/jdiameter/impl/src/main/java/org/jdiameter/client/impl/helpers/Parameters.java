@@ -139,6 +139,11 @@ public class Parameters extends Ordinal {
   public static final Parameters UseUriAsFqdn = new Parameters("UseUriAsFqdn", Boolean.class, false);
 
   /**
+   * Server is bound as multihomed addresses from
+   */
+  public static final Parameters SingleLocalPeer = new Parameters("SingleLocalPeer", Boolean.class, false);
+
+  /**
    * Peer name property
    */
   public static final Parameters PeerName = new Parameters("PeerName", String.class, "");

@@ -217,6 +217,14 @@
                    <xsi:attribute name="value" type="xsi:boolean" use="required"/>
                </xsi:complexType>
             </xsi:element>
+            <xsi:element name="SingleLocalPeer" minOccurs="0" maxOccurs="1">
+                <xsi:annotation>
+                    <xsi:documentation>Enable multihomed single server or start as many servers as IPAddresses defined for LocalPeer</xsi:documentation>
+                </xsi:annotation>
+                <xsi:complexType>
+                    <xsi:attribute name="value" type="xsi:boolean" use="optional"/>
+                </xsi:complexType>
+            </xsi:element>
             <xsi:element name="QueueSize" minOccurs="1" maxOccurs="1">
                 <xsi:annotation>
                     <xsi:documentation>QueueSize of fsm event queue</xsi:documentation>

@@ -111,6 +111,7 @@ import static org.jdiameter.client.impl.helpers.Parameters.SDUseClientMode;
 import static org.jdiameter.client.impl.helpers.Parameters.Security;
 import static org.jdiameter.client.impl.helpers.Parameters.SecurityRef;
 import static org.jdiameter.client.impl.helpers.Parameters.SessionTimeOut;
+import static org.jdiameter.client.impl.helpers.Parameters.SingleLocalPeer;
 import static org.jdiameter.client.impl.helpers.Parameters.Statistics;
 import static org.jdiameter.client.impl.helpers.Parameters.StatisticsActiveList;
 import static org.jdiameter.client.impl.helpers.Parameters.StatisticsEnabled;
@@ -341,6 +342,9 @@ public class XMLConfiguration extends EmptyConfiguration {
       String nodeName = c.item(i).getNodeName();
       if (nodeName.equals("UseUriAsFqdn")) {
         add(UseUriAsFqdn, Boolean.valueOf(getValue(c.item(i))));
+      }
+      else if (nodeName.equals("SingleLocalPeer")) {
+        add(SingleLocalPeer, Boolean.valueOf(getValue(c.item(i))));
       }
       else if (nodeName.equals("QueueSize")) {
         add(QueueSize, getIntValue(c.item(i)));

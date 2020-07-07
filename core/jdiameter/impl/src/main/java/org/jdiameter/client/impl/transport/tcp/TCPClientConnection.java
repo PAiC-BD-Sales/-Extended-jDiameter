@@ -119,6 +119,16 @@ public class TCPClientConnection implements IConnection {
     listeners.add(listener);
   }
 
+  public TCPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
+                             int remotePort, InetAddress localAddress, int localPort, String[] extraHostAddresses,
+                             IConnectionListener listener, IMessageParser parser, String ref) {
+    this(concurrentFactory, parser);
+    client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
+    client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    logger.warn("ExtraHostAddresses[{}] can't be bound to local server using TCP.", extraHostAddresses.length);
+    listeners.add(listener);
+  }
+
   @Override
   public long getCreatedTime() {
     return createdTime;

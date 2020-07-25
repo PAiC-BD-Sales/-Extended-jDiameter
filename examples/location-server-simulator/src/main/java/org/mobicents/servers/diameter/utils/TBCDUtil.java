@@ -110,25 +110,4 @@ public class TBCDUtil {
     private static final byte[] HEX_CHAR = new byte[]
         { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
-
-    /*
-     * Helper function that dumps an array of bytes in the hexadecimal format.
-     */
-    public static final String dumpBytes(byte[] buffer)
-    {
-        if ( buffer == null )
-        {
-            return "";
-        }
-
-        StringBuffer sb = new StringBuffer();
-
-        for ( int i = 0; i < buffer.length; i++ )
-        {
-            sb.append( "0x" ).append( ( char ) ( HEX_CHAR[( buffer[i] & 0x00F0 ) >> 4] ) ).append(
-                ( char ) ( HEX_CHAR[buffer[i] & 0x000F] ) ).append( " " );
-        }
-
-        return sb.toString();
-    }
 }

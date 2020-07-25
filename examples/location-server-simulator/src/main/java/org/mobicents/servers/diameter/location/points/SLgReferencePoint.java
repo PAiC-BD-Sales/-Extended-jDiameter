@@ -40,6 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
+import static org.mobicents.servers.diameter.utils.TBCDUtil.parseTBCD;
+import static org.mobicents.servers.diameter.utils.TBCDUtil.toTBCDString;
+
 /**
  * @author <a href="mailto:aferreiraguido@gmail.com"> Alejandro Ferreira Guido </a>
  * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>
@@ -123,7 +126,7 @@ public class SLgReferencePoint extends SLgSessionFactoryImpl implements NetworkR
         }
 
         if (plrAvpSet.getAvp(Avp.MSISDN) != null) {
-            msisdn = plrAvpSet.getAvp(Avp.MSISDN).getUTF8String();
+            msisdn = toTBCDString(plrAvpSet.getAvp(Avp.MSISDN).getOctetString());
         }
 
         if (logger.isInfoEnabled()) {
@@ -380,7 +383,7 @@ public class SLgReferencePoint extends SLgSessionFactoryImpl implements NetworkR
                 lrrAvpSet.addAvp(Avp.USER_NAME, subscriberElement.imsi, true, false, false);
 
             if (subscriberElement.msisdn != null)
-                lrrAvpSet.addAvp(Avp.MSISDN, subscriberElement.msisdn, 10415, true, false, true);
+                lrrAvpSet.addAvp(Avp.MSISDN, parseTBCD(subscriberElement.msisdn), 10415, true, false);
 
             if (subscriberElement.imei != null)
                 lrrAvpSet.addAvp(Avp.TGPP_IMEI, subscriberElement.imei, 10415, true, false, false);

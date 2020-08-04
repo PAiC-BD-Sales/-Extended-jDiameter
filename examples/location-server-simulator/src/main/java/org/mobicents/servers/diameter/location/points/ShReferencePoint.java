@@ -20,7 +20,6 @@ import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.sh.ServerShSession;
 import org.jdiameter.api.sh.events.UserDataRequest;
 import org.jdiameter.api.sh.events.UserDataAnswer;
-import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.sh.ShSessionFactoryImpl;
 import org.jdiameter.common.impl.app.sh.UserDataAnswerImpl;
 import org.jdiameter.server.impl.app.sh.ShServerSessionImpl;

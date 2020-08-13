@@ -59,6 +59,39 @@
       </roles>
       <timezone>+1</timezone>
     </developer>
+    <developer>
+      <id>FerUy</id>
+      <name>Fernando Mendioroz</name>
+      <email>fernando.mendioroz@gmail.com</email>
+      <organization>PAiC Business Development</organization>
+      <organizationUrl>https://paicbd.com/</organizationUrl>
+      <roles>
+        <role>Active Developer</role>
+      </roles>
+      <timezone>-3</timezone>
+    </developer>
+    <developer>
+      <id>aferreiraguido</id>
+      <name>Alejandro Ferreira Guido</name>
+      <email>aferreiraguido@gmail.com</email>
+      <organization>PAiC Business Development</organization>
+      <organizationUrl>https://paicbd.com/</organizationUrl>
+      <roles>
+        <role>Active Developer</role>
+      </roles>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>aferreiraguido</id>
+      <name>Joram Herrera</name>
+      <email>joram.herrera2@gmail.com</email>
+      <organization>PAiC Business Development</organization>
+      <organizationUrl>https://paicbd.com/</organizationUrl>
+      <roles>
+        <role>Active Developer</role>
+      </roles>
+      <timezone>-6</timezone>
+    </developer>
   </developers>
 
   <licenses>

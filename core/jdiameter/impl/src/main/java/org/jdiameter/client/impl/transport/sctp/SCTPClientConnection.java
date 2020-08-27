@@ -25,7 +25,10 @@ package org.jdiameter.client.impl.transport.sctp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
@@ -63,6 +66,32 @@ public class SCTPClientConnection implements IConnection {
   // Cached value for connection key
   private String cachedKey = null;
 
+  // active/stand-by
+  private int remotePort;
+  private int localPort;
+
+  private List<ConnectionTuple> multiConnectionTuples = new ArrayList<>();
+  private int currentConnectionTuple = -1;
+
+  class ConnectionTuple {
+
+    private InetAddress remoteAddress;
+    private InetAddress localAddress;
+
+    public InetAddress getLocalAddress() {
+      return localAddress;
+    }
+
+    public InetAddress getRemoteAddress() {
+      return remoteAddress;
+    }
+
+    ConnectionTuple(InetAddress localAddress, InetAddress remoteAddress) {
+      this.remoteAddress = remoteAddress;
+      this.localAddress = localAddress;
+    }
+  }
+
   protected SCTPClientConnection(IMessageParser parser) {
     this.createdTime = System.currentTimeMillis();
     this.parser = parser;
@@ -76,7 +105,9 @@ public class SCTPClientConnection implements IConnection {
     logger.debug("SCTP Client constructor. Remote [{}:{}] Local [{}:{}]", new Object[]{remoteAddress, remotePort,
         localAddress, localPort});
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
+    this.remotePort = remotePort;
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    this.localPort = localPort;
   }
 
   public SCTPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
@@ -86,7 +117,9 @@ public class SCTPClientConnection implements IConnection {
     logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}]",
         new Object[]{remoteAddress, remotePort, localAddress, localPort});
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
+    this.remotePort = remotePort;
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    this.localPort = localPort;
     listeners.add(listener);
   }
 
@@ -97,9 +130,35 @@ public class SCTPClientConnection implements IConnection {
     logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (with extra host addresses)",
         new Object[]{remoteAddress, remotePort, localAddress, localPort});
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
+    this.remotePort = remotePort;
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    this.localPort = localPort;
     client.setExtraHostAddress(extraHostAddresses);
     listeners.add(listener);
+
+    multiConnectionTuples.add(new ConnectionTuple(localAddress, remoteAddress));
+    currentConnectionTuple = 0;
+
+    String standbyAddressesConfiguration = ref;  // TODO: define the standby_addresses parameter
+    if (standbyAddressesConfiguration != null && standbyAddressesConfiguration.length() > 0 && extraHostAddresses.length > 0) {
+      String[] standbyAddresses = standbyAddressesConfiguration.split(",");
+      int extraHostAddressIndex = 0;
+      for (int i = 0; i < standbyAddresses.length; i++) {
+        try {
+          InetAddress standbyLocalAddress = InetAddress.getByName(extraHostAddresses[extraHostAddressIndex]);
+          InetAddress standbyRemoteAddress = InetAddress.getByName(standbyAddresses[i]);
+          multiConnectionTuples.add(new ConnectionTuple(standbyLocalAddress, standbyRemoteAddress));
+          logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (standby connection added)",
+              new Object[]{standbyAddresses[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
+          if (extraHostAddressIndex++ == extraHostAddresses.length) {
+            break;
+          }
+        } catch (UnknownHostException e) {
+          logger.error("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (error adding standby connection)",
+              new Object[]{standbyAddresses[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
+        }
+      }
+    }
   }
 
   @Override
@@ -110,6 +169,10 @@ public class SCTPClientConnection implements IConnection {
   @Override
   public void connect() throws TransportException {
     try {
+      currentConnectionTuple = (currentConnectionTuple + 1) % multiConnectionTuples.size();
+      client.setDestAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(), remotePort));
+      client.setOrigAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getLocalAddress(), localPort));
+
       getClient().initialize();
       getClient().start();
     } catch (IOException e) {

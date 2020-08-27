@@ -33,8 +33,8 @@ import org.mobicents.servers.diameter.location.data.SubscriberInformation;
 import org.mobicents.servers.diameter.location.points.SLgReferencePoint;
 import org.mobicents.servers.diameter.location.points.SLhReferencePoint;
 import org.mobicents.servers.diameter.location.points.ShReferencePoint;
-import org.mobicents.servers.diameter.utils.StackCreator;
 
+import org.mobicents.servers.diameter.utils.StackCreator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;

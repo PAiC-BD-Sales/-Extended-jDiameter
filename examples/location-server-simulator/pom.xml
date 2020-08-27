@@ -9,7 +9,7 @@
     <version>2.27.32</version>
   </parent>
 
-  <groupId>org.mobicents.servers.diameter.examples</groupId>
+  <groupId>org.mobicents.servers.diameter.location</groupId>
   <artifactId>location-server-simulator</artifactId>
   <version>1.0.0</version>
 

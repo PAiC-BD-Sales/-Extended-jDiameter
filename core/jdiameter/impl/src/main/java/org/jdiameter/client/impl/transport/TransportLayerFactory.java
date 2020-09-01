@@ -95,7 +95,7 @@ public class TransportLayerFactory implements ITransportLayerFactory {
       //TODO: this is bad practice, IConnection is interface and this code enforces constructor type to be present!
       constructorIAiCLEha = connectionClass.getConstructor(
           Configuration.class, IConcurrentFactory.class, InetAddress.class, Integer.TYPE, InetAddress.class,
-          Integer.TYPE, String[].class, IConnectionListener.class, IMessageParser.class, String.class);
+          Integer.TYPE, String[].class, String.class, IConnectionListener.class, IMessageParser.class, String.class);
       constructorIAiCL = connectionClass.getConstructor(
           Configuration.class, IConcurrentFactory.class, InetAddress.class, Integer.TYPE, InetAddress.class,
           Integer.TYPE, IConnectionListener.class, IMessageParser.class, String.class);

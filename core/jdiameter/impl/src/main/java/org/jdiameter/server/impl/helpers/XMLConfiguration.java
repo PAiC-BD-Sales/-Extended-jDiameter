@@ -96,6 +96,7 @@ import static org.jdiameter.client.impl.helpers.Parameters.PeerIp;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerLocalPortRange;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerName;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerRating;
+import static org.jdiameter.client.impl.helpers.Parameters.PeerStandbyAddresses;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerTable;
 import static org.jdiameter.client.impl.helpers.Parameters.Properties;
 import static org.jdiameter.client.impl.helpers.Parameters.PropertyName;
@@ -615,6 +616,9 @@ public class XMLConfiguration extends EmptyConfiguration {
     }
     if (node.getAttributes().getNamedItem("portRange") != null) {
       c.add(PeerLocalPortRange, node.getAttributes().getNamedItem("portRange").getNodeValue());
+    }
+    if (node.getAttributes().getNamedItem("standby_addresses") != null) {
+      c.add(PeerStandbyAddresses, node.getAttributes().getNamedItem("standby_addresses").getNodeValue());
     }
     if (node.getAttributes().getNamedItem("security_ref") != null) {
       c.add(SecurityRef, node.getAttributes().getNamedItem("security_ref").getNodeValue());

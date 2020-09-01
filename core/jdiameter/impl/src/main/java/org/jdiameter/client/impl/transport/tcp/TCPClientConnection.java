@@ -121,11 +121,17 @@ public class TCPClientConnection implements IConnection {
 
   public TCPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
                              int remotePort, InetAddress localAddress, int localPort, String[] extraHostAddresses,
-                             IConnectionListener listener, IMessageParser parser, String ref) {
+                             String standbyRemoteAddresses, IConnectionListener listener, IMessageParser parser,
+                             String ref) {
     this(concurrentFactory, parser);
     client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
-    logger.warn("ExtraHostAddresses[{}] can't be bound to local server using TCP.", extraHostAddresses.length);
+    if (extraHostAddresses!= null && extraHostAddresses.length > 0) {
+      logger.warn("ExtraHostAddresses[{}] can't be bound to local server using TCP.", extraHostAddresses.length);
+    }
+    if (standbyRemoteAddresses!= null && standbyRemoteAddresses.length() > 0) {
+      logger.warn("Secondary/stand-by remote connection [{}] not yet implemented over TCP.", standbyRemoteAddresses);
+    }
     listeners.add(listener);
   }
 

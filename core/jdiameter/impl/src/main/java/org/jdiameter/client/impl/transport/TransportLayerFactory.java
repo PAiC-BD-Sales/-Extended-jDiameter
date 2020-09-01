@@ -109,8 +109,8 @@ public class TransportLayerFactory implements ITransportLayerFactory {
   }
 
   @Override
-  public IConnection createConnection(InetAddress remoteAddress, IConcurrentFactory factory, int remotePort, InetAddress localAddress, int localPort,
-                                      String ref) throws TransportException {
+  public IConnection createConnection(InetAddress remoteAddress, IConcurrentFactory factory, int remotePort,
+                                      InetAddress localAddress, int localPort, String ref) throws TransportException {
     try {
       factory = factory == null ? new DummyConcurrentFactory() : factory;
       return constructorIAi.newInstance(config, factory, remoteAddress, remotePort, localAddress, localPort, parser, ref);
@@ -120,8 +120,8 @@ public class TransportLayerFactory implements ITransportLayerFactory {
   }
 
   @Override
-  public IConnection createConnection(InetAddress remoteAddress, IConcurrentFactory factory, int remotePort, InetAddress localAddress, int localPort,
-                                      IConnectionListener listener, String ref) throws TransportException {
+  public IConnection createConnection(InetAddress remoteAddress, IConcurrentFactory factory, int remotePort, InetAddress localAddress,
+                                      int localPort, IConnectionListener listener, String ref) throws TransportException {
     try {
       factory = factory == null ? new DummyConcurrentFactory() : factory;
       return constructorIAiCL.newInstance(config, factory, remoteAddress, remotePort, localAddress, localPort, listener, parser, ref);
@@ -131,12 +131,13 @@ public class TransportLayerFactory implements ITransportLayerFactory {
   }
 
   @Override
-  public IConnection createConnection(InetAddress remoteAddress, IConcurrentFactory factory, int remotePort, InetAddress localAddress, int localPort,
-                                      String[] extraHostAddresses, IConnectionListener listener, String ref) throws TransportException {
+  public IConnection createConnection(InetAddress remoteAddress, IConcurrentFactory factory, int remotePort, InetAddress localAddress,
+                                      int localPort, String[] extraHostAddresses, String standbyRemoteAddresses,
+                                      IConnectionListener listener, String ref) throws TransportException {
     try {
       factory = factory == null ? new DummyConcurrentFactory() : factory;
-      return constructorIAiCLEha.newInstance(config, factory, remoteAddress, remotePort, localAddress, localPort, extraHostAddresses,
-          listener, parser, ref);
+      return constructorIAiCLEha.newInstance(config, factory, remoteAddress, remotePort, localAddress, localPort,
+          extraHostAddresses, standbyRemoteAddresses, listener, parser, ref);
     } catch (Exception e) {
       throw new TransportException("Cannot create an instance of " + connectionClass, TransportError.Internal, e);
     }

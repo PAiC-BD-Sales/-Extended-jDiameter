@@ -164,6 +164,11 @@ public class Parameters extends Ordinal {
   public static final Parameters PeerLocalPortRange = new Parameters("PeerLocalPortRange", String.class, "");
 
   /**
+   * Peer remote standby address list
+   */
+  public static final Parameters PeerStandbyAddresses = new Parameters("PeerStandbyAddresses", String.class, "");
+
+  /**
    * Peer rating property
    */
   public static final Parameters PeerRating = new Parameters("PeerRating", Integer.class, 0);

@@ -73,6 +73,7 @@ import static org.jdiameter.client.api.fsm.EventTypes.INTERNAL_ERROR;
 import static org.jdiameter.client.api.fsm.EventTypes.RECEIVE_MSG_EVENT;
 import static org.jdiameter.client.api.fsm.EventTypes.STOP_EVENT;
 import static org.jdiameter.client.impl.helpers.Parameters.PeerHost;
+import static org.jdiameter.client.impl.helpers.Parameters.PeerStandbyAddresses;
 import static org.jdiameter.client.impl.helpers.Parameters.SecurityRef;
 import static org.jdiameter.client.impl.helpers.Parameters.UseUriAsFqdn;
 
@@ -363,8 +364,9 @@ public class PeerImpl extends AbstractPeer implements IPeer {
         }
         logger.debug("Create connection with localAddress=[{}]; localPort=[{}]", localAddress, localPort);
       }
+      String standbyRemoteAddresses = peerConfig.getStringValue(PeerStandbyAddresses.ordinal(), null);
       this.connection = trFactory.createConnection(remoteAddress, concurrentFactory, port, localAddress, localPort,
-          extraHostAddresses, connListener, ref);
+          extraHostAddresses, standbyRemoteAddresses, connListener, ref);
     } else {
       this.connection = connection;
       this.connection.addConnectionListener(connListener);

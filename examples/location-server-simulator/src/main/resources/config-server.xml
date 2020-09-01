@@ -31,7 +31,7 @@
 
   <Network>
     <Peers>
-      <Peer name="aaa://gmlc:3868" attempt_connect="false" rating="1" ip="" security_ref="" portRange="" host="" />
+      <Peer name="aaa://127.0.0.1:3868" attempt_connect="true" rating="1" standby_addresses="127.0.0.2" />
     </Peers>
     <Realms>
       <Realm name="restcomm.org" peers="gmlc" local_action="LOCAL" dynamic="true" exp_time="1">

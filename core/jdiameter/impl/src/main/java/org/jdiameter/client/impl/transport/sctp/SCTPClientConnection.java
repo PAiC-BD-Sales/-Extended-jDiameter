@@ -125,7 +125,7 @@ public class SCTPClientConnection implements IConnection {
 
   public SCTPClientConnection(Configuration config, IConcurrentFactory concurrentFactory, InetAddress remoteAddress,
                               int remotePort, InetAddress localAddress, int localPort, String[] extraHostAddresses,
-                              IConnectionListener listener, IMessageParser parser, String ref) {
+                              String standbyAddresses, IConnectionListener listener, IMessageParser parser, String ref) {
     this(parser);
     logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (with extra host addresses)",
         new Object[]{remoteAddress, remotePort, localAddress, localPort});
@@ -139,23 +139,22 @@ public class SCTPClientConnection implements IConnection {
     multiConnectionTuples.add(new ConnectionTuple(localAddress, remoteAddress));
     currentConnectionTuple = 0;
 
-    String standbyAddressesConfiguration = ref;  // TODO: define the standby_addresses parameter
-    if (standbyAddressesConfiguration != null && standbyAddressesConfiguration.length() > 0 && extraHostAddresses.length > 0) {
-      String[] standbyAddresses = standbyAddressesConfiguration.split(",");
+    if (standbyAddresses != null && standbyAddresses.length() > 0 && extraHostAddresses.length > 0) {
+      String[] standbyAddressesList = standbyAddresses.split(",");
       int extraHostAddressIndex = 0;
-      for (int i = 0; i < standbyAddresses.length; i++) {
+      for (int i = 0; i < standbyAddressesList.length; i++) {
         try {
           InetAddress standbyLocalAddress = InetAddress.getByName(extraHostAddresses[extraHostAddressIndex]);
-          InetAddress standbyRemoteAddress = InetAddress.getByName(standbyAddresses[i]);
+          InetAddress standbyRemoteAddress = InetAddress.getByName(standbyAddressesList[i]);
           multiConnectionTuples.add(new ConnectionTuple(standbyLocalAddress, standbyRemoteAddress));
           logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (standby connection added)",
-              new Object[]{standbyAddresses[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
+              new Object[]{standbyAddressesList[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
           if (extraHostAddressIndex++ == extraHostAddresses.length) {
             break;
           }
         } catch (UnknownHostException e) {
           logger.error("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (error adding standby connection)",
-              new Object[]{standbyAddresses[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
+              new Object[]{standbyAddressesList[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
         }
       }
     }

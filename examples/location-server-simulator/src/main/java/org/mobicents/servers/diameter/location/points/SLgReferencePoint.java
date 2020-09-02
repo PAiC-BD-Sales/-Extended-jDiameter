@@ -349,7 +349,7 @@ public class SLgReferencePoint extends SLgSessionFactoryImpl implements NetworkR
         session.sendProvideLocationAnswer(pla);
     }
 
-    public void sendLocationReportRequest(String subscriberIdentity, Integer locationEventType, String lcsReferenceNumber, Boolean isImsi)
+    public void sendLocationReportRequest(String subscriberIdentity, Integer locationEventType, Integer lcsReferenceNumber, Boolean isImsi)
             throws InternalException, RouteException, OverloadException, IllegalDiameterStateException {
 
         int resultCode = ResultCode.SUCCESS;

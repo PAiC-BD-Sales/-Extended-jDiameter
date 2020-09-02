@@ -49,7 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  */
@@ -72,25 +71,6 @@ public class SCTPClientConnection implements IConnection {
 
   private List<ConnectionTuple> multiConnectionTuples = new ArrayList<>();
   private int currentConnectionTuple = -1;
-
-  class ConnectionTuple {
-
-    private InetAddress remoteAddress;
-    private InetAddress localAddress;
-
-    public InetAddress getLocalAddress() {
-      return localAddress;
-    }
-
-    public InetAddress getRemoteAddress() {
-      return remoteAddress;
-    }
-
-    ConnectionTuple(InetAddress localAddress, InetAddress remoteAddress) {
-      this.remoteAddress = remoteAddress;
-      this.localAddress = localAddress;
-    }
-  }
 
   protected SCTPClientConnection(IMessageParser parser) {
     this.createdTime = System.currentTimeMillis();
@@ -129,9 +109,9 @@ public class SCTPClientConnection implements IConnection {
     this(parser);
     logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (with extra host addresses)",
         new Object[]{remoteAddress, remotePort, localAddress, localPort});
-    client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
+    //client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     this.remotePort = remotePort;
-    client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
+    //client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
     this.localPort = localPort;
     client.setExtraHostAddress(extraHostAddresses);
     listeners.add(listener);
@@ -175,9 +155,17 @@ public class SCTPClientConnection implements IConnection {
   @Override
   public void connect() throws TransportException {
     try {
-      currentConnectionTuple = (currentConnectionTuple + 1) % multiConnectionTuples.size();
-      client.setDestAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(), remotePort));
-      client.setOrigAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getLocalAddress(), localPort));
+      if (currentConnectionTuple != -1) {
+        logger.info("SCTP is using connection tuple idx {} of {}, local '{}:{}' and remote '{}:{}'",
+            currentConnectionTuple, multiConnectionTuples.size(),
+            multiConnectionTuples.get(currentConnectionTuple).getLocalAddress(), localPort,
+            multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(), remotePort);
+        getClient().setDestAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(),
+            remotePort));
+        getClient().setOrigAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getLocalAddress(),
+            localPort));
+        currentConnectionTuple = (currentConnectionTuple + 1) % multiConnectionTuples.size();
+      }
 
       getClient().initialize();
       getClient().start();
@@ -390,10 +378,6 @@ public class SCTPClientConnection implements IConnection {
     ByteBuffer message;
     Exception exception;
 
-    Event(EventType type) {
-      this.type = type;
-    }
-
     Event(EventType type, Exception exception) {
       this(type);
       this.exception = exception;
@@ -402,6 +386,29 @@ public class SCTPClientConnection implements IConnection {
     Event(EventType type, ByteBuffer message) {
       this(type);
       this.message = message;
+    }
+
+    Event(EventType type) {
+      this.type = type;
+    }
+  }
+
+  class ConnectionTuple {
+
+    private InetAddress remoteAddress;
+    private InetAddress localAddress;
+
+    ConnectionTuple(InetAddress localAddress, InetAddress remoteAddress) {
+      this.remoteAddress = remoteAddress;
+      this.localAddress = localAddress;
+    }
+
+    public InetAddress getLocalAddress() {
+      return localAddress;
+    }
+
+    public InetAddress getRemoteAddress() {
+      return remoteAddress;
     }
   }
 }

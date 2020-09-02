@@ -139,22 +139,29 @@ public class SCTPClientConnection implements IConnection {
     multiConnectionTuples.add(new ConnectionTuple(localAddress, remoteAddress));
     currentConnectionTuple = 0;
 
-    if (standbyAddresses != null && standbyAddresses.length() > 0 && extraHostAddresses.length > 0) {
+    if (standbyAddresses != null && standbyAddresses.length() > 0) {
       String[] standbyAddressesList = standbyAddresses.split(",");
       int extraHostAddressIndex = 0;
       for (int i = 0; i < standbyAddressesList.length; i++) {
         try {
-          InetAddress standbyLocalAddress = InetAddress.getByName(extraHostAddresses[extraHostAddressIndex]);
+          InetAddress standbyLocalAddress = extraHostAddresses.length > 0 ?
+              InetAddress.getByName(extraHostAddresses[extraHostAddressIndex]) : localAddress;
           InetAddress standbyRemoteAddress = InetAddress.getByName(standbyAddressesList[i]);
           multiConnectionTuples.add(new ConnectionTuple(standbyLocalAddress, standbyRemoteAddress));
           logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (standby connection added)",
               new Object[]{standbyAddressesList[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
-          if (extraHostAddressIndex++ == extraHostAddresses.length) {
-            break;
+          if (extraHostAddresses.length > 0) {
+            if (extraHostAddressIndex++ == extraHostAddresses.length) {
+              break;
+            }
           }
         } catch (UnknownHostException e) {
           logger.error("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (error adding standby connection)",
-              new Object[]{standbyAddressesList[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
+              new Object[]{
+                  standbyAddressesList[i],
+                  remotePort,
+                  extraHostAddresses.length > 0 ? extraHostAddresses[extraHostAddressIndex] : localAddress.getHostAddress(),
+                  localPort});
         }
       }
     }

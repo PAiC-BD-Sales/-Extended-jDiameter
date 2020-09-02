@@ -144,13 +144,13 @@ public class SCTPClientConnection implements IConnection {
       int extraHostAddressIndex = 0;
       for (int i = 0; i < standbyAddressesList.length; i++) {
         try {
-          InetAddress standbyLocalAddress = extraHostAddresses.length > 0 ?
+          InetAddress standbyLocalAddress = (extraHostAddresses != null && extraHostAddresses.length > 0) ?
               InetAddress.getByName(extraHostAddresses[extraHostAddressIndex]) : localAddress;
           InetAddress standbyRemoteAddress = InetAddress.getByName(standbyAddressesList[i]);
           multiConnectionTuples.add(new ConnectionTuple(standbyLocalAddress, standbyRemoteAddress));
           logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (standby connection added)",
               new Object[]{standbyAddressesList[i], remotePort, extraHostAddresses[extraHostAddressIndex], localPort});
-          if (extraHostAddresses.length > 0) {
+          if (extraHostAddresses != null && extraHostAddresses.length > 0) {
             if (extraHostAddressIndex++ == extraHostAddresses.length) {
               break;
             }

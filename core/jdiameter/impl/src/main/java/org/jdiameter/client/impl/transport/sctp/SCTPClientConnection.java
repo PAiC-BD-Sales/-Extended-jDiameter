@@ -72,6 +72,8 @@ public class SCTPClientConnection implements IConnection {
   private List<ConnectionTuple> multiConnectionTuples = new ArrayList<>();
   private int currentConnectionTuple = -1;
 
+  private boolean transportClientStarted;
+
   protected SCTPClientConnection(IMessageParser parser) {
     this.createdTime = System.currentTimeMillis();
     this.parser = parser;
@@ -113,7 +115,7 @@ public class SCTPClientConnection implements IConnection {
     this.remotePort = remotePort;
     //client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
     this.localPort = localPort;
-    client.setExtraHostAddress(extraHostAddresses);
+    //client.setExtraHostAddress(extraHostAddresses);
     listeners.add(listener);
 
     multiConnectionTuples.add(new ConnectionTuple(localAddress, remoteAddress));
@@ -156,19 +158,43 @@ public class SCTPClientConnection implements IConnection {
   public void connect() throws TransportException {
     try {
       if (currentConnectionTuple != -1) {
-        logger.info("SCTP is using connection tuple idx {} of {}, local '{}:{}' and remote '{}:{}'",
-            currentConnectionTuple, multiConnectionTuples.size(),
-            multiConnectionTuples.get(currentConnectionTuple).getLocalAddress(), localPort,
-            multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(), remotePort);
+        if (transportClientStarted) {
+          logger.debug("SCTP is releasing previously initialized association for local '{}:{}' and remote '{}:{}'",
+              getClient().getOrigAddress().getAddress(), getClient().getOrigAddress().getPort(),
+              getClient().getDestAddress().getAddress(), getClient().getDestAddress().getPort());
+          try {
+            getClient().release();
+          } catch (Exception e) {
+            logger.error("Caught exception while releasing the previous association", e);
+          }
+        }
+
+        InetAddress localAddress = multiConnectionTuples.get(currentConnectionTuple).getLocalAddress();
+        String[] extraHostAddresses = new String[multiConnectionTuples.size() - 1];
+        int extraHostAddressIndex = 0;
+        for(ConnectionTuple tuple : multiConnectionTuples) {
+          if (!tuple.getLocalAddress().equals(localAddress)) {
+            extraHostAddresses[extraHostAddressIndex++] = tuple.getLocalAddress().getHostAddress();
+          }
+        }
+
+        logger.debug("Client connection [index {}, nodes {}] local '{}:{}' and remote '{}:{}', extra hosts '{}'",
+            currentConnectionTuple, multiConnectionTuples.size(), localAddress, localPort,
+            multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(), remotePort,
+            extraHostAddresses);
         getClient().setDestAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(),
             remotePort));
         getClient().setOrigAddress(new InetSocketAddress(multiConnectionTuples.get(currentConnectionTuple).getLocalAddress(),
             localPort));
+        getClient().setExtraHostAddress(extraHostAddresses);
+
         currentConnectionTuple = (currentConnectionTuple + 1) % multiConnectionTuples.size();
       }
 
       getClient().initialize();
       getClient().start();
+
+      transportClientStarted = true;
     } catch (IOException e) {
       throw new TransportException("Cannot init transport: ", TransportError.NetWorkError, e);
     } catch (Exception e) {

@@ -249,14 +249,19 @@ public class SCTPTransportClient {
 
   public void stop() throws Exception {
     // Stop the SCTP
-    this.management.stopAssociation(clientAssociationName);
+    if (this.management != null) {
+      this.management.stopAssociation(clientAssociationName);
+    }
   }
 
   public void release() throws Exception {
     this.stop();
-    this.management.removeAssociation(clientAssociationName);
-    this.management.stop();
+    if (this.management != null) {
+      this.management.removeAssociation(clientAssociationName);
+      this.management.stop();
+    }
     this.clientAssociation = null;
+    this.management = null;  // TODO - should we nullify management object? fair enough?
   }
 
   public InetSocketAddress getDestAddress() {

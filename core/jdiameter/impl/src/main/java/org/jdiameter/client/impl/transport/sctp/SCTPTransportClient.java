@@ -102,10 +102,6 @@ public class SCTPTransportClient {
         logger.debug("Management already initialized.");
       }
 
-      if (this.clientAssociation != null) {
-        this.management.stopAssociation(this.clientAssociationName);
-      }
-
       if (this.clientAssociation == null) {
         logger.debug("Creating CLIENT ASSOCIATION '{}'. Origin Address [{}] <=> Dest Address [{}]", new Object[]{
             clientAssociationName, origAddress, destAddress});

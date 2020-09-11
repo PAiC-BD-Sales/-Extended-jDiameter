@@ -178,6 +178,10 @@ public class SCTPClientConnection implements IConnection {
           }
         }
 
+        // TODO should we have a force shutdown previous association instead?
+        getClient().stop();
+        getClient().release();
+
         logger.debug("Client connection [index {}, nodes {}] local '{}:{}' and remote '{}:{}', extra hosts '{}'",
             currentConnectionTuple, multiConnectionTuples.size(), localAddress, localPort,
             multiConnectionTuples.get(currentConnectionTuple).getRemoteAddress(), remotePort,

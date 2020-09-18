@@ -580,6 +580,11 @@ public class PeerImpl extends AbstractPeer implements IPeer {
 
   @Override
   public boolean sendMessage(IMessage message) throws TransportException, OverloadException, InternalException {
+    if (getState(PeerState.class) != PeerState.OKAY) {
+      // TODO strict message sending!!
+      return false;
+    }
+
     if (dictionary != null && dictionary.isEnabled()) {
       logger.debug("Message validation is ENABLED. Going to validate message before sending.");
       dictionary.validate(message, false);

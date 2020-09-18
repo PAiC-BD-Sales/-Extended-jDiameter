@@ -178,7 +178,7 @@ public class SCTPClientConnection implements IConnection {
           }
         }
 
-        // stop & release prefious association if there before
+        // stop & release previous association if there before
         if (multiConnectionTuples.size() > 1) {
           getClient().stop();
           getClient().release();

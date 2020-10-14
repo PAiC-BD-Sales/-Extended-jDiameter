@@ -455,8 +455,8 @@ public class PeerFSMImpl implements IStateMachine {
 
   protected org.jdiameter.api.app.State[] getStates() {
     if (states == null) {
-      states = new org.jdiameter.api.app.State[] { // todo merge and redesign with server fsm
-          new MyState() { // OKEY
+      states = new org.jdiameter.api.app.State[] {
+          new MyState() {                        // OKAY
             @Override
             public void entryAction() {
               setInActiveTimer();
@@ -555,7 +555,7 @@ public class PeerFSMImpl implements IStateMachine {
               return true;
             }
           },
-          new MyState() { // SUSPECT
+          new MyState() {                        // SUSPECT
             @Override
             public boolean processEvent(StateEvent event) {
               switch (event.encodeType(EventTypes.class)) {
@@ -625,7 +625,7 @@ public class PeerFSMImpl implements IStateMachine {
               return true;
             }
           },
-          new MyState() { // DOWN
+          new MyState() {                        // DOWN
             @Override
             public void entryAction() {
               clearTimer();
@@ -665,7 +665,7 @@ public class PeerFSMImpl implements IStateMachine {
               return true;
             }
           },
-          new MyState() { // REOPEN
+          new MyState() {                        // REOPEN
             @Override
             public boolean processEvent(StateEvent event) {
               switch (event.encodeType(EventTypes.class)) {
@@ -705,7 +705,7 @@ public class PeerFSMImpl implements IStateMachine {
               return true;
             }
           },
-          new MyState() { // INITIAL
+          new MyState() {                        // INITIAL
             @Override
             public void entryAction() {
               setTimer(CEA_TIMEOUT);
@@ -748,7 +748,7 @@ public class PeerFSMImpl implements IStateMachine {
               return true;
             }
           },
-          new MyState() { // STOPPING
+          new MyState() {                        // STOPPING
             @Override
             public boolean processEvent(StateEvent event) {
               switch (event.encodeType(EventTypes.class)) {

@@ -37,6 +37,7 @@
       <Peer name="aaa://10.0.0.171:3868" attempt_connect="true" rating="1" standby_addresses="10.0.0.172" />
       <Peer name="aaa://10.0.0.173:3868" attempt_connect="true" rating="1" standby_addresses="10.0.0.174" />
     </Peers>
+
     <Realms>
       <Realm name="restcomm.org" peers="gmlc" local_action="LOCAL" dynamic="true" exp_time="1">
         <ApplicationID>
@@ -45,7 +46,7 @@
           <AcctApplId value="0" />
         </ApplicationID>
       </Realm>
-      <Realm name="restcomm.org" peers="gmlc" local_action="LOCAL" dynamic="true" exp_time="1">
+      <!--Realm name="restcomm.org" peers="gmlc" local_action="LOCAL" dynamic="true" exp_time="1">
         <ApplicationID>
           <VendorId value="10415" />
           <AuthApplId value="16777291" />
@@ -58,7 +59,7 @@
           <AuthApplId value="16777217" />
           <AcctApplId value="0" />
         </ApplicationID>
-      </Realm>
+      </Realm -->
     </Realms>
   </Network>
 

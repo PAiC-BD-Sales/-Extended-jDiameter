@@ -44,6 +44,7 @@ package org.jdiameter.server.impl;
 
 import static org.jdiameter.api.PeerState.DOWN;
 import static org.jdiameter.api.PeerState.INITIAL;
+import static org.jdiameter.api.PeerState.REOPEN;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -171,7 +172,7 @@ public class PeerImpl extends org.jdiameter.client.impl.controller.PeerImpl impl
   @Override
   public void addIncomingConnection(IConnection conn) {
     PeerState state = fsm.getState(PeerState.class);
-    if (DOWN  ==  state || INITIAL == state) {
+    if (DOWN  ==  state || INITIAL == state || REOPEN == state) {
       conn.addConnectionListener(connListener);
       // ammendonca: if we are receiving a new connection in such state, we may want to make it primary, right?
       this.connection = conn;

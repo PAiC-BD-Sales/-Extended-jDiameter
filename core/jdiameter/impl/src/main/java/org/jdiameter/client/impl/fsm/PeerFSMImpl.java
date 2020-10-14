@@ -418,14 +418,20 @@ public class PeerFSMImpl implements IStateMachine {
       if (context.isRestoreConnection()) {
         timer = REC_TIMEOUT + System.currentTimeMillis();
         switchToNextState(REOPEN);
+        // TODO this is not an error
+        logger.error("Peer '{}' is ending connection, changing status to REOPEN", context.getPeerDescription());
       }
       else {
         switchToNextState(DOWN);
+        // TODO this is not an error
+        logger.error("Peer '{}' is ending connection, changing status to DOWN", context.getPeerDescription());
       }
     }
 
     protected void doDisconnect() {
       try {
+        // TODO this is not an error
+        logger.error("Peer '{}' is closing connection!", context.getPeerDescription());
         context.disconnect();
       }
       catch (Throwable e) {

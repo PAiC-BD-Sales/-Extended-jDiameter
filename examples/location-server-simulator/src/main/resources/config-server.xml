@@ -36,6 +36,8 @@
 
       <Peer name="aaa://10.0.0.171:3868" attempt_connect="true" rating="1" standby_addresses="10.0.0.172" />
       <Peer name="aaa://10.0.0.173:3868" attempt_connect="true" rating="1" standby_addresses="10.0.0.174" />
+
+      <Peer name="aaa://localhost:3868" attempt_connect="false" rating="1" standby_addresses="10.0.0.172" />
     </Peers>
 
     <Realms>

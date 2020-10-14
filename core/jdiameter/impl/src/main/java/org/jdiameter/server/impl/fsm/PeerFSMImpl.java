@@ -487,7 +487,7 @@ public class PeerFSMImpl extends org.jdiameter.client.impl.fsm.PeerFSMImpl imple
               return true;
             }
           },
-          new MyState() { // STOPPING
+          new MyState() {                        // STOPPING
             @Override
             public boolean processEvent(StateEvent event) {
               switch (type(event)) {

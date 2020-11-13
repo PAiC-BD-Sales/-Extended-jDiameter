@@ -188,8 +188,7 @@ public class PeerFSMImpl implements IStateMachine {
               if (children.length == 2 && children[1].getValueAsLong() != 0) {
                 long count = children[1].getValueAsLong();
                 return ((float) children[0].getValueAsLong()) / ((float) (count != 0 ? count : 1));
-              }
-              else {
+              } else {
                 return 0;
               }
             }
@@ -217,8 +216,7 @@ public class PeerFSMImpl implements IStateMachine {
               if (logger.isDebugEnabled() && event != null) {
                 logger.debug("Got Event [{}] from Queue", event);
               }
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
               logger.debug("Peer FSM stopped", e);
               break;
             }
@@ -246,16 +244,13 @@ public class PeerFSMImpl implements IStateMachine {
                       handleEvent(timeOutEvent); //FIXME: check why timer is not killed?
                     }
                   }
-                }
-                finally {
+                } finally {
                   lock.unlock();
                 }
               }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
               logger.debug("Error during processing FSM event", e);
-            }
-            finally {
+            } finally {
               // PCB removed lock
               // lock.unlock();
             }
@@ -277,8 +272,7 @@ public class PeerFSMImpl implements IStateMachine {
         Thread executor = concurrentFactory.getThread("FSM-" + context.getPeerDescription() + "_" + i, fsmQueueProcessor);
         executor.start();
       }
-    }
-    finally {
+    } finally {
       lock.unlock();
     }
   }
@@ -318,7 +312,7 @@ public class PeerFSMImpl implements IStateMachine {
     }
     getStates()[state.ordinal()].exitAction();
     if (logger.isDebugEnabled()) {
-      logger.debug("{} FSM switch state: {} -> {}", new Object[] {context.getPeerDescription(), state, newState});
+      logger.debug("{} FSM switch state: {} -> {}", new Object[]{context.getPeerDescription(), state, newState});
     }
     state = newState;
     getStates()[state.ordinal()].entryAction();
@@ -345,15 +339,13 @@ public class PeerFSMImpl implements IStateMachine {
         // outgoing are done elsewhere: see BaseSessionImpl
         try {
           dictionary.validate((Message) event.getData(), incoming);
-        }
-        catch (AvpNotAllowedException e) {
+        } catch (AvpNotAllowedException e) {
           logger.error("Failed to validate incoming message.", e);
           return false;
         }
-      }
-      else {
+      } else {
         logger.debug("Not performing incoming validation on message. Validator Enabled [{}] Incoming [{}] Incoming Level [{}]",
-            new Object[] { (dictionary != null && dictionary.isEnabled()), incoming, incomingLevel });
+            new Object[]{(dictionary != null && dictionary.isEnabled()), incoming, incomingLevel});
       }
     }
 
@@ -370,13 +362,18 @@ public class PeerFSMImpl implements IStateMachine {
         //  }
         //}
       }
+      if (event.getData() != null) {
+        logger.info("Placing event [{}] into linked blocking queue with remaining capacity [{}] for sessionId [{}].",
+            event, eventQueue.remainingCapacity(), ((IMessage) event.getData()).getSessionId());
+      }
       rc = eventQueue.offer(event, IAC_TIMEOUT, TimeUnit.MILLISECONDS);
-    }
-    catch (InterruptedException e) {
-      logger.debug("Can not put event '" + event.toString() + "' to FSM " + this.toString(), e);
+    } catch (InterruptedException e) {
+      //logger.debug("Can not put event '" + event.toString() + "' to FSM " + this.toString(), e);
+      logger.warn("Can not put event '" + event.toString() + "' to FSM '" + this.toString() + "'", e);
       throw new InternalError("Can not put event '" + event.toString() + "' to FSM " + this.toString());
     }
     if (!rc) {
+      logger.warn("Can not put event '" + event.toString() + "' to FSM '" + this.toString() + "' FSM overloaded!");
       throw new OverloadException("FSM overloaded");
     }
     return true;
@@ -398,8 +395,7 @@ public class PeerFSMImpl implements IStateMachine {
   public <E> E getState(Class<E> a) {
     if (a == PeerState.class) {
       return (E) state.getPublicState();
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -420,8 +416,7 @@ public class PeerFSMImpl implements IStateMachine {
         switchToNextState(REOPEN);
         // TODO this is not an error
         logger.error("Peer '{}' is ending connection, changing status to REOPEN", context.getPeerDescription());
-      }
-      else {
+      } else {
         switchToNextState(DOWN);
         // TODO this is not an error
         logger.error("Peer '{}' is ending connection, changing status to DOWN", context.getPeerDescription());
@@ -433,8 +428,7 @@ public class PeerFSMImpl implements IStateMachine {
         // TODO this is not an error
         logger.error("Peer '{}' is closing connection!", context.getPeerDescription());
         context.disconnect();
-      }
-      catch (Throwable e) {
+      } catch (Throwable e) {
       }
     }
 
@@ -461,7 +455,7 @@ public class PeerFSMImpl implements IStateMachine {
 
   protected org.jdiameter.api.app.State[] getStates() {
     if (states == null) {
-      states = new org.jdiameter.api.app.State[] {
+      states = new org.jdiameter.api.app.State[]{
           new MyState() {                        // OKAY
             @Override
             public void entryAction() {
@@ -482,12 +476,10 @@ public class PeerFSMImpl implements IStateMachine {
                     setTimer(DWA_TIMEOUT);
                     if (watchdogSent) {
                       switchToNextState(FsmState.SUSPECT);
-                    }
-                    else {
+                    } else {
                       watchdogSent = true;
                     }
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DWR", e);
                     doDisconnect();
                     setTimer(REC_TIMEOUT);
@@ -498,15 +490,13 @@ public class PeerFSMImpl implements IStateMachine {
                   try {
                     if (event.getData() == null) {
                       context.sendDprMessage(DisconnectCause.REBOOTING);
-                    }
-                    else {
+                    } else {
                       Integer disconnectCause = (Integer) event.getData();
                       context.sendDprMessage(disconnectCause);
                     }
                     setTimer(DPA_TIMEOUT);
                     switchToNextState(FsmState.STOPPING);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DPR", e);
                     doDisconnect();
                     switchToNextState(FsmState.DOWN);
@@ -520,8 +510,7 @@ public class PeerFSMImpl implements IStateMachine {
                   try {
                     int code = context.processDprMessage(message(event));
                     context.sendDpaMessage(message(event), code, null);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DPA", e);
                   }
                   doDisconnect();
@@ -532,8 +521,7 @@ public class PeerFSMImpl implements IStateMachine {
                   try {
                     int code = context.processDwrMessage(message(event));
                     context.sendDwaMessage(message(event), code, null);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DWA", e);
                     doDisconnect();
                     switchToNextState(FsmState.DOWN);
@@ -546,8 +534,7 @@ public class PeerFSMImpl implements IStateMachine {
                 case SEND_MSG_EVENT:
                   try {
                     context.sendMessage(message(event));
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send message", e);
                     doDisconnect();
                     setTimer(REC_TIMEOUT);
@@ -578,15 +565,13 @@ public class PeerFSMImpl implements IStateMachine {
                   try {
                     if (event.getData() == null) {
                       context.sendDprMessage(DisconnectCause.REBOOTING);
-                    }
-                    else {
+                    } else {
                       Integer disconnectCause = (Integer) event.getData();
                       context.sendDprMessage(disconnectCause);
                     }
                     setInActiveTimer();
                     switchToNextState(FsmState.STOPPING);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DPR", e);
                     doDisconnect();
                     switchToNextState(FsmState.DOWN);
@@ -596,8 +581,7 @@ public class PeerFSMImpl implements IStateMachine {
                   try {
                     int code = context.processDprMessage(message(event));
                     context.sendDpaMessage(message(event), code, null);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DPA", e);
                   }
                   doDisconnect();
@@ -611,8 +595,7 @@ public class PeerFSMImpl implements IStateMachine {
                     int code = context.processDwrMessage(message(event));
                     context.sendDwaMessage(message(event), code, null);
                     switchToNextState(FsmState.OKAY);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send DWA", e);
                     doDisconnect();
                     switchToNextState(FsmState.DOWN);
@@ -652,8 +635,7 @@ public class PeerFSMImpl implements IStateMachine {
                     context.sendCerMessage();
                     setTimer(CEA_TIMEOUT);
                     switchToNextState(FsmState.INITIAL);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Connect error", e);
                     setTimer(REC_TIMEOUT);
                     switchToNextState(FsmState.REOPEN);
@@ -680,8 +662,7 @@ public class PeerFSMImpl implements IStateMachine {
                     context.sendCerMessage();
                     setTimer(CEA_TIMEOUT);
                     switchToNextState(FsmState.INITIAL);
-                  }
-                  catch (Throwable e) {
+                  } catch (Throwable e) {
                     logger.debug("Can not send CER", e);
                     setTimer(REC_TIMEOUT);
                   }
@@ -689,8 +670,7 @@ public class PeerFSMImpl implements IStateMachine {
                 case TIMEOUT_EVENT:
                   try {
                     context.connect();
-                  }
-                  catch (Exception e) {
+                  } catch (Exception e) {
                     logger.debug("Timeout processed. Can not connect to {}", context.getPeerDescription());
                     setTimer(REC_TIMEOUT);
                   }
@@ -738,8 +718,7 @@ public class PeerFSMImpl implements IStateMachine {
                   clearTimer();
                   if (context.processCeaMessage(((FsmEvent) event).getKey(), ((FsmEvent) event).getMessage())) {
                     switchToNextState(FsmState.OKAY);
-                  }
-                  else {
+                  } else {
                     doDisconnect();
                     setTimer(REC_TIMEOUT);
                     switchToNextState(FsmState.REOPEN);

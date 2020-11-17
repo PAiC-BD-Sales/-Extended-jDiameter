@@ -814,7 +814,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
 
         logger.info("SessionId [{}] message sent", message.getSessionId());
       } catch (Exception e) {
-        logger.error("SessionId [{}] caugth exeption [{}]", message.getSessionId(), e);
+        logger.error("SessionId [{}] caught exception [{}]", message.getSessionId(), e);
         throw e;
       }
 

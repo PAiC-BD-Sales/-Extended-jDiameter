@@ -362,10 +362,6 @@ public class PeerFSMImpl implements IStateMachine {
         //  }
         //}
       }
-      if (event.getData() != null) {
-        logger.info("Placing event [{}] into linked blocking queue with remaining capacity [{}] for sessionId [{}].",
-            event, eventQueue.remainingCapacity(), ((IMessage) event.getData()).getSessionId());
-      }
       rc = eventQueue.offer(event, IAC_TIMEOUT, TimeUnit.MILLISECONDS);
     } catch (InterruptedException e) {
       //logger.debug("Can not put event '" + event.toString() + "' to FSM " + this.toString(), e);
@@ -414,19 +410,13 @@ public class PeerFSMImpl implements IStateMachine {
       if (context.isRestoreConnection()) {
         timer = REC_TIMEOUT + System.currentTimeMillis();
         switchToNextState(REOPEN);
-        // TODO this is not an error
-        logger.error("Peer '{}' is ending connection, changing status to REOPEN", context.getPeerDescription());
       } else {
         switchToNextState(DOWN);
-        // TODO this is not an error
-        logger.error("Peer '{}' is ending connection, changing status to DOWN", context.getPeerDescription());
       }
     }
 
     protected void doDisconnect() {
       try {
-        // TODO this is not an error
-        logger.error("Peer '{}' is closing connection!", context.getPeerDescription());
         context.disconnect();
       } catch (Throwable e) {
       }

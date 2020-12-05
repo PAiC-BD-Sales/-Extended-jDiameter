@@ -60,12 +60,10 @@ pipeline {
 					branch 'master';
 					branch 'release'
 				}
-			}
-        	when {
-          		expression {
+				expression {
             		currentBuild.result == null || currentBuild.result == 'SUCCESS' 
           		}
-        	}
+			}
         	steps {
           		echo "Archiving Extended jDiameter version ${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
             	archiveArtifacts artifacts: "release/*.zip", followSymlinks: false, onlyIfSuccessful: true

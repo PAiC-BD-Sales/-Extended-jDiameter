@@ -142,7 +142,7 @@ public class SCTPTransportServer {
         this.management.setSingleThread(true);
         this.management.start();
         // Clear any saved connections, we will get them from jdiameter-config.xml
-        this.management.removeAllResourses();
+        this.management.removeAllResources();
       }
 
       logger.debug("Orig Address: '{}:{}'", origAddress.getAddress().getHostAddress(), origAddress.getPort());

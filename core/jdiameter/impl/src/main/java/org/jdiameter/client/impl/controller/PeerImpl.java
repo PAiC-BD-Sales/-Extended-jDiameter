@@ -715,7 +715,6 @@ public class PeerImpl extends AbstractPeer implements IPeer {
     }
   }
 
-
   protected class ActionContext implements IContext {
 
     @Override
@@ -806,11 +805,18 @@ public class PeerImpl extends AbstractPeer implements IPeer {
       // PCB added this
       router.garbageCollectRequestRouteInfo(message);
 
-      // Send to network
-      message.setState(IMessage.STATE_SENT);
-      logger.debug("Calling connection to send message [{}] to peer [{}] over the network", message, getUri());
-      connection.sendMessage(message);
-      logger.debug("Connection sent message [{}] to peer [{}] over the network", message, getUri());
+      try {
+        // Send to network
+        message.setState(IMessage.STATE_SENT);
+        logger.debug("Calling connection to send message [{}] to peer [{}] over the network", message, getUri());
+        connection.sendMessage(message);
+        logger.debug("Connection sent message [{}] to peer [{}] over the network", message, getUri());
+
+        logger.info("SessionId [{}] message sent", message.getSessionId(), message.getHopByHopIdentifier(), message.getEndToEndIdentifier());
+      } catch (Exception e) {
+        logger.error("SessionId [{}] caught exception [{}]", message.getSessionId(), e);
+        throw e;
+      }
 
       return true;
     }

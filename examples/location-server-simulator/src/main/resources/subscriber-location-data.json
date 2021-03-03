@@ -53,7 +53,7 @@
       "civicAddress": "Avenida Italia 8973, 11500, Montevideo, Uruguay",
       "barometricPressure": 1013,
       "lrrFlags": 0,
-      "deferredMtLrDataLocationType": 4,
+      "deferredMtLrDataLocationType": 2,
       "deferredMtLrDataTerminationCause": 4,
       "deferredMtLrDataServingNode": {
         "sgsnNumber": "5989900021",
@@ -143,7 +143,7 @@
       "civicAddress": "Avenida Brasil 2701, 11300, Montevideo, Uruguay",
       "barometricPressure": 1014,
       "lrrFlags": 0,
-      "deferredMtLrDataLocationType": 5,
+      "deferredMtLrDataLocationType": 3,
       "deferredMtLrDataTerminationCause": 4,
       "deferredMtLrDataServingNode": {
         "sgsnNumber": "5989900021",
@@ -232,7 +232,7 @@
       "civicAddress": "18 de Julio 1981, 11500, Montevideo, Uruguay",
       "barometricPressure": 1014,
       "lrrFlags": 0,
-      "deferredMtLrDataLocationType": 0,
+      "deferredMtLrDataLocationType": 1,
       "deferredMtLrDataTerminationCause": 1,
       "deferredMtLrDataServingNode": {
         "sgsnNumber": "5989900024",
@@ -326,7 +326,7 @@
       "civicAddress": "Calle 2 Sur 20-185, 0cellGlobalIdentity50022, Medellin, Colombia",
       "barometricPressure": 1012,
       "lrrFlags": 0,
-      "deferredMtLrDataLocationType": 5,
+      "deferredMtLrDataLocationType": 0,
       "deferredMtLrDataTerminationCause": 3,
       "deferredMtLrDataServingNode": {
         "sgsnNumber": "573010002",
@@ -402,7 +402,7 @@
         "uncertaintyVerticalSpeed": 2,
         "velocityType": 0
       },
-      "eutranPositioningData": "732-103-2829413",
+      "eutranPositioningData": "5152535253",
       "geranPositioningData": "0",
       "geranGanssPositioningData": "0",
       "utranPositioningData": "81",

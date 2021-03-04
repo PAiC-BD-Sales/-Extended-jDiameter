@@ -43,6 +43,7 @@
 package org.jdiameter.server.impl.app.s6a;
 
 import org.jdiameter.api.Answer;
+import org.jdiameter.api.Message;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
@@ -362,6 +363,11 @@ public class S6aServerSessionImpl extends S6aSession implements ServerS6aSession
     rd.request = request;
     super.scheduler.execute(rd);
     return null;
+  }
+
+  @Override
+  public Message processMessage(Message message) {
+    return message;
   }
 
   protected void send(Event.Type type, AppEvent request, AppEvent answer) throws InternalException {

@@ -28,9 +28,17 @@ package org.jdiameter.api;
  * to network class instances
  *
  * @author erick.svenson@yahoo.com
+ * @author joram.herrera@paicbd.com
  * @version 1.5.1 Final
  */
 public interface NetworkReqListener {
+
+  /**
+   * Interface for message pre-processing
+   * @param message
+   * @return message
+   */
+  Message processMessage(Message message);
 
   /**
    * This method use for process new network requests.

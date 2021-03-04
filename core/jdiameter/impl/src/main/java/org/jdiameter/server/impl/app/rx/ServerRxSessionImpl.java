@@ -46,6 +46,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.jdiameter.api.Answer;
+import org.jdiameter.api.Message;
 import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
@@ -330,6 +331,11 @@ public class ServerRxSessionImpl extends AppRxSessionImpl implements ServerRxSes
     rd.request = request;
     super.scheduler.execute(rd);
     return null;
+  }
+
+  @Override
+  public Message processMessage(Message message) {
+    return message;
   }
 
   @Override

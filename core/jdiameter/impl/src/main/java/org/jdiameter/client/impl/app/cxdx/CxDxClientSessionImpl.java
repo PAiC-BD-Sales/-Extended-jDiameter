@@ -43,6 +43,7 @@
 package org.jdiameter.client.impl.app.cxdx;
 
 import org.jdiameter.api.Answer;
+import org.jdiameter.api.Message;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
@@ -129,6 +130,11 @@ public class CxDxClientSessionImpl extends CxDxSession implements ClientCxDxSess
     rd.request = request;
     super.scheduler.execute(rd);
     return null;
+  }
+
+  @Override
+  public Message processMessage(Message message) {
+    return message;
   }
 
   /*

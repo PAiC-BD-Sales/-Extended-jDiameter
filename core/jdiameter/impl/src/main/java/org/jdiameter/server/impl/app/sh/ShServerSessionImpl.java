@@ -179,6 +179,11 @@ public class ShServerSessionImpl extends ShSession implements ServerShSession, E
   }
 
   @Override
+  public Message processMessage(Message message) {
+    return message;
+  }
+
+  @Override
   public <E> E getState(Class<E> stateType) {
     return null;
   }

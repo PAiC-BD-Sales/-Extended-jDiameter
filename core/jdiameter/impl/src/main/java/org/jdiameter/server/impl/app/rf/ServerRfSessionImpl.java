@@ -48,6 +48,7 @@ import static org.jdiameter.common.api.app.rf.ServerRfSessionState.OPEN;
 import java.io.Serializable;
 
 import org.jdiameter.api.Answer;
+import org.jdiameter.api.Message;
 import org.jdiameter.api.Avp;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
@@ -468,6 +469,11 @@ public class ServerRfSessionImpl extends AppRfSessionImpl implements EventListen
       }
     }
     return null;
+  }
+
+  @Override
+  public Message processMessage(Message message) {
+    return message;
   }
 
   @Override

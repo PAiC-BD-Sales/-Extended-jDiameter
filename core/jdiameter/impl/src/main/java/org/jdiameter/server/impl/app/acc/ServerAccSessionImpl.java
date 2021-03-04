@@ -48,6 +48,7 @@ import static org.jdiameter.common.api.app.acc.ServerAccSessionState.OPEN;
 import java.io.Serializable;
 
 import org.jdiameter.api.Answer;
+import org.jdiameter.api.Message;
 import org.jdiameter.api.Avp;
 import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.AvpSet;
@@ -483,6 +484,11 @@ public class ServerAccSessionImpl extends AppAccSessionImpl implements EventList
       }
     }
     return null;
+  }
+
+  @Override
+  public Message processMessage(Message message) {
+    return message;
   }
 
   @Override

@@ -555,6 +555,11 @@ public class ClientGxSessionImpl extends AppGxSessionImpl implements ClientGxSes
   }
 
   @Override
+  public Message processMessage(Message message) {
+    return message;
+  }
+
+  @Override
   public void receivedSuccessMessage(Request request, Answer answer) {
     AnswerDelivery ad = new AnswerDelivery();
     ad.session = this;

@@ -346,6 +346,10 @@ public class PeerImpl extends org.jdiameter.client.impl.controller.PeerImpl impl
       // we set the peer in the message so we can later reply directly
       message.setPeer(PeerImpl.this);
 
+      // apply other modifications and return new message
+      NetworkReqListener listener = network.getListener(message);
+      message = (IMessage) listener.processMessage(message);
+
       if (message.isRequest()) {
         IRequest req = message;
         Avp destRealmAvp = req.getAvps().getAvp(Avp.DESTINATION_REALM);

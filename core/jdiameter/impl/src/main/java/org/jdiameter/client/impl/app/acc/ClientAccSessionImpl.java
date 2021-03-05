@@ -732,11 +732,6 @@ public class ClientAccSessionImpl extends AppAccSessionImpl implements EventList
     return a;
   }
 
-  @Override
-  public Message processMessage(Message message) {
-    return message;
-  }
-
   /* (non-Javadoc)
    * @see org.jdiameter.common.impl.app.AppSessionImpl#isReplicable()
    */

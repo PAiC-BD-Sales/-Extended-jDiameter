@@ -732,11 +732,6 @@ public class ClientRfSessionImpl extends AppRfSessionImpl implements EventListen
     return null;
   }
 
-  @Override
-  public Message processMessage(Message message) {
-    return message;
-  }
-
   /* (non-Javadoc)
    * @see org.jdiameter.common.impl.app.AppSessionImpl#isReplicable()
    */

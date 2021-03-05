@@ -31,13 +31,12 @@ package org.jdiameter.api;
  * @author joram.herrera@paicbd.com
  * @version 1.5.1 Final
  */
-public interface NetworkReqListener {
+public interface NetworkMsgListener {
 
   /**
-   * This method use for process new network requests.
-   * @param request request message
-   * @return answer immediate answer message. Method may return null and an
-   * Answer will be sent later on
+   * Interface for message pre-processing
+   * @param message
+   * @return message
    */
-  Answer processRequest(Request request);
+  Message processMessage(Message message);
 }

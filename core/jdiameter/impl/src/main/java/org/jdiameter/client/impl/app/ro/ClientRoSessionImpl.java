@@ -582,11 +582,6 @@ public class ClientRoSessionImpl extends AppRoSessionImpl implements ClientRoSes
   }
 
   @Override
-  public Message processMessage(Message message) {
-    return message;
-  }
-
-  @Override
   public void receivedSuccessMessage(Request request, Answer answer) {
     AnswerDelivery ad = new AnswerDelivery();
     ad.session = this;

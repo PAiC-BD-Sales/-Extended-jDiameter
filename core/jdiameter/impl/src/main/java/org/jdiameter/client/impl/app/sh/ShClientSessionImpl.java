@@ -124,11 +124,6 @@ public class ShClientSessionImpl extends ShSession implements ClientShSession, E
   }
 
   @Override
-  public Message processMessage(Message message) {
-    return message;
-  }
-
-  @Override
   @SuppressWarnings("unchecked")
   public <E> E getState(Class<E> stateType) {
     return null;

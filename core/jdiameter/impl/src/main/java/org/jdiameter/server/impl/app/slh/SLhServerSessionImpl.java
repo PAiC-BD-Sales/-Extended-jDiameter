@@ -22,7 +22,6 @@
 package org.jdiameter.server.impl.app.slh;
 
 import org.jdiameter.api.Answer;
-import org.jdiameter.api.Message;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
@@ -187,11 +186,6 @@ public class SLhServerSessionImpl extends SLhSession implements ServerSLhSession
     rd.request = request;
     super.scheduler.execute(rd);
     return null;
-  }
-
-  @Override
-  public Message processMessage(Message message) {
-    return message;
   }
 
   protected void send(Event.Type type, AppEvent request, AppEvent answer) throws InternalException {

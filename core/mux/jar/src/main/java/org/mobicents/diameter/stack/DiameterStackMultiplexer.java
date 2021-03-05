@@ -304,11 +304,6 @@ public class DiameterStackMultiplexer extends ServiceMBeanSupport implements Dia
     return null;
   }
 
-  @Override
-  public Message processMessage(Message message) {
-    return message;
-  }
-
   // ===== EventListener<Request, Answer> IMPLEMENTATION =====
 
   @Override

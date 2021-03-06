@@ -22,7 +22,6 @@
 package org.jdiameter.client.impl.app.slg;
 
 import org.jdiameter.api.Answer;
-import org.jdiameter.api.Message;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
@@ -91,11 +90,6 @@ public class SLgClientSessionImpl extends SLgSession
     rd.request = request;
     super.scheduler.execute(rd);
     return null;
-  }
-
-  @Override
-  public Message processMessage(Message message) {
-    return message;
   }
 
   public void sendProvideLocationRequest(ProvideLocationRequest request)

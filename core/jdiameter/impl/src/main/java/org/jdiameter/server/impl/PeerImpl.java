@@ -58,6 +58,7 @@ import org.jdiameter.api.InternalException;
 import org.jdiameter.api.LocalAction;
 import org.jdiameter.api.Message;
 import org.jdiameter.api.NetworkReqListener;
+import org.jdiameter.api.NetworkMsgListener;
 import org.jdiameter.api.OverloadException;
 import org.jdiameter.api.PeerState;
 import org.jdiameter.api.ResultCode;
@@ -347,8 +348,10 @@ public class PeerImpl extends org.jdiameter.client.impl.controller.PeerImpl impl
       message.setPeer(PeerImpl.this);
 
       // apply other modifications and return new message
-      NetworkReqListener listener = network.getListener(message);
-      message = (IMessage) listener.processMessage(message);
+      Object listener = network.getListener(message);
+      if (listener instanceof NetworkMsgListener) {
+        message = (IMessage) ((NetworkMsgListener) listener).processMessage(message);
+      }
 
       if (message.isRequest()) {
         IRequest req = message;

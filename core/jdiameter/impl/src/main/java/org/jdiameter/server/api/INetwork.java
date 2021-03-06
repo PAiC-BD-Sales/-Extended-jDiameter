@@ -43,7 +43,6 @@
 package org.jdiameter.server.api;
 
 import org.jdiameter.api.Network;
-import org.jdiameter.api.NetworkReqListener;
 import org.jdiameter.client.api.IMessage;
 
 /**
@@ -61,9 +60,9 @@ public interface INetwork extends Network {
    * Return NetworkListener instance for specified application-id
    * @param message message
    * @return  NetworkListener instance for specified selector
-   * @see org.jdiameter.api.NetworkReqListener
+   * @see org.jdiameter.api.NetworkReqListener || org.jdiameter.api.NetworkMsgListener
    */
-  NetworkReqListener getListener(IMessage message);
+  <T> T getListener(IMessage message);
 
   /**
    * This method set peer manager for addPeer/remPeer methods

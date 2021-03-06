@@ -190,3 +190,8 @@ xerces/
 xml-apis/
 xmlpull/
 xpp3/
+
+### Test suite generated files ###
+testsuite/tests/127.0.0.1.0_127.0.0.111.3868_sctp.xml
+testsuite/tests/server-management-127.0.0.1.13868_sctp.xml
+testsuite/tests/server-management-127.0.0.111.3868_sctp.xml

@@ -58,10 +58,8 @@ public class ShSessionBasicFlowPNRTest {
   private URI serverNode1ConfigURI;
 
   /**
-   * @param clientNode
-   * @param node1
-   * @param node2
-   * @param serverCount
+   * @param clientConfigUrl
+   * @param serverNode1ConfigURL
    */
   public ShSessionBasicFlowPNRTest(String clientConfigUrl, String serverNode1ConfigURL) throws Exception {
     super();

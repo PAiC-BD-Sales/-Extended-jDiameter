@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.mobicents.diameter</groupId>
     <artifactId>diameter-parent</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.3-SNAPSHOT</version>
   </parent>
 
   <groupId>org.restcomm.diameter.server.base.accounting</groupId>
@@ -17,8 +17,8 @@
 
   <properties>
     <!-- Mobicents Diameter Components Versions -->
-    <restcomm.diameter.jdiameter.version>1.7.0-SNAPSHOT</restcomm.diameter.jdiameter.version>
-    <restcomm.diameter.mux.version>1.7.0-SNAPSHOT</restcomm.diameter.mux.version>
+    <restcomm.diameter.jdiameter.version>1.7.3-SNAPSHOT</restcomm.diameter.jdiameter.version>
+    <restcomm.diameter.mux.version>1.7.3-SNAPSHOT</restcomm.diameter.mux.version>
     <!-- Thirdparty Dependencies Versions -->
     <slf4j.version>1.5.8</slf4j.version>
     <jbosscache.version>3.2.5.GA</jbosscache.version>

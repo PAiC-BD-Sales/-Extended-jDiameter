@@ -75,10 +75,9 @@ public class AccSessionFTFlowTest {
   private URI serverNode2ConfigURI;
 
   /**
-   * @param clientNode
-   * @param node1
-   * @param node2
-   * @param serverCount
+   * @param clientConfigUrl
+   * @param serverNode1ConfigURL
+   * @param serverNode2ConfigURL
    */
   public AccSessionFTFlowTest(String clientConfigUrl, String serverNode1ConfigURL, String serverNode2ConfigURL) throws Exception {
     super();

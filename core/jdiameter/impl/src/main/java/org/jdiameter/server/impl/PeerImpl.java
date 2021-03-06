@@ -348,8 +348,10 @@ public class PeerImpl extends org.jdiameter.client.impl.controller.PeerImpl impl
       message.setPeer(PeerImpl.this);
 
       // apply other modifications and return new message
-      NetworkMsgListener listener = network.getListener(message);
-      message = (IMessage) listener.processMessage(message);
+      Object listener = network.getListener(message);
+      if (listener instanceof NetworkMsgListener) {
+        message = (IMessage) ((NetworkMsgListener) listener).processMessage(message);
+      }
 
       if (message.isRequest()) {
         IRequest req = message;

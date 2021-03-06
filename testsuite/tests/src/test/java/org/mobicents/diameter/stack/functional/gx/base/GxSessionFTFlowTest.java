@@ -59,10 +59,9 @@ public class GxSessionFTFlowTest {
   private URI serverNode2ConfigURI;
 
   /**
-   * @param clientNode
-   * @param node1
-   * @param node2
-   * @param serverCount
+   * @param clientConfigUrl
+   * @param serverNode1ConfigURL
+   * @param serverNode2ConfigURL
    */
   public GxSessionFTFlowTest(String clientConfigUrl, String serverNode1ConfigURL, String serverNode2ConfigURL) throws Exception {
     super();

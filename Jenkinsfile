@@ -37,12 +37,6 @@ pipeline {
       		}
     	}
 		stage("Release") {
-			when {
-				anyOf {
-					branch 'master';
-					branch 'release'
-				}
-			}
 			steps {
 				echo "Building a release version of #${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
         		withAnt(installation: 'Ant1.10') {
@@ -55,32 +49,24 @@ pipeline {
 		}
 
 		stage('Save Artifacts') {
-			when {
-				anyOf {
-					branch 'master';
-					branch 'release'
-				}
-				expression {
-            		currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-          		}
-			}
+			when { anyOf { branch 'master'; branch 'release' } }
         	steps {
           		echo "Archiving Extended jDiameter version ${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
             	archiveArtifacts artifacts: "release/*.zip", followSymlinks: false, onlyIfSuccessful: true
         	}
     	}
-    	stage('Clean workspace') {
-			when {
-				anyOf {
-					branch 'master';
-					branch 'release'
-				}
-			}
-			steps {
-				sh 'rm -rf release/checkout'
-      	        sh 'rm -rf release/target'
-			}
-		}
+    	stage('Push Artifacts') {
+            when{ anyOf { branch 'master'; branch 'release' }}
+            steps{
+                script{
+                    ROOT_PATH = "/var/www/html/PAIC_Extended/extended_jdiameter/${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}/"
+                }
+                sshagent(['ssh_grafana']) {
+                    sh "ssh root@45.79.17.57 \"mkdir -p ${ROOT_PATH}\""
+                    sh "scp -r release/*.zip root@45.79.17.57:${ROOT_PATH}"
+                }
+            }
+    	}
   	}
 
 	post {
@@ -92,6 +78,8 @@ pipeline {
 		}
 		always {
 			echo "This will be called always. After testing do clean up."
+			sh 'rm -rf release/checkout'
+      	    sh 'rm -rf release/target'
 		}
 	}
 }

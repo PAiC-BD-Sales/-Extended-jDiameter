@@ -122,19 +122,20 @@
         <artifactId>nexus-staging-maven-plugin</artifactId>
         <version>1.6.7</version>
         <extensions>true</extensions>
-        <configuration>
+        <configuration combine.self="override" />
+        <!--configuration>
           <serverId>restcomm-releases-repository</serverId>
           <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-        </configuration>
+        </configuration-->
         <executions>
           <execution>
             <id>deploy-to-sonatype</id>
-            <phase>deploy</phase>
-            <goals>
+            <phase>none</phase>
+            <!--goals>
               <goal>deploy</goal>
-              <!--goal>close</goal-->
+              <goal>close</goal>
               <goal>release</goal>
-            </goals>
+            </goals-->
           </execution>
         </executions>
       </plugin>
@@ -327,6 +328,19 @@
       </build>
     </profile>
   </profiles>
+
+  <distributionManagement>
+    <repository>
+      <id>paicbd</id>
+      <name>localhost-releases</name>
+      <url>http://45.33.115.65:8081/artifactory/libs-release-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>paicbd</id>
+      <name>localhost-snapshots</name>
+      <url>http://45.33.115.65:8081/artifactory/libs-release-local</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <dependencyManagement>
     <dependencies>

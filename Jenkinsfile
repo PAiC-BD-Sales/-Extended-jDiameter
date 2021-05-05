@@ -56,6 +56,7 @@ pipeline {
             	archiveArtifacts artifacts: "release/*.zip", followSymlinks: false, onlyIfSuccessful: true
         	}
     	}
+
     	stage('Push Artifacts') {
             when{ anyOf { branch 'master'; branch 'release' }}
             steps{
@@ -68,6 +69,13 @@ pipeline {
                 }
             }
     	}
+
+        stage('Push to jFrog') {
+            when {anyOf {branch 'master'; branch 'release'}}
+            steps {
+                sh 'mvn deploy -DskipTests'
+            }
+        }
   	}
 
 	post {

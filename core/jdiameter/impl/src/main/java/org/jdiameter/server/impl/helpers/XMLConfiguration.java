@@ -358,10 +358,12 @@ public class XMLConfiguration extends EmptyConfiguration {
       }
     }
     if (!threadPoolConfiguration.isAttributeExist(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize.ordinal())) {
-      threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize, org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize.defValue());
+      threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize,
+          org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize.defValue());
     }
     if (!threadPoolConfiguration.isAttributeExist(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority.ordinal())) {
-      threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority, org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority.defValue());
+      threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority,
+          org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority.defValue());
     }
     this.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPool, threadPoolConfiguration);
   }
@@ -475,8 +477,10 @@ public class XMLConfiguration extends EmptyConfiguration {
   protected Configuration addSecurityData(Node node) {
     AppConfiguration sd = getInstance().add(org.jdiameter.client.impl.helpers.Parameters.SDName, node.getAttributes().getNamedItem("name").getNodeValue())
         .add(org.jdiameter.client.impl.helpers.Parameters.SDProtocol, node.getAttributes().getNamedItem("protocol").getNodeValue())
-        .add(org.jdiameter.client.impl.helpers.Parameters.SDEnableSessionCreation, Boolean.valueOf(node.getAttributes().getNamedItem("enable_session_creation").getNodeValue()))
-        .add(org.jdiameter.client.impl.helpers.Parameters.SDUseClientMode, Boolean.valueOf(node.getAttributes().getNamedItem("use_client_mode").getNodeValue()));
+        .add(org.jdiameter.client.impl.helpers.Parameters.SDEnableSessionCreation,
+            Boolean.valueOf(node.getAttributes().getNamedItem("enable_session_creation").getNodeValue()))
+        .add(org.jdiameter.client.impl.helpers.Parameters.SDUseClientMode,
+            Boolean.valueOf(node.getAttributes().getNamedItem("use_client_mode").getNodeValue()));
 
     NodeList c = node.getChildNodes();
 
@@ -487,13 +491,15 @@ public class XMLConfiguration extends EmptyConfiguration {
         sd.add(org.jdiameter.client.impl.helpers.Parameters.CipherSuites, cnode.getTextContent().trim());
       }
       if (nodeName.equals("KeyData")) {
-        sd.add(org.jdiameter.client.impl.helpers.Parameters.KeyData, getInstance().add(org.jdiameter.client.impl.helpers.Parameters.KDManager, cnode.getAttributes().getNamedItem("manager").getNodeValue())
+        sd.add(org.jdiameter.client.impl.helpers.Parameters.KeyData, getInstance().add(org.jdiameter.client.impl.helpers.Parameters.KDManager,
+            cnode.getAttributes().getNamedItem("manager").getNodeValue())
             .add(org.jdiameter.client.impl.helpers.Parameters.KDStore, cnode.getAttributes().getNamedItem("store").getNodeValue())
             .add(org.jdiameter.client.impl.helpers.Parameters.KDFile, cnode.getAttributes().getNamedItem("file").getNodeValue())
             .add(org.jdiameter.client.impl.helpers.Parameters.KDPwd, cnode.getAttributes().getNamedItem("pwd").getNodeValue()));
       }
       if (nodeName.equals("TrustData")) {
-        sd.add(org.jdiameter.client.impl.helpers.Parameters.TrustData, getInstance().add(org.jdiameter.client.impl.helpers.Parameters.TDManager, cnode.getAttributes().getNamedItem("manager").getNodeValue())
+        sd.add(org.jdiameter.client.impl.helpers.Parameters.TrustData, getInstance().add(org.jdiameter.client.impl.helpers.Parameters.TDManager,
+            cnode.getAttributes().getNamedItem("manager").getNodeValue())
             .add(org.jdiameter.client.impl.helpers.Parameters.TDStore, cnode.getAttributes().getNamedItem("store").getNodeValue())
             .add(org.jdiameter.client.impl.helpers.Parameters.TDFile, cnode.getAttributes().getNamedItem("file").getNodeValue())
             .add(org.jdiameter.client.impl.helpers.Parameters.TDPwd, cnode.getAttributes().getNamedItem("pwd").getNodeValue()));
@@ -684,8 +690,10 @@ public class XMLConfiguration extends EmptyConfiguration {
       Node n = propertiesChildren.item(index);
       if (n.getNodeName().equals("Property")) {
         AppConfiguration property = getInstance();
-        property.add(org.jdiameter.client.impl.helpers.Parameters.PropertyName, n.getAttributes().getNamedItem(org.jdiameter.client.impl.helpers.Parameters.PropertyName.name()).getNodeValue());
-        property.add(org.jdiameter.client.impl.helpers.Parameters.PropertyValue, n.getAttributes().getNamedItem(org.jdiameter.client.impl.helpers.Parameters.PropertyValue.name()).getNodeValue());
+        property.add(org.jdiameter.client.impl.helpers.Parameters.PropertyName,
+            n.getAttributes().getNamedItem(org.jdiameter.client.impl.helpers.Parameters.PropertyName.name()).getNodeValue());
+        property.add(org.jdiameter.client.impl.helpers.Parameters.PropertyValue,
+            n.getAttributes().getNamedItem(org.jdiameter.client.impl.helpers.Parameters.PropertyValue.name()).getNodeValue());
         props.add(property);
       }
     }

@@ -60,75 +60,7 @@ import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalStatistic
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalStatisticProcessor;
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalTimerFacility;
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalTransportFactory;
-import static org.jdiameter.client.impl.helpers.Parameters.AcctApplId;
-import static org.jdiameter.client.impl.helpers.Parameters.Agent;
-import static org.jdiameter.client.impl.helpers.Parameters.ApplicationId;
-import static org.jdiameter.client.impl.helpers.Parameters.AuthApplId;
-import static org.jdiameter.client.impl.helpers.Parameters.CeaTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.CipherSuites;
-import static org.jdiameter.client.impl.helpers.Parameters.Concurrent;
-import static org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityDescription;
-import static org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityName;
-import static org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityPoolSize;
-import static org.jdiameter.client.impl.helpers.Parameters.Dictionary;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionaryClass;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionaryEnabled;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionaryReceiveLevel;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionarySendLevel;
-import static org.jdiameter.client.impl.helpers.Parameters.DpaTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.DwaTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.IacTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.KDFile;
-import static org.jdiameter.client.impl.helpers.Parameters.KDManager;
-import static org.jdiameter.client.impl.helpers.Parameters.KDPwd;
-import static org.jdiameter.client.impl.helpers.Parameters.KDStore;
-import static org.jdiameter.client.impl.helpers.Parameters.KeyData;
-import static org.jdiameter.client.impl.helpers.Parameters.MessageTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnDiameterURI;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnFirmwareRevision;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnIPAddress;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnProductName;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnRealm;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnVendorID;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerFSMThreadCount;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerHost;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerIp;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerLocalPortRange;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerName;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerRating;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerStandbyAddresses;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerTable;
-import static org.jdiameter.client.impl.helpers.Parameters.Properties;
-import static org.jdiameter.client.impl.helpers.Parameters.PropertyName;
-import static org.jdiameter.client.impl.helpers.Parameters.PropertyValue;
-import static org.jdiameter.client.impl.helpers.Parameters.QueueSize;
-import static org.jdiameter.client.impl.helpers.Parameters.RealmEntry;
-import static org.jdiameter.client.impl.helpers.Parameters.RealmTable;
-import static org.jdiameter.client.impl.helpers.Parameters.RecTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.SDEnableSessionCreation;
-import static org.jdiameter.client.impl.helpers.Parameters.SDName;
-import static org.jdiameter.client.impl.helpers.Parameters.SDProtocol;
-import static org.jdiameter.client.impl.helpers.Parameters.SDUseClientMode;
-import static org.jdiameter.client.impl.helpers.Parameters.Security;
-import static org.jdiameter.client.impl.helpers.Parameters.SecurityRef;
-import static org.jdiameter.client.impl.helpers.Parameters.SessionTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.SingleLocalPeer;
-import static org.jdiameter.client.impl.helpers.Parameters.Statistics;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsActiveList;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsEnabled;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsLoggerDelay;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsLoggerPause;
-import static org.jdiameter.client.impl.helpers.Parameters.StopTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.TDFile;
-import static org.jdiameter.client.impl.helpers.Parameters.TDManager;
-import static org.jdiameter.client.impl.helpers.Parameters.TDPwd;
-import static org.jdiameter.client.impl.helpers.Parameters.TDStore;
-import static org.jdiameter.client.impl.helpers.Parameters.ThreadPool;
-import static org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority;
-import static org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize;
-import static org.jdiameter.client.impl.helpers.Parameters.TrustData;
-import static org.jdiameter.client.impl.helpers.Parameters.UseUriAsFqdn;
-import static org.jdiameter.client.impl.helpers.Parameters.VendorId;
+import static org.jdiameter.client.impl.helpers.Parameters.*;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.InternalNetWork;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.InternalNetworkGuard;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.InternalOverloadManager;
@@ -181,6 +113,7 @@ import org.w3c.dom.NodeList;
  * @author erick.svenson@yahoo.com
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author joram.herrera2@gmail.com
  */
 public class XMLConfiguration extends EmptyConfiguration {
 
@@ -322,6 +255,12 @@ public class XMLConfiguration extends EmptyConfiguration {
   protected Configuration addApplicationID(Node node) {
     NodeList c = node.getChildNodes();
     AppConfiguration e = getInstance();
+
+    if(node.hasAttributes()) {
+      String id = getAttrValue(node,"id");
+      e.add(AppId, ((id == null || id.length() == 0) ? -1 : Integer.valueOf(id)));
+    }
+
     for (int i = 0; i < c.getLength(); i++) {
       String nodeName = c.item(i).getNodeName();
       if (nodeName.equals("VendorId")) {

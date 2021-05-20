@@ -42,17 +42,6 @@
 
 package org.jdiameter.client.impl;
 
-import static org.jdiameter.client.impl.helpers.Parameters.AcctApplId;
-import static org.jdiameter.client.impl.helpers.Parameters.ApplicationId;
-import static org.jdiameter.client.impl.helpers.Parameters.AuthApplId;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnDiameterURI;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnFirmwareRevision;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnIPAddress;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnProductName;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnRealm;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnVendorID;
-import static org.jdiameter.client.impl.helpers.Parameters.VendorId;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
@@ -94,12 +83,16 @@ import org.jdiameter.common.impl.controller.AbstractPeer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
+import static org.jdiameter.client.impl.helpers.Parameters.*;
+
+ /**
  * Use stack extension point
  *
  * @author erick.svenson@yahoo.com
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
+ * @author joram.herrera2@gmail.com
+ *
  */
 public class MetaDataImpl implements IMetaData {
 
@@ -303,17 +296,18 @@ public class MetaDataImpl implements IMetaData {
             logger.debug("Stack configuration has apps list size of  [{}]. Looping through them", apps.length);
           }
           for (Configuration a : apps) {
+            int id = a.getIntValue(AppId.ordinal(), -1);
             long vnd = a.getLongValue(VendorId.ordinal(), 0L);
             long auth = a.getLongValue(AuthApplId.ordinal(), 0L);
             long acc = a.getLongValue(AcctApplId.ordinal(), 0L);
             if (logger.isDebugEnabled()) {
-              logger.debug("Adding app id vendor [{}] auth [{}] acc [{}]", new Object[]{vnd, auth, acc});
+              logger.debug("Adding app id [{}] vendor [{}] auth [{}] acc [{}]", new Object[]{(id == -1 ? "" : id), vnd, auth, acc});
             }
             if (auth != 0) {
-              appIds.add(org.jdiameter.api.ApplicationId.createByAuthAppId(vnd, auth));
+              appIds.add(org.jdiameter.api.ApplicationId.createByAuthAppId(vnd, auth).setAppId((id == -1 ? null : id)));
             }
             if (acc != 0) {
-              appIds.add(org.jdiameter.api.ApplicationId.createByAccAppId(vnd, acc));
+              appIds.add(org.jdiameter.api.ApplicationId.createByAccAppId(vnd, acc).setAppId((id == -1 ? null : id)));
             }
           }
         }

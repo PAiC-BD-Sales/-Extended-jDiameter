@@ -60,75 +60,6 @@ import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalStatistic
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalStatisticProcessor;
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalTimerFacility;
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.InternalTransportFactory;
-import static org.jdiameter.client.impl.helpers.Parameters.AcctApplId;
-import static org.jdiameter.client.impl.helpers.Parameters.Agent;
-import static org.jdiameter.client.impl.helpers.Parameters.ApplicationId;
-import static org.jdiameter.client.impl.helpers.Parameters.AuthApplId;
-import static org.jdiameter.client.impl.helpers.Parameters.CeaTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.CipherSuites;
-import static org.jdiameter.client.impl.helpers.Parameters.Concurrent;
-import static org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityDescription;
-import static org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityName;
-import static org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityPoolSize;
-import static org.jdiameter.client.impl.helpers.Parameters.Dictionary;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionaryClass;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionaryEnabled;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionaryReceiveLevel;
-import static org.jdiameter.client.impl.helpers.Parameters.DictionarySendLevel;
-import static org.jdiameter.client.impl.helpers.Parameters.DpaTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.DwaTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.IacTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.KDFile;
-import static org.jdiameter.client.impl.helpers.Parameters.KDManager;
-import static org.jdiameter.client.impl.helpers.Parameters.KDPwd;
-import static org.jdiameter.client.impl.helpers.Parameters.KDStore;
-import static org.jdiameter.client.impl.helpers.Parameters.KeyData;
-import static org.jdiameter.client.impl.helpers.Parameters.MessageTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnDiameterURI;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnFirmwareRevision;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnIPAddress;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnProductName;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnRealm;
-import static org.jdiameter.client.impl.helpers.Parameters.OwnVendorID;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerFSMThreadCount;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerHost;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerIp;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerLocalPortRange;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerName;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerRating;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerStandbyAddresses;
-import static org.jdiameter.client.impl.helpers.Parameters.PeerTable;
-import static org.jdiameter.client.impl.helpers.Parameters.Properties;
-import static org.jdiameter.client.impl.helpers.Parameters.PropertyName;
-import static org.jdiameter.client.impl.helpers.Parameters.PropertyValue;
-import static org.jdiameter.client.impl.helpers.Parameters.QueueSize;
-import static org.jdiameter.client.impl.helpers.Parameters.RealmEntry;
-import static org.jdiameter.client.impl.helpers.Parameters.RealmTable;
-import static org.jdiameter.client.impl.helpers.Parameters.RecTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.SDEnableSessionCreation;
-import static org.jdiameter.client.impl.helpers.Parameters.SDName;
-import static org.jdiameter.client.impl.helpers.Parameters.SDProtocol;
-import static org.jdiameter.client.impl.helpers.Parameters.SDUseClientMode;
-import static org.jdiameter.client.impl.helpers.Parameters.Security;
-import static org.jdiameter.client.impl.helpers.Parameters.SecurityRef;
-import static org.jdiameter.client.impl.helpers.Parameters.SessionTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.SingleLocalPeer;
-import static org.jdiameter.client.impl.helpers.Parameters.Statistics;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsActiveList;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsEnabled;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsLoggerDelay;
-import static org.jdiameter.client.impl.helpers.Parameters.StatisticsLoggerPause;
-import static org.jdiameter.client.impl.helpers.Parameters.StopTimeOut;
-import static org.jdiameter.client.impl.helpers.Parameters.TDFile;
-import static org.jdiameter.client.impl.helpers.Parameters.TDManager;
-import static org.jdiameter.client.impl.helpers.Parameters.TDPwd;
-import static org.jdiameter.client.impl.helpers.Parameters.TDStore;
-import static org.jdiameter.client.impl.helpers.Parameters.ThreadPool;
-import static org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority;
-import static org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize;
-import static org.jdiameter.client.impl.helpers.Parameters.TrustData;
-import static org.jdiameter.client.impl.helpers.Parameters.UseUriAsFqdn;
-import static org.jdiameter.client.impl.helpers.Parameters.VendorId;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.InternalNetWork;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.InternalNetworkGuard;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.InternalOverloadManager;
@@ -181,6 +112,7 @@ import org.w3c.dom.NodeList;
  * @author erick.svenson@yahoo.com
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author joram.herrera2@gmail.com
  */
 public class XMLConfiguration extends EmptyConfiguration {
 
@@ -306,7 +238,7 @@ public class XMLConfiguration extends EmptyConfiguration {
       }
     }
 
-    add(ApplicationId, items.toArray(EMPTY_ARRAY));
+    add(org.jdiameter.client.impl.helpers.Parameters.ApplicationId, items.toArray(EMPTY_ARRAY));
   }
 
   protected Configuration addApplicationID(NodeList node) {
@@ -322,16 +254,22 @@ public class XMLConfiguration extends EmptyConfiguration {
   protected Configuration addApplicationID(Node node) {
     NodeList c = node.getChildNodes();
     AppConfiguration e = getInstance();
+
+    if(node.hasAttributes()) {
+      String id = getAttrValue(node,"id");
+      e.add(org.jdiameter.client.impl.helpers.Parameters.AppId, ((id == null || id.length() == 0) ? -1 : Integer.valueOf(id)));
+    }
+
     for (int i = 0; i < c.getLength(); i++) {
       String nodeName = c.item(i).getNodeName();
       if (nodeName.equals("VendorId")) {
-        e.add(VendorId,   getLongValue(c.item(i)));
+        e.add(org.jdiameter.client.impl.helpers.Parameters.VendorId,   getLongValue(c.item(i)));
       }
       else if (nodeName.equals("AuthApplId")) {
-        e.add(AuthApplId, getLongValue(c.item(i)));
+        e.add(org.jdiameter.client.impl.helpers.Parameters.AuthApplId, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("AcctApplId")) {
-        e.add(AcctApplId, getLongValue(c.item(i)));
+        e.add(org.jdiameter.client.impl.helpers.Parameters.AcctApplId, getLongValue(c.item(i)));
       }
     }
     return e;
@@ -342,37 +280,37 @@ public class XMLConfiguration extends EmptyConfiguration {
     for (int i = 0; i < c.getLength(); i++) {
       String nodeName = c.item(i).getNodeName();
       if (nodeName.equals("UseUriAsFqdn")) {
-        add(UseUriAsFqdn, Boolean.valueOf(getValue(c.item(i))));
+        add(org.jdiameter.client.impl.helpers.Parameters.UseUriAsFqdn, Boolean.valueOf(getValue(c.item(i))));
       }
       else if (nodeName.equals("SingleLocalPeer")) {
-        add(SingleLocalPeer, Boolean.valueOf(getValue(c.item(i))));
+        add(org.jdiameter.client.impl.helpers.Parameters.SingleLocalPeer, Boolean.valueOf(getValue(c.item(i))));
       }
       else if (nodeName.equals("QueueSize")) {
-        add(QueueSize, getIntValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.QueueSize, getIntValue(c.item(i)));
       }
       else if (nodeName.equals("MessageTimeOut")) {
-        add(MessageTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.MessageTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("StopTimeOut")) {
-        add(StopTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.StopTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("CeaTimeOut")) {
-        add(CeaTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.CeaTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("IacTimeOut")) {
-        add(IacTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.IacTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("DwaTimeOut")) {
-        add(DwaTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.DwaTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("DpaTimeOut")) {
-        add(DpaTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.DpaTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("RecTimeOut")) {
-        add(RecTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.RecTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("SessionTimeOut")) {
-        add(SessionTimeOut, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.SessionTimeOut, getLongValue(c.item(i)));
       }
       else if (nodeName.equals("BindDelay"))  {
         add(BindDelay, getLongValue(c.item(i)));
@@ -381,16 +319,16 @@ public class XMLConfiguration extends EmptyConfiguration {
         addThreadPool(c.item(i));
       }
       else if (nodeName.equals("PeerFSMThreadCount")) {
-        add(PeerFSMThreadCount, getIntValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.PeerFSMThreadCount, getIntValue(c.item(i)));
       }
       else if (nodeName.equals("Statistics")) {
-        addStatisticLogger(Statistics, c.item(i));
+        addStatisticLogger(org.jdiameter.client.impl.helpers.Parameters.Statistics, c.item(i));
       }
       else if (nodeName.equals("Concurrent")) {
-        addConcurrent(Concurrent, c.item(i));
+        addConcurrent(org.jdiameter.client.impl.helpers.Parameters.Concurrent, c.item(i));
       }
       else if (nodeName.equals("Dictionary")) {
-        addDictionary(Dictionary, c.item(i));
+        addDictionary(org.jdiameter.client.impl.helpers.Parameters.Dictionary, c.item(i));
       }
       else if (nodeName.equals("RequestTable")) {
         addRequestTable(RequestTable, c.item(i));
@@ -410,22 +348,22 @@ public class XMLConfiguration extends EmptyConfiguration {
 
       int v = Integer.parseInt(n.getNodeValue());
       if (n.getNodeName().equals("size")) {
-        threadPoolConfiguration.add(ThreadPoolSize, v);
+        threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize, v);
       }
       else if (n.getNodeName().equals("priority")) {
-        threadPoolConfiguration.add(ThreadPoolPriority, v);
+        threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority, v);
       }
       else {
         //log.error("Unkonwn attribute on " + item.getNodeName() + ", attribute name: " + n.getNodeName());
       }
     }
-    if (!threadPoolConfiguration.isAttributeExist(ThreadPoolSize.ordinal())) {
-      threadPoolConfiguration.add(ThreadPoolSize, ThreadPoolSize.defValue());
+    if (!threadPoolConfiguration.isAttributeExist(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize.ordinal())) {
+      threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize, org.jdiameter.client.impl.helpers.Parameters.ThreadPoolSize.defValue());
     }
-    if (!threadPoolConfiguration.isAttributeExist(ThreadPoolPriority.ordinal())) {
-      threadPoolConfiguration.add(ThreadPoolPriority, ThreadPoolPriority.defValue());
+    if (!threadPoolConfiguration.isAttributeExist(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority.ordinal())) {
+      threadPoolConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority, org.jdiameter.client.impl.helpers.Parameters.ThreadPoolPriority.defValue());
     }
-    this.add(ThreadPool, threadPoolConfiguration);
+    this.add(org.jdiameter.client.impl.helpers.Parameters.ThreadPool, threadPoolConfiguration);
   }
 
   protected void addConcurrent(org.jdiameter.client.impl.helpers.Parameters name, Node node) {
@@ -443,14 +381,14 @@ public class XMLConfiguration extends EmptyConfiguration {
   protected void addConcurrentEntity(List<Configuration> items, Node node) {
     AppConfiguration cfg = getInstance();
     String name = node.getAttributes().getNamedItem("name").getNodeValue();
-    cfg.add(ConcurrentEntityName, name);
+    cfg.add(org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityName, name);
     if (node.getAttributes().getNamedItem("description") != null) {
       String descr = node.getAttributes().getNamedItem("description").getNodeValue();
-      cfg.add(ConcurrentEntityDescription, descr);
+      cfg.add(org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityDescription, descr);
     }
     if (node.getAttributes().getNamedItem("size") != null) {
       String size = node.getAttributes().getNamedItem("size").getNodeValue();
-      cfg.add(ConcurrentEntityPoolSize, Integer.parseInt(size));
+      cfg.add(org.jdiameter.client.impl.helpers.Parameters.ConcurrentEntityPoolSize, Integer.parseInt(size));
     }
     items.add(cfg);
   }
@@ -464,14 +402,14 @@ public class XMLConfiguration extends EmptyConfiguration {
     if (node.getAttributes().getNamedItem("active_records") != null) {
       active_records = node.getAttributes().getNamedItem("active_records").getNodeValue();
     } else {
-      active_records = (String) StatisticsActiveList.defValue();
+      active_records = (String) org.jdiameter.client.impl.helpers.Parameters.StatisticsActiveList.defValue();
     }
     add(name,
         getInstance().
-        add(StatisticsLoggerPause, Long.parseLong(pause)).
-        add(StatisticsLoggerDelay, Long.parseLong(delay)).
-        add(StatisticsEnabled, Boolean.parseBoolean(enabled)).
-        add(StatisticsActiveList, active_records));
+        add(org.jdiameter.client.impl.helpers.Parameters.StatisticsLoggerPause, Long.parseLong(pause)).
+        add(org.jdiameter.client.impl.helpers.Parameters.StatisticsLoggerDelay, Long.parseLong(delay)).
+        add(org.jdiameter.client.impl.helpers.Parameters.StatisticsEnabled, Boolean.parseBoolean(enabled)).
+        add(org.jdiameter.client.impl.helpers.Parameters.StatisticsActiveList, active_records));
   }
 
   protected void addDictionary(org.jdiameter.client.impl.helpers.Parameters name, Node node) {
@@ -480,25 +418,25 @@ public class XMLConfiguration extends EmptyConfiguration {
     Node param = node.getAttributes().getNamedItem("class");
     if (param != null) {
       String clazz = param.getNodeValue();
-      dicConfiguration.add(DictionaryClass, clazz);
+      dicConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.DictionaryClass, clazz);
     }
 
     param =  node.getAttributes().getNamedItem("enabled");
     if (param != null) {
       String enabled = param.getNodeValue();
-      dicConfiguration.add(DictionaryEnabled, Boolean.valueOf(enabled));
+      dicConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.DictionaryEnabled, Boolean.valueOf(enabled));
     }
 
     param =  node.getAttributes().getNamedItem("sendLevel");
     if (param != null) {
       String sendLevel = param.getNodeValue();
-      dicConfiguration.add(DictionarySendLevel, sendLevel);
+      dicConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.DictionarySendLevel, sendLevel);
     }
 
     param =  node.getAttributes().getNamedItem("receiveLevel");
     if (param != null) {
       String receiveLevel = param.getNodeValue();
-      dicConfiguration.add(DictionaryReceiveLevel, receiveLevel);
+      dicConfiguration.add(org.jdiameter.client.impl.helpers.Parameters.DictionaryReceiveLevel, receiveLevel);
     }
 
     add(name, dicConfiguration);
@@ -531,14 +469,14 @@ public class XMLConfiguration extends EmptyConfiguration {
         items.add(addSecurityData(c.item(i)));
       }
     }
-    add(Security, items.toArray(EMPTY_ARRAY));
+    add(org.jdiameter.client.impl.helpers.Parameters.Security, items.toArray(EMPTY_ARRAY));
   }
 
   protected Configuration addSecurityData(Node node) {
-    AppConfiguration sd = getInstance().add(SDName, node.getAttributes().getNamedItem("name").getNodeValue())
-        .add(SDProtocol, node.getAttributes().getNamedItem("protocol").getNodeValue())
-        .add(SDEnableSessionCreation, Boolean.valueOf(node.getAttributes().getNamedItem("enable_session_creation").getNodeValue()))
-        .add(SDUseClientMode, Boolean.valueOf(node.getAttributes().getNamedItem("use_client_mode").getNodeValue()));
+    AppConfiguration sd = getInstance().add(org.jdiameter.client.impl.helpers.Parameters.SDName, node.getAttributes().getNamedItem("name").getNodeValue())
+        .add(org.jdiameter.client.impl.helpers.Parameters.SDProtocol, node.getAttributes().getNamedItem("protocol").getNodeValue())
+        .add(org.jdiameter.client.impl.helpers.Parameters.SDEnableSessionCreation, Boolean.valueOf(node.getAttributes().getNamedItem("enable_session_creation").getNodeValue()))
+        .add(org.jdiameter.client.impl.helpers.Parameters.SDUseClientMode, Boolean.valueOf(node.getAttributes().getNamedItem("use_client_mode").getNodeValue()));
 
     NodeList c = node.getChildNodes();
 
@@ -546,19 +484,19 @@ public class XMLConfiguration extends EmptyConfiguration {
       Node cnode = c.item(i);
       String nodeName = cnode.getNodeName();
       if (nodeName.equals("CipherSuites")) {
-        sd.add(CipherSuites, cnode.getTextContent().trim());
+        sd.add(org.jdiameter.client.impl.helpers.Parameters.CipherSuites, cnode.getTextContent().trim());
       }
       if (nodeName.equals("KeyData")) {
-        sd.add(KeyData, getInstance().add(KDManager, cnode.getAttributes().getNamedItem("manager").getNodeValue())
-            .add(KDStore, cnode.getAttributes().getNamedItem("store").getNodeValue())
-            .add(KDFile, cnode.getAttributes().getNamedItem("file").getNodeValue())
-            .add(KDPwd, cnode.getAttributes().getNamedItem("pwd").getNodeValue()));
+        sd.add(org.jdiameter.client.impl.helpers.Parameters.KeyData, getInstance().add(org.jdiameter.client.impl.helpers.Parameters.KDManager, cnode.getAttributes().getNamedItem("manager").getNodeValue())
+            .add(org.jdiameter.client.impl.helpers.Parameters.KDStore, cnode.getAttributes().getNamedItem("store").getNodeValue())
+            .add(org.jdiameter.client.impl.helpers.Parameters.KDFile, cnode.getAttributes().getNamedItem("file").getNodeValue())
+            .add(org.jdiameter.client.impl.helpers.Parameters.KDPwd, cnode.getAttributes().getNamedItem("pwd").getNodeValue()));
       }
       if (nodeName.equals("TrustData")) {
-        sd.add(TrustData, getInstance().add(TDManager, cnode.getAttributes().getNamedItem("manager").getNodeValue())
-            .add(TDStore, cnode.getAttributes().getNamedItem("store").getNodeValue())
-            .add(TDFile, cnode.getAttributes().getNamedItem("file").getNodeValue())
-            .add(TDPwd, cnode.getAttributes().getNamedItem("pwd").getNodeValue()));
+        sd.add(org.jdiameter.client.impl.helpers.Parameters.TrustData, getInstance().add(org.jdiameter.client.impl.helpers.Parameters.TDManager, cnode.getAttributes().getNamedItem("manager").getNodeValue())
+            .add(org.jdiameter.client.impl.helpers.Parameters.TDStore, cnode.getAttributes().getNamedItem("store").getNodeValue())
+            .add(org.jdiameter.client.impl.helpers.Parameters.TDFile, cnode.getAttributes().getNamedItem("file").getNodeValue())
+            .add(org.jdiameter.client.impl.helpers.Parameters.TDPwd, cnode.getAttributes().getNamedItem("pwd").getNodeValue()));
       }
     }
     return sd;
@@ -585,7 +523,7 @@ public class XMLConfiguration extends EmptyConfiguration {
         items.add(addPeer(c.item(i)));
       }
     }
-    add(PeerTable, items.toArray(EMPTY_ARRAY));
+    add(org.jdiameter.client.impl.helpers.Parameters.PeerTable, items.toArray(EMPTY_ARRAY));
   }
 
   protected void addRealms(Node node) {
@@ -597,7 +535,7 @@ public class XMLConfiguration extends EmptyConfiguration {
         items.add(addRealm(c.item(i)));
       }
     }
-    add(RealmTable, items.toArray(EMPTY_ARRAY));
+    add(org.jdiameter.client.impl.helpers.Parameters.RealmTable, items.toArray(EMPTY_ARRAY));
   }
 
   protected Configuration addPeer(Node node) {
@@ -605,23 +543,23 @@ public class XMLConfiguration extends EmptyConfiguration {
     String connecting = node.getAttributes().getNamedItem("attempt_connect").getNodeValue();
     String name = node.getAttributes().getNamedItem("name").getNodeValue();
     AppConfiguration c = getInstance();
-    c.add(PeerRating, Integer.parseInt(rating));
+    c.add(org.jdiameter.client.impl.helpers.Parameters.PeerRating, Integer.parseInt(rating));
     c.add(PeerAttemptConnection, Boolean.valueOf(connecting));
-    c.add(PeerName, name);
+    c.add(org.jdiameter.client.impl.helpers.Parameters.PeerName, name);
     if (node.getAttributes().getNamedItem("ip") != null) {
-      c.add(PeerIp, node.getAttributes().getNamedItem("ip").getNodeValue());
+      c.add(org.jdiameter.client.impl.helpers.Parameters.PeerIp, node.getAttributes().getNamedItem("ip").getNodeValue());
     }
     if (node.getAttributes().getNamedItem("host") != null) {
-      c.add(PeerHost, node.getAttributes().getNamedItem("host").getNodeValue());
+      c.add(org.jdiameter.client.impl.helpers.Parameters.PeerHost, node.getAttributes().getNamedItem("host").getNodeValue());
     }
     if (node.getAttributes().getNamedItem("portRange") != null) {
-      c.add(PeerLocalPortRange, node.getAttributes().getNamedItem("portRange").getNodeValue());
+      c.add(org.jdiameter.client.impl.helpers.Parameters.PeerLocalPortRange, node.getAttributes().getNamedItem("portRange").getNodeValue());
     }
     if (node.getAttributes().getNamedItem("standby_addresses") != null) {
-      c.add(PeerStandbyAddresses, node.getAttributes().getNamedItem("standby_addresses").getNodeValue());
+      c.add(org.jdiameter.client.impl.helpers.Parameters.PeerStandbyAddresses, node.getAttributes().getNamedItem("standby_addresses").getNodeValue());
     }
     if (node.getAttributes().getNamedItem("security_ref") != null) {
-      c.add(SecurityRef, node.getAttributes().getNamedItem("security_ref").getNodeValue());
+      c.add(org.jdiameter.client.impl.helpers.Parameters.SecurityRef, node.getAttributes().getNamedItem("security_ref").getNodeValue());
     }
     return c;
   }
@@ -629,26 +567,26 @@ public class XMLConfiguration extends EmptyConfiguration {
   protected void addLocalPeer(Node node) {
     NodeList c = node.getChildNodes();
     if (node.getAttributes().getNamedItem("security_ref") != null) {
-      add(SecurityRef, node.getAttributes().getNamedItem("security_ref").getNodeValue());
+      add(org.jdiameter.client.impl.helpers.Parameters.SecurityRef, node.getAttributes().getNamedItem("security_ref").getNodeValue());
     }
 
     for (int i = 0; i < c.getLength(); i++) {
       String nodeName = c.item(i).getNodeName();
       if (nodeName.equals("URI")) {
-        add(OwnDiameterURI, getValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.OwnDiameterURI, getValue(c.item(i)));
       }
       addIPAddress(c.item(i));
       if (nodeName.equals("Realm")) {
-        add(OwnRealm, getValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.OwnRealm, getValue(c.item(i)));
       }
       if (nodeName.equals("VendorID")) {
-        add(OwnVendorID, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.OwnVendorID, getLongValue(c.item(i)));
       }
       if (nodeName.equals("ProductName")) {
-        add(OwnProductName, getValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.OwnProductName, getValue(c.item(i)));
       }
       if (nodeName.equals("FirmwareRevision")) {
-        add(OwnFirmwareRevision, getLongValue(c.item(i)));
+        add(org.jdiameter.client.impl.helpers.Parameters.OwnFirmwareRevision, getLongValue(c.item(i)));
       }
       if (nodeName.equals("Applications")) {
         addApplications(c.item(i));
@@ -676,7 +614,7 @@ public class XMLConfiguration extends EmptyConfiguration {
         add(OverloadEntryIndex, Integer.valueOf(getAttrValue(node, "index"))).
         add(OverloadEntrylowThreshold, Double.valueOf(getAttrValue(node, "lowThreshold"))).
         add(OverloadEntryhighThreshold, Double.valueOf(getAttrValue(node, "highThreshold"))).
-        add(ApplicationId, addApplicationID(node.getChildNodes()));
+        add(org.jdiameter.client.impl.helpers.Parameters.ApplicationId, addApplicationID(node.getChildNodes()));
   }
 
   protected void addIPAddress(Node node) {
@@ -700,13 +638,13 @@ public class XMLConfiguration extends EmptyConfiguration {
 
   protected Configuration addIPAddressItem(Node node) {
     return getInstance().
-        add(OwnIPAddress, getValue(node));
+        add(org.jdiameter.client.impl.helpers.Parameters.OwnIPAddress, getValue(node));
   }
 
   protected Configuration addRealm(Node node) {
     AppConfiguration realmEntry = getInstance();
     realmEntry.
-      add(ApplicationId, new Configuration[] {addApplicationID(node.getChildNodes())}).
+      add(org.jdiameter.client.impl.helpers.Parameters.ApplicationId, new Configuration[] {addApplicationID(node.getChildNodes())}).
       add(RealmName,  getAttrValue(node, "name")).
       add(RealmHosts, getAttrValue(node, "peers")).
       add(RealmLocalAction,    getAttrValue(node, "local_action")).
@@ -717,11 +655,11 @@ public class XMLConfiguration extends EmptyConfiguration {
     for (int i = 0; i < childNodes.getLength(); i++) {
       String nodeName = childNodes.item(i).getNodeName();
       if (nodeName.equals("Agent")) {
-        realmEntry.add(Agent, addAgent(childNodes.item(i)));
+        realmEntry.add(org.jdiameter.client.impl.helpers.Parameters.Agent, addAgent(childNodes.item(i)));
       }
     }
 
-    return getInstance().add(RealmEntry, realmEntry);
+    return getInstance().add(org.jdiameter.client.impl.helpers.Parameters.RealmEntry, realmEntry);
   }
 
   protected Configuration addAgent(Node node) {
@@ -731,7 +669,7 @@ public class XMLConfiguration extends EmptyConfiguration {
     for (int index = 0; index < agentChildren.getLength(); index++) {
       Node n = agentChildren.item(index);
       if (n.getNodeName().equals("Properties")) {
-        agentConf.add(Properties, getProperties(n).toArray(EMPTY_ARRAY));
+        agentConf.add(org.jdiameter.client.impl.helpers.Parameters.Properties, getProperties(n).toArray(EMPTY_ARRAY));
       }
     }
 
@@ -746,8 +684,8 @@ public class XMLConfiguration extends EmptyConfiguration {
       Node n = propertiesChildren.item(index);
       if (n.getNodeName().equals("Property")) {
         AppConfiguration property = getInstance();
-        property.add(PropertyName, n.getAttributes().getNamedItem(PropertyName.name()).getNodeValue());
-        property.add(PropertyValue, n.getAttributes().getNamedItem(PropertyValue.name()).getNodeValue());
+        property.add(org.jdiameter.client.impl.helpers.Parameters.PropertyName, n.getAttributes().getNamedItem(org.jdiameter.client.impl.helpers.Parameters.PropertyName.name()).getNodeValue());
+        property.add(org.jdiameter.client.impl.helpers.Parameters.PropertyValue, n.getAttributes().getNamedItem(org.jdiameter.client.impl.helpers.Parameters.PropertyValue.name()).getNodeValue());
         props.add(property);
       }
     }

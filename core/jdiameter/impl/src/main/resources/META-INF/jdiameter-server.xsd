@@ -167,6 +167,7 @@
                 </xsi:complexType>
             </xsi:element>
         </xsi:sequence>
+        <xsi:attribute name="id" type="xsi:integer" use="optional"/>
     </xsi:complexType>
 
     <xsi:element name="Parameters" type="ParametersType">

@@ -348,7 +348,7 @@ public class PeerImpl extends org.jdiameter.client.impl.controller.PeerImpl impl
       message.setPeer(PeerImpl.this);
 
       // apply other modifications and return new message
-      Object listener = network.getListener(message);
+      Object listener = network.getListener(message, applications.toArray(new String[]{}));
       if (listener instanceof NetworkMsgListener) {
         message = (IMessage) ((NetworkMsgListener) listener).processMessage(message);
       }

@@ -91,6 +91,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.jdiameter.api.ApplicationId;
 import org.jdiameter.api.Avp;
@@ -675,7 +676,9 @@ public class PeerImpl extends AbstractPeer implements IPeer {
     for (ApplicationId l : locAppId) {
       for (ApplicationId r : remAppId) {
         if (l.equals(r)) {
-          newAppId.add(l);
+          if(applications.isEmpty() || applications.contains(String.valueOf(l.getAppId()))) {
+            newAppId.add(l);
+          }
         } else if (r.getAcctAppId() == INT_COMMON_APP_ID || r.getAuthAppId() == INT_COMMON_APP_ID ||
             l.getAcctAppId() == INT_COMMON_APP_ID || l.getAuthAppId() == INT_COMMON_APP_ID) {
           newAppId.add(r);
@@ -1016,7 +1019,9 @@ public class PeerImpl extends AbstractPeer implements IPeer {
           } else {
             logger.debug("CEA did not contained appId, therefore set local appids to common-appid field");
             commonApplications.clear();
-            commonApplications.addAll(metaData.getLocalPeer().getCommonApplications());
+            commonApplications.addAll(metaData.getLocalPeer().getCommonApplications().stream()
+                    .filter(application -> (applications.isEmpty() || applications.contains(String.valueOf(application.getAppId()))))
+                    .collect(Collectors.toList()));
           }
 
           if (firmWare == 0 && frmId != null) {

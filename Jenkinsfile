@@ -10,7 +10,7 @@ pipeline {
   	}
 
  
-	parameters { string(name: 'EXT_DIAMETER_MAJOR_VERSION_NUMBER', defaultValue: '1.7.3', description: 'The major version for Extended-jDiameter') }
+	parameters { string(name: 'EXT_DIAMETER_MAJOR_VERSION_NUMBER', defaultValue: '1.7.4', description: 'The major version for Extended-jDiameter') }
 
 	stages {
 		stage("SCM Checkout") {

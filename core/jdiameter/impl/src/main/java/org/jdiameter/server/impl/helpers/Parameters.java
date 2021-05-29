@@ -140,6 +140,11 @@ public class Parameters extends org.jdiameter.client.impl.helpers.Parameters {
 
   public static final Parameters RequestTableClearSize = new Parameters("RequestTableClearSize", Integer.class, new Integer(2048));
 
+  /**
+   * Capabilities Exchange Request <CER> custom Application-Id
+   */
+  public static final Parameters Applications = new Parameters("Applications", String.class);
+
   protected Parameters(String name, Class type) {
     super(name, type);
   }

@@ -42,6 +42,7 @@
 
 package org.jdiameter.server.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -74,6 +75,7 @@ import org.slf4j.LoggerFactory;
  * @author erick.svenson@yahoo.com
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author <a href="joram.herrera2@gmail.com"> Joram Herrera </a>
  */
 public class NetworkImpl implements INetwork  {
 
@@ -240,7 +242,7 @@ public class NetworkImpl implements INetwork  {
   }
 
   @Override
-  public <T> T getListener(IMessage message) {
+  public <T> T getListener(IMessage message, String... peerApplications) {
     if (message == null) {
       return null;
     }
@@ -255,14 +257,24 @@ public class NetworkImpl implements INetwork  {
     if (appId == null) {
       return null;
     }
+
+    boolean filter = false;
+    ConcurrentHashMap<ApplicationId, Object> filterAppId = new ConcurrentHashMap<>();
+    if (peerApplications != null && peerApplications.length > 0) {
+      filter = true;
+      appIdToNetListener.entrySet().stream()
+              .filter(applicationId -> Arrays.asList(peerApplications).contains(String.valueOf(applicationId.getKey().getAppId())))
+              .forEach(applicationIdObjectEntry -> filterAppId.put(applicationIdObjectEntry.getKey(), applicationIdObjectEntry.getValue()));
+    }
+
     if (appIdToNetListener.containsKey(commonAuthAppId)) {
-      return (T) appIdToNetListener.get(commonAuthAppId);
+      return (T) (!filter ? appIdToNetListener : filterAppId).get(commonAuthAppId);
     }
     else if (appIdToNetListener.containsKey(commonAccAppId)) {
-      return (T) appIdToNetListener.get(commonAccAppId);
+      return (T) (!filter ? appIdToNetListener : filterAppId).get(commonAccAppId);
     }
     else {
-      return (T) appIdToNetListener.get(appId);
+      return (T) (!filter ? appIdToNetListener : filterAppId).get(appId);
     }
   }
 

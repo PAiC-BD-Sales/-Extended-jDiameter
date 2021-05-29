@@ -259,7 +259,7 @@ public class PeerImpl extends org.jdiameter.client.impl.controller.PeerImpl impl
         // Process cer
         Set<ApplicationId> newAppId = getCommonApplicationIds(message);
         if (newAppId.isEmpty()) {
-          if(logger.isWarnEnabled()) {
+          if (logger.isWarnEnabled()) {
             logger.warn("Processing CER failed, no common application. Message AppIds [{}]", message.getApplicationIdAvps());
           }
           return ResultCode.NO_COMMON_APPLICATION;

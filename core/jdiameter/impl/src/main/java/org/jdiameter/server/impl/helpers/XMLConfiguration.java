@@ -239,7 +239,7 @@ public class XMLConfiguration extends EmptyConfiguration {
     NodeList c = node.getChildNodes();
     AppConfiguration e = getInstance();
 
-    if(node.hasAttributes()) {
+    if (node.hasAttributes()) {
       String id = getAttrValue(node,"id");
       e.add(AppId, ((id == null || id.length() == 0) ? -1 : Integer.valueOf(id)));
     }
@@ -551,7 +551,7 @@ public class XMLConfiguration extends EmptyConfiguration {
     if (node.getAttributes().getNamedItem("security_ref") != null) {
       c.add(SecurityRef, node.getAttributes().getNamedItem("security_ref").getNodeValue());
     }
-    if(node.getAttributes().getNamedItem("applications") != null) {
+    if (node.getAttributes().getNamedItem("applications") != null) {
       c.add(Applications, node.getAttributes().getNamedItem("applications").getNodeValue());
     }
     return c;

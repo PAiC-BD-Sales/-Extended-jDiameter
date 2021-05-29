@@ -326,7 +326,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
             localAddress = InetAddress.getByName(metaData.getLocalPeer().getUri().getFQDN());
           }
         }
-        if((appIDs != null && appIDs.trim().length() > 0)) {
+        if ((appIDs != null && appIDs.trim().length() > 0)) {
           applications.addAll(Arrays.asList(appIDs.trim().split(",")));
         }
       } catch (Exception e) {
@@ -676,7 +676,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
     for (ApplicationId l : locAppId) {
       for (ApplicationId r : remAppId) {
         if (l.equals(r)) {
-          if(applications.isEmpty() || applications.contains(String.valueOf(l.getAppId()))) {
+          if (applications.isEmpty() || applications.contains(String.valueOf(l.getAppId()))) {
             newAppId.add(l);
           }
         } else if (r.getAcctAppId() == INT_COMMON_APP_ID || r.getAuthAppId() == INT_COMMON_APP_ID ||
@@ -856,7 +856,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
       message.getAvps().addAvp(VENDOR_ID, metaData.getLocalPeer().getVendorId(), true, false, true);
       message.getAvps().addAvp(PRODUCT_NAME, metaData.getLocalPeer().getProductName(), false);
       for (ApplicationId appId : metaData.getLocalPeer().getCommonApplications()) {
-        if(applications.isEmpty() || applications.contains(String.valueOf(appId.getAppId()))) {
+        if (applications.isEmpty() || applications.contains(String.valueOf(appId.getAppId()))) {
           addAppId(appId, message);
         }
       }

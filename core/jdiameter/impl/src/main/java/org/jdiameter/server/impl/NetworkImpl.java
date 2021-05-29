@@ -75,6 +75,7 @@ import org.slf4j.LoggerFactory;
  * @author erick.svenson@yahoo.com
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author <a href="joram.herrera2@gmail.com"> Joram Herrera </a>
  */
 public class NetworkImpl implements INetwork  {
 
@@ -259,7 +260,7 @@ public class NetworkImpl implements INetwork  {
 
     boolean filter = false;
     ConcurrentHashMap<ApplicationId, Object> filterAppId = new ConcurrentHashMap<>();
-    if(peerApplications != null && peerApplications.length > 0) {
+    if (peerApplications != null && peerApplications.length > 0) {
       filter = true;
       appIdToNetListener.entrySet().stream()
               .filter(applicationId -> Arrays.asList(peerApplications).contains(String.valueOf(applicationId.getKey().getAppId())))

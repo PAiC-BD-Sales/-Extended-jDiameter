@@ -10,7 +10,7 @@
 
   <groupId>org.mobicents.diameter</groupId>
   <artifactId>diameter-parent</artifactId>
-  <version>1.7.3-SNAPSHOT</version>
+  <version>1.7.4-SNAPSHOT</version>
 
   <packaging>pom</packaging>
 

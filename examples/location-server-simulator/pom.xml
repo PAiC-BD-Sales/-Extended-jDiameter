@@ -19,12 +19,14 @@
     <!-- Restcomm properties -->
     <jss7.restcomm.version>7.4.0-102</jss7.restcomm.version>
     <!-- Mobicents Diameter Components Versions -->
-    <restcomm.diameter.jdiameter.version>1.7.3-SNAPSHOT</restcomm.diameter.jdiameter.version>
-    <restcomm.diameter.mux.version>1.7.3-SNAPSHOT</restcomm.diameter.mux.version>
+    <restcomm.diameter.jdiameter.version>1.7.4-SNAPSHOT</restcomm.diameter.jdiameter.version>
+    <restcomm.diameter.mux.version>1.7.4-SNAPSHOT</restcomm.diameter.mux.version>
     <!-- Thirdparty Dependencies Versions -->
     <slf4j.version>1.7.13</slf4j.version>
     <jbosscache.version>3.2.5.GA</jbosscache.version>
     <commons-pool.version>1.5.5</commons-pool.version>
+    <compiler.plugin.version>3.8.1</compiler.plugin.version>
+    <compile.source>11</compile.source>
   </properties>
 
   <dependencyManagement>
@@ -168,14 +170,16 @@
           </execution>
         </executions>
       </plugin>
-        <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <configuration>
-                <source>1.8</source>
-                <target>1.8</target>
-            </configuration>
-        </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${compiler.plugin.version}</version>
+        <configuration>
+          <source>${compile.source}</source>
+          <target>${compile.source}</target>
+          <debug>${compile.debug}</debug>
+        </configuration>
+      </plugin>
       <plugin>
         <!-- Build an executable JAR -->
         <groupId>org.apache.maven.plugins</groupId>

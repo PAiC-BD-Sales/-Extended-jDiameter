@@ -128,23 +128,21 @@
             <id>generate-pdf-doc</id>
             <phase>generate-resources</phase>
             <goals>
-                <goal>process-asciidoc</goal>
+              <goal>process-asciidoc</goal>
             </goals>
-
             <configuration>
-              <backend>html5</backend>
-              <outputDirectory>${project.build.directory}/generated-docs/html-website</outputDirectory>
-              <!--doctype>book</doctype -->
+              <backend>pdf</backend>
+              <outputDirectory>${project.build.directory}/generated-docs/pdf</outputDirectory>
               <attributes>
+                <!-- Since 1.5.0-alpha.9 PDF back-end can use 'rouge' as well as
+                'coderay' source highlighting -->
+                <sourceHighlighter>rouge</sourceHighlighter>
                 <imagesdir>./images/..</imagesdir>
-                <toc></toc>
                 <icons>font</icons>
-                <sectanchors>true</sectanchors>
+                <pagenums />
+                <toc />
                 <idprefix />
                 <idseparator>-</idseparator>
-                <docinfo1>true</docinfo1>
-                <embedAssets>true</embedAssets>
-                <stylesheet>${basedir}/src/main/asciidoc/stylesheets/telestax.css</stylesheet>
                 <project-version>${docs.project.version}</project-version>
                 <this-application>${docs.this.application}</this-application>
                 <this-platform>${docs.this.platform}</this-platform>
@@ -155,9 +153,8 @@
                 <this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
                 <this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
                 <slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
-                <toclevels-value>2</toclevels-value>
+                <toclevels-value>6</toclevels-value>
               </attributes>
-              <preserveDirectories>true</preserveDirectories>
             </configuration>
           </execution>
         </executions>

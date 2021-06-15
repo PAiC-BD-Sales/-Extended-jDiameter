@@ -103,13 +103,13 @@
   -->
 
   <!--<target name="checkout" unless="skip.checkout" depends="init, checkout-core, checkout-rhq-plugin, checkout-slee-diameter-package" />-->
-  <target name="checkout" unless="skip.checkout" depends="init, checkout-core, checkout-rhq-plugin" />
+  <target name="checkout" unless="skip.checkout" depends="init, checkout-core" />
   <!--<target name="build-src" unless="skip.build-src" depends="build-src-core, build-rhq-plugin, build-src-resources" />-->
-  <target name="build-src" unless="skip.build-src" depends="build-src-core, build-rhq-plugin" />
+  <target name="build-src" unless="skip.build-src" depends="build-src-core" />
   <!--<target name="prepare-text-content" depends="prepare-text-content-core, prepare-text-content-resources" />-->
   <target name="prepare-text-content" depends="prepare-text-content-core" />
   <!--<target name="copy-jars" depends="copy-jars-core, copy-rhq-plugin, copy-jars-resources" />-->
-  <target name="copy-jars" depends="copy-jars-core, copy-rhq-plugin" />
+  <target name="copy-jars" depends="copy-jars-core" />
 
   <!-- Checkout section -->
 
@@ -139,12 +139,12 @@
     </for>
   </target>
 
-  <target name="checkout-rhq-plugin" unless="skip.checkout">
+  <!-- target name="checkout-rhq-plugin" unless="skip.checkout">
     <echo>Checkout Diameter RHQ Plugin</echo>
     <exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.diameter.release.sf}/../">
       <arg line="-f components-checkout.xml validate -P checkout-rhq-plugin -Ddiameter.tools.rhq-plugin.tag=${TOOLS_RHQ_PLUGIN_TAG}" />
     </exec>
-  </target>
+  </target -->
 
   <!-- Compile Section -->
 
@@ -181,7 +181,7 @@
     </for>
   </target>
 
-  <target name="build-rhq-plugin" unless="skip.build-src">
+  <!-- target name="build-rhq-plugin" unless="skip.build-src">
     <echo>Build Diameter RHQ Plugin</echo>
     <replace file="${checkout_base_dir}/diameter-rhq-plugin/pom.xml" token="2.23-SNAPSHOT" value="2.27.21"/>
     <exec failonerror="true" executable="${mvn.executable}" dir="${checkout_base_dir}/diameter-rhq-plugin">
@@ -194,7 +194,7 @@
     <exec failonerror="true" executable="${mvn.executable}" dir="${checkout_base_dir}/diameter-rhq-plugin/docs">
       <arg line="${release.build.goals} -Drestcomm.diameter.version=${diameter.release.version} -P${DOCS_PROFILE}" />
     </exec>
-  </target>
+  </target -->
 
   <!-- Copy jars section -->
 
@@ -282,7 +282,7 @@
     </for>
   </target>
 
-  <target name="copy-rhq-plugin">
+  <!-- target name="copy-rhq-plugin">
     <copy tofile="${zip_dir}/tools/${RELEASE_NAME}-diameter-rhq-plugin-${TOOLS_RHQ_PLUGIN_VERSION}.jar">
       <fileset dir="${checkout_base_dir}/diameter-rhq-plugin/plugin/target/">
         <include name="*.jar" />
@@ -293,7 +293,7 @@
         <include name="*.pdf" />
       </fileset>
     </copy>
-  </target>
+  </target -->
 
   <target name="copy-jars-additional-resources" if="include.slee.deps">
     <copy todir="${zip_dir}/examples/openims/thirdparty/sip11" file="${jainslee.folder.path}/resources/sip11/sip11-ra-DU-${JAINSLEE_SIP11_RA_VERSION}.jar" failonerror="${failoncopy}" />

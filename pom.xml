@@ -429,10 +429,10 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <scm>
+  <!--scm>
     <connection>scm:git:git@github.com:RestComm/jdiameter.git</connection>
     <developerConnection>scm:git:https://github.com/RestComm/jdiameter.git</developerConnection>
     <url>https://github.com/RestComm/jdiameter</url>
-  </scm>
+  </scm -->
 
 </project>

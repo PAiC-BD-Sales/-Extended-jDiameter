@@ -14,12 +14,6 @@ pipeline {
 	parameters { string(name: 'EXT_DIAMETER_MAJOR_VERSION_NUMBER', defaultValue: '1.7.4', description: 'The major version for Extended-jDiameter') }
 
 	stages {
-		stage("SCM Checkout") {
-			steps {
-				git credentialsId: 'Fernando', url: 'https://fernando-mendioroz@bitbucket.org/paicdb/extended-jdiameter.git'
-			}
-			
-		}
 
 		stage("Build") {
 			steps {

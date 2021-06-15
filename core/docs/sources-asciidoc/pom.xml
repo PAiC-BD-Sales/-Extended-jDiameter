@@ -134,24 +134,27 @@
             <configuration>
               <backend>pdf</backend>
               <outputDirectory>${project.build.directory}/generated-docs/pdf</outputDirectory>
-              <!-- Since 1.5.0-alpha.9 PDF back-end can use 'rouge' as well as 'coderay'
-              source highlighting -->
-              <sourceHighlighter>rouge</sourceHighlighter>
               <attributes>
+                <!-- Since 1.5.0-alpha.9 PDF back-end can use 'rouge' as well as
+                'coderay' source highlighting -->
+                <sourceHighlighter>rouge</sourceHighlighter>
                 <imagesdir>./images/..</imagesdir>
                 <icons>font</icons>
-                <pagenums/>
-                <toc/>
-                <idprefix/>
+                <pagenums />
+                <toc />
+                <idprefix />
                 <idseparator>-</idseparator>
-                <project-version>${project.version}</project-version>
-                <this-application>jDiameter</this-application>
-                <this-platform>Restcomm </this-platform>
-                <jee-platform>JBoss Application Server</jee-platform>
-                <this-issue-tracker-url>https://github.com/Restcomm/jdiameter/issues</this-issue-tracker-url>
-                <this-release-source-code-url>https://github.com/Restcomm/jdiameter</this-release-source-code-url>
-                <this-trunk-source-code-url>https://github.com/Restcomm/jdiameter</this-trunk-source-code-url>
-                <this-release-binary-url>https://github.com/Restcomm/jdiameter</this-release-binary-url>
+                <project-version>${docs.project.version}</project-version>
+                <this-application>${docs.this.application}</this-application>
+                <this-platform>${docs.this.platform}</this-platform>
+                <this-folder>${docs.this.folder}</this-folder>
+                <jee-platform>${docs.jee.platform}</jee-platform>
+                <this-issue-tracker-url>${docs.this.issue.tracker.url}</this-issue-tracker-url>
+                <this-release-source-code-url>${docs.this.release.source.code.url}</this-release-source-code-url>
+                <this-trunk-source-code-url>${docs.this.trunk.source.code.url}</this-trunk-source-code-url>
+                <this-release-binary-url>${docs.this.release.binary.url}</this-release-binary-url>
+                <slee-binary-url>${docs.slee.binary.url}</slee-binary-url>
+                <toclevels-value>6</toclevels-value>
               </attributes>
             </configuration>
           </execution>

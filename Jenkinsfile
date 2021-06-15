@@ -50,7 +50,7 @@ pipeline {
 		}
 
 		stage('Save Artifacts') {
-			when { anyOf { branch 'master'; branch 'release' } }
+			//when { anyOf { branch 'master'; branch 'release' } }
         	steps {
           		echo "Archiving Extended jDiameter version ${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
             	archiveArtifacts artifacts: "release/*.zip", followSymlinks: false, onlyIfSuccessful: true

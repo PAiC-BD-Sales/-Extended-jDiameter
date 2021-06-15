@@ -2,6 +2,7 @@ pipeline {
 	agent any
 
 	tools {
+	    jdk 'JDK 11'
 		maven 'Maven_3.6.3'
 	}
 	
@@ -13,12 +14,6 @@ pipeline {
 	parameters { string(name: 'EXT_DIAMETER_MAJOR_VERSION_NUMBER', defaultValue: '1.7.4', description: 'The major version for Extended-jDiameter') }
 
 	stages {
-		stage("SCM Checkout") {
-			steps {
-				git credentialsId: 'Fernando', url: 'https://fernando-mendioroz@bitbucket.org/paicdb/extended-jdiameter.git'
-			}
-			
-		}
 
 		stage("Build") {
 			steps {
@@ -50,7 +45,7 @@ pipeline {
 		}
 
 		stage('Save Artifacts') {
-			when { anyOf { branch 'master'; branch 'release' } }
+			//when { anyOf { branch 'master'; branch 'release' } }
         	steps {
           		echo "Archiving Extended jDiameter version ${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
             	archiveArtifacts artifacts: "release/*.zip", followSymlinks: false, onlyIfSuccessful: true

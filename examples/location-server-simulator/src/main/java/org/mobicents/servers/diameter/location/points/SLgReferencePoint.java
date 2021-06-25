@@ -156,7 +156,8 @@ public class SLgReferencePoint extends SLgSessionFactoryImpl implements NetworkR
         ProvideLocationAnswer pla = new ProvideLocationAnswerImpl((Request) plr.getMessage(), resultCode);
         AvpSet plaAvpSet = pla.getMessage().getAvps();
 
-        if (resultCode == ResultCode.SUCCESS) {
+        if (resultCode == ResultCode.SUCCESS || resultCode == DIAMETER_ERROR_POSITIONING_FAILED ||
+            resultCode == DIAMETER_ERROR_POSITIONING_DENIED || resultCode == DIAMETER_ERROR_UNREACHABLE_USER) {
             try {
                 if (subscriberElement.locationEstimate != null || subscriberElement.addLocationEstimate !=null) {
                     if (subscriberElement.locationEstimate != null &&
@@ -271,14 +272,18 @@ public class SLgReferencePoint extends SLgSessionFactoryImpl implements NetworkR
                 if (subscriberElement.plaFlags != null)
                     plaAvpSet.addAvp(Avp.PLA_FLAGS, subscriberElement.plaFlags, 10415, false, false, true);
 
-                if (subscriberElement.esmlcCellInfoEcgi != null && subscriberElement.esmlcCellInfoCpi != null) {
-                    AvpSet esmlcCellInfo = plaAvpSet.addGroupedAvp(Avp.ESMLC_CELL_INFO, 10415, false, false);
+                if (subscriberElement.esmlcCellInfoEcgi != null) {
                     String[] esmlcEcgiArray = subscriberElement.esmlcCellInfoEcgi.split("-");
                     Integer[] ecgiParams = setAreaIdParams(esmlcEcgiArray, "eUtranCellId");
                     EUtranCgiImpl ecgi = new EUtranCgiImpl();
                     ecgi.setData(ecgiParams[0], ecgiParams[1], ecgiParams[2]);
-                    esmlcCellInfo.addAvp(Avp.ECGI, ecgi.getData(), 10415, false, false);
-                    esmlcCellInfo.addAvp(Avp.CELL_PORTION_ID, subscriberElement.esmlcCellInfoCpi, 10415, false, false, true);
+                    if (subscriberElement.esmlcCellInfoCpi != null) {
+                        AvpSet esmlcCellInfo = plaAvpSet.addGroupedAvp(Avp.ESMLC_CELL_INFO, 10415, false, false);
+                        esmlcCellInfo.addAvp(Avp.ECGI, ecgi.getData(), 10415, false, false);
+                        esmlcCellInfo.addAvp(Avp.CELL_PORTION_ID, subscriberElement.esmlcCellInfoCpi, 10415, false, false, true);
+                    } else {
+                        plaAvpSet.addAvp(Avp.ECGI, ecgi.getData(), 10415, false, false);
+                    }
                 }
 
                 if (subscriberElement.civicAddress != null)

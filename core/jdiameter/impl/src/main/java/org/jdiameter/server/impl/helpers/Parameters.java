@@ -152,4 +152,9 @@ public class Parameters extends org.jdiameter.client.impl.helpers.Parameters {
   protected Parameters(String name, Class type, Object defValue) {
     super(name, type, defValue);
   }
+
+  /**
+   *  MaxConcurrentConnections - specifies parameters of max concurrent connections count.
+   */
+  public static final Parameters MaxConcurrentConnections = new Parameters("MaxConcurrentConnections", Integer.class, new Integer(10));
 }

@@ -26,8 +26,8 @@
     <jbosscache.version>3.2.5.GA</jbosscache.version>
     <commons-pool.version>1.5.5</commons-pool.version>
     <compiler.plugin.version>3.8.1</compiler.plugin.version>
-    <compile.source>1.8</compile.source>
-    <!--compile.source>11</compile.source-->
+    <compile.source>11</compile.source>
+    <!--compile.source>1.8</compile.source-->
   </properties>
 
   <dependencyManagement>

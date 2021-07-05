@@ -2,7 +2,7 @@ pipeline {
 	agent any
 
 	tools {
-	    jdk 'JDK 1.8'
+	    jdk 'JDK 11'
 		maven 'Maven_3.6.3'
 	}
 	
@@ -26,7 +26,7 @@ pipeline {
 				echo "Maven build completed."
 			}
 		}
-    	stage('Set Version'){
+    	stage('Set Version') {
       		steps{
 				sh "mvn versions:set -DnewVersion=${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER} clean install -DskipTests"
       		}

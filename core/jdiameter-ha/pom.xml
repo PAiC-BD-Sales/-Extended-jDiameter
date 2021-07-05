@@ -22,6 +22,7 @@
 
   <properties>
     <!--<cluster.version>1.15.0-SNAPSHOT</cluster.version>-->
+    <compile.source>1.8</compile.source>
   </properties>
 
   <dependencyManagement>

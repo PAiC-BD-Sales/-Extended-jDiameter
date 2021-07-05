@@ -15,6 +15,7 @@
 
   <properties>
     <vendor>Mobicents</vendor>
+    <compile.source>1.8</compile.source>
   </properties>
 
   <dependencies>

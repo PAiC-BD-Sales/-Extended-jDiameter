@@ -37,8 +37,6 @@ import org.mobicents.protocols.sctp.ManagementImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jdiameter.server.impl.helpers.Parameters.MaxConcurrentConnections;
-
 /**
  *
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
@@ -60,6 +58,7 @@ public class SCTPTransportServer {
   private int payloadProtocolId = 0;
   private int streamNumber = 0;
   private String[] extraHostAddress = null;
+  private Integer maxConcurrentConnectionCount;
 
   public SCTPTransportServer() {
   }
@@ -163,7 +162,7 @@ public class SCTPTransportServer {
       // We don't have any, let's create it
       if (server == null) {
         server = this.management.addServer(serverName, origAddress.getAddress().getHostAddress(), origAddress.getPort(),
-            IpChannelType.SCTP, true, MaxConcurrentConnections.ordinal(), extraHostAddress);
+            IpChannelType.SCTP, true, this.maxConcurrentConnectionCount, extraHostAddress);
       }
 
       for (String assocName : server.getAssociations()) {
@@ -205,6 +204,10 @@ public class SCTPTransportServer {
 
   public void setExtraHostAddress(String[] extraHostAddress) {
     this.extraHostAddress = extraHostAddress;
+  }
+
+  public void setMaxConcurrentConnectionCount(Integer maxConcurrentConnectionCount) {
+    this.maxConcurrentConnectionCount = maxConcurrentConnectionCount;
   }
 
   private class ServerAssociationListener implements AssociationListener {

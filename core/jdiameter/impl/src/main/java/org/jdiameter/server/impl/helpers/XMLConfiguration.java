@@ -46,24 +46,7 @@ package org.jdiameter.server.impl.helpers;
 import static org.jdiameter.client.impl.helpers.ExtensionPoint.*;
 import static org.jdiameter.client.impl.helpers.Parameters.*;
 import static org.jdiameter.server.impl.helpers.ExtensionPoint.*;
-import static org.jdiameter.server.impl.helpers.Parameters.AcceptUndefinedPeer;
-import static org.jdiameter.server.impl.helpers.Parameters.Applications;
-import static org.jdiameter.server.impl.helpers.Parameters.BindDelay;
-import static org.jdiameter.server.impl.helpers.Parameters.DuplicateProtection;
-import static org.jdiameter.server.impl.helpers.Parameters.DuplicateSize;
-import static org.jdiameter.server.impl.helpers.Parameters.DuplicateTimer;
-import static org.jdiameter.server.impl.helpers.Parameters.OverloadEntryIndex;
-import static org.jdiameter.server.impl.helpers.Parameters.OverloadEntryhighThreshold;
-import static org.jdiameter.server.impl.helpers.Parameters.OverloadEntrylowThreshold;
-import static org.jdiameter.server.impl.helpers.Parameters.OverloadMonitor;
-import static org.jdiameter.server.impl.helpers.Parameters.OwnIPAddresses;
-import static org.jdiameter.server.impl.helpers.Parameters.PeerAttemptConnection;
-import static org.jdiameter.server.impl.helpers.Parameters.RealmEntryExpTime;
-import static org.jdiameter.server.impl.helpers.Parameters.RealmEntryIsDynamic;
-import static org.jdiameter.server.impl.helpers.Parameters.RealmHosts;
-import static org.jdiameter.server.impl.helpers.Parameters.RealmLocalAction;
-import static org.jdiameter.server.impl.helpers.Parameters.RealmName;
-import static org.jdiameter.server.impl.helpers.Parameters.RequestTable;
+import static org.jdiameter.server.impl.helpers.Parameters.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -316,6 +299,9 @@ public class XMLConfiguration extends EmptyConfiguration {
       }
       else if (nodeName.equals("RequestTable")) {
         addRequestTable(RequestTable, c.item(i));
+      }
+      else if (nodeName.equals("MaxConcurrentConnections")) {
+        add(MaxConcurrentConnections, getIntValue(c.item(i)));
       }
       else {
         appendOtherParameter(c.item(i));

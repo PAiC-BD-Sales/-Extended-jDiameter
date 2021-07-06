@@ -26,7 +26,7 @@ pipeline {
 				echo "Maven build completed."
 			}
 		}
-    	stage('Set Version'){
+    	stage('Set Version') {
       		steps{
 				sh "mvn versions:set -DnewVersion=${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER} clean install -DskipTests"
       		}

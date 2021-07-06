@@ -823,7 +823,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
         connection.sendMessage(message);
         logger.debug("Connection sent message [{}] to peer [{}] over the network", message, getUri());
 
-        logger.info("SessionId [{}] message sent", message.getSessionId(), message.getHopByHopIdentifier(), message.getEndToEndIdentifier());
+        logger.debug("SessionId [{}] message sent", message.getSessionId(), message.getHopByHopIdentifier(), message.getEndToEndIdentifier());
       } catch (Exception e) {
         logger.error("SessionId [{}] caught exception [{}]", message.getSessionId(), e);
         throw e;

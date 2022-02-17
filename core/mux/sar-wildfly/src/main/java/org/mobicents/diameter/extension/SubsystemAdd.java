@@ -1,7 +1,5 @@
 package org.mobicents.diameter.extension;
 
-import java.util.List;
-
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.registry.Resource;
@@ -9,10 +7,7 @@ import org.jboss.as.controller.OperationFailedException;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-
 import org.jboss.msc.service.ServiceName;
-
-import javax.management.MBeanServer;
 
 /**
  * Handler responsible for adding the subsystem resource to the model

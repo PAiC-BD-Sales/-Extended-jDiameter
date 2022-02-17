@@ -12,8 +12,8 @@
 
   <properties>
     <checkout.basedir>${basedir}/diameter</checkout.basedir>
-    <checkout.username>paicbd</checkout.username>
-    <checkout.password><![CDATA[47NKH34YB!b]]></checkout.password>
+    <checkout.username>paicbd@gmail.com</checkout.username>
+    <checkout.password><![CDATA[P@1C-2022]]></checkout.password>
 
     <diameter.core.jdiameter.connectionURL>scm:git:https://bitbucket.org/paicdb/extended-jdiameter.git</diameter.core.jdiameter.connectionURL>
     <!-- diameter.tools.rhq-plugin.connectionURL>scm:git:https://github.com/RestComm/jdiameter.rhq-plugin.git</diameter.tools.rhq-plugin.connectionURL -->

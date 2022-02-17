@@ -19,7 +19,7 @@
   <property name="skip.build-src" value="true" />
   -->
 
-  <property name="CORE_JDIAMETER_TAG" value="master" />
+  <property name="CORE_JDIAMETER_TAG" value="ESMSC-253" />
   <property name="TOOLS_RHQ_PLUGIN_TAG" value="master" />
 
   <property name="DOCS_PROFILE" value="restcomm" />

@@ -47,6 +47,7 @@ public class DiameterMuxExtension implements Extension {
 
     protected static final PathElement SUBSYSTEM_PATH = PathElement.pathElement(SUBSYSTEM, SUBSYSTEM_NAME);
     private static final String RESOURCE_NAME = DiameterMuxExtension.class.getPackage().getName() + ".LocalDescriptions";
+    private static final ModelVersion CURRENT_MODEL_VERSION = ModelVersion.create(1,0);
 
     static StandardResourceDescriptionResolver getResourceDescriptionResolver(final String keyPrefix) {
         String prefix = SUBSYSTEM_NAME + (keyPrefix == null ? "" : "." + keyPrefix);
@@ -61,8 +62,9 @@ public class DiameterMuxExtension implements Extension {
 
     @Override
     public void initialize(ExtensionContext context) {
-        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, 1, 0);
+        final SubsystemRegistration subsystem = context.registerSubsystem(SUBSYSTEM_NAME, CURRENT_MODEL_VERSION);
         final ManagementResourceRegistration registration = subsystem.registerSubsystemModel(SubsystemDefinition.INSTANCE);
+
 
         final OperationDefinition describeOp = new SimpleOperationDefinitionBuilder(DESCRIBE,
                 getResourceDescriptionResolver(null))

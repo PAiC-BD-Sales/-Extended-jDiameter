@@ -20,14 +20,15 @@
     <jdiameter-ha.version>1.1.0-SNAPSHOT</jdiameter-ha.version>
     -->
 
-    <version.wildfly.as>10.1.0.Final</version.wildfly.as>
-    <version.wildfly.core>2.2.0.Final</version.wildfly.core>
+    <version.wildfly.as>24.0.1.Final</version.wildfly.as>
+    <version.wildfly.core>16.0.1.Final</version.wildfly.core>
   </properties>
 
   <packaging>pom</packaging>
 
   <modules>
     <module>jar</module>
+    <module>sar-wildfly</module>
   </modules>
 
   <profiles>

@@ -115,9 +115,9 @@
 
   <target name="checkout-core" unless="skip.checkout">
     <echo>Checkout Diameter Core (jDiameter @tag:${CORE_JDIAMETER_TAG})</echo>
-    <exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.diameter.release.sf}/../">
+    <!--exec failonerror="true" executable="${mvn.executable}" dir="${ant.file.diameter.release.sf}/../">
       <arg line="-f components-checkout.xml validate -P checkout -Ddiameter.core.jdiameter.tag=${CORE_JDIAMETER_TAG}" />
-    </exec>
+    </exec-->
   </target>
 
   <target name="checkout-slee-diameter-package" unless="skip.checkout">
@@ -149,16 +149,16 @@
   <!-- Compile Section -->
 
   <target name="build-src-core" unless="skip.build-src">
-    <exec failonerror="true" executable="${mvn.executable}" dir="${checkout_base_dir}">
+    <exec failonerror="true" executable="${mvn.executable}" dir="../">
       <arg line="versions:set -DnewVersion=${diameter.release.version} -Pjboss5,maven-release" />
     </exec>
-    <exec failonerror="true" executable="${mvn.executable}" dir="${checkout_base_dir}">
+    <exec failonerror="true" executable="${mvn.executable}" dir="../">
       <arg line="versions:set -DnewVersion=${diameter.release.version} -Pwildfly,maven-release" />
     </exec>
-    <exec failonerror="true" executable="${mvn.executable}" dir="${checkout_base_dir}/">
+    <exec failonerror="true" executable="${mvn.executable}" dir="../">
       <arg line="-f pom.xml ${release.build.goals} -Pjboss5,maven-release" />
     </exec>
-    <exec failonerror="true" executable="${mvn.executable}" dir="${checkout_base_dir}/">
+    <exec failonerror="true" executable="${mvn.executable}" dir="../">
       <arg line="-f pom.xml ${release.build.goals} -Pwildfly,maven-release" />
     </exec>
   </target>
@@ -200,43 +200,43 @@
 
   <target name="copy-jars-core">
     <copy todir="${zip_dir}/core/jdiameter" failonerror="false">
-      <fileset dir="${checkout_base_dir}/core/jdiameter/api/target">
+      <fileset dir="../core/jdiameter/api/target">
         <include name="jdiameter-api-*.jar" />
       </fileset>
-      <fileset dir="${checkout_base_dir}/core/jdiameter/impl/target">
+      <fileset dir="../core/jdiameter/impl/target">
         <include name="jdiameter-impl-*.jar" />
       </fileset>
-      <fileset dir="${checkout_base_dir}/core/jdiameter-ha/api/target">
+      <fileset dir="../core/jdiameter-ha/api/target">
         <include name="jdiameter-ha-api-*.jar" />
       </fileset>
-      <fileset dir="${checkout_base_dir}/core/jdiameter-ha/impl/target">
+      <fileset dir="../core/jdiameter-ha/impl/target">
         <include name="jdiameter-ha-impl-*.jar" />
       </fileset>
     </copy>
 
     <!-- Copy fixed AS5 MUX jar file -->
     <copy todir="${zip_dir}/core/mux" flatten="true">
-      <fileset dir="${checkout_base_dir}/core/mux/sar-jboss-5/target/">
+      <fileset dir="../core/mux/sar-jboss-5/target/">
         <include name="restcomm-diameter-mux-*/lib/restcomm-diameter-mux-*.jar" />
       </fileset>
     </copy>
     <copy todir="${zip_dir}/core/pdf">
-      <fileset dir="${checkout_base_dir}/core/docs/sources-asciidoc/target/generated-docs/pdf">
+      <fileset dir="../core/docs/sources-asciidoc/target/generated-docs/pdf">
         <include name="*" />
       </fileset>
     </copy>
     <copy todir="${zip_dir}/core/html-book">
-      <fileset dir="${checkout_base_dir}/core/docs/sources-asciidoc/target/generated-docs/html-book">
+      <fileset dir="../core/docs/sources-asciidoc/target/generated-docs/html-book">
         <include name="**/*" />
       </fileset>
     </copy>
-    <copy todir="${checkout_base_dir}/core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/">
-      <fileset dir="${checkout_base_dir}/core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/">
+    <copy todir="../core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/">
+      <fileset dir="../core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/">
         <include name="restcomm-diameter-mux*.sar" />
       </fileset>
       <mapper type="glob" from="restcomm-diameter-mux*.sar" to="restcomm-diameter-mux.sar"/>
     </copy>
-    <unzip src="${checkout_base_dir}/core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/restcomm-diameter-mux.sar"
+    <unzip src="../core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/restcomm-diameter-mux.sar"
            dest="${zip_dir}/core/mux/${RELEASE_NAME}-diameter-mux.sar/"/>
 
     <!-- Replace with fixed AS5 MUX jar file -->
@@ -343,7 +343,7 @@
         </replacetokens>
       </filterchain>
     </copy>
-    <copy todir="${zip_dir}/core/jdiameter" file="${checkout_base_dir}/core/jdiameter/release/README.TXT" failonerror="${failoncopy}">
+    <copy todir="${zip_dir}/core/jdiameter" file="../core/jdiameter/release/README.TXT" failonerror="${failoncopy}">
       <filterchain>
         <replacetokens>
           <token key="JDIAM_VERSION" value="${CORE_JDIAMETER_VERSION}" />
@@ -351,7 +351,7 @@
       </filterchain>
     </copy>
     <!-- TODO: Add jdiameter-ha README.TXT ? -->
-    <copy todir="${zip_dir}/core/mux" file="${checkout_base_dir}/core/mux/release/README.TXT" failonerror="${failoncopy}">
+    <copy todir="${zip_dir}/core/mux" file="../core/mux/release/README.TXT" failonerror="${failoncopy}">
       <filterchain>
         <replacetokens>
           <token key="MUX_VERSION" value="${CORE_MUX_VERSION}" />
@@ -417,7 +417,7 @@
 
   <target name="build-src-zip">
     <zip destfile="${basedir}/${zip_file_name}-src.zip">
-      <zipfileset dir="${checkout_base_dir}/core" prefix="core" excludes="release"></zipfileset>
+      <zipfileset dir="../core" prefix="core" excludes="release"></zipfileset>
       <!-- zipfileset dir="${checkout_base_dir}/resources" prefix="resources" excludes="release"></zipfileset -->
       <!-- zipfileset dir="${checkout_base_dir}/examples" prefix="examples" excludes="release"></zipfileset -->
     </zip>
@@ -442,13 +442,13 @@
   </target>
 
   <target name="build-and-package-mux-jboss5" description="Create zip file: ${basedir}/${mux_zip_file_name}">
-    <exec executable="${mvn.executable}" dir="${checkout_base_dir}/core/mux">
+    <exec executable="${mvn.executable}" dir="../core/mux">
       <arg line="-f pom.xml ${release.build.goals} -Pjboss5" />
    </exec>
 
     <mkdir dir="${mux_zip_dir}" />
 
-    <copy todir="${mux_zip_dir}" file="${checkout_base_dir}/core/mux/release/README.TXT" failonerror="${failoncopy}">
+    <copy todir="${mux_zip_dir}" file="../core/mux/release/README.TXT" failonerror="${failoncopy}">
       <filterchain>
         <replacetokens>
           <token key="MUX_VERSION" value="${CORE_MUX_VERSION}" />
@@ -457,7 +457,7 @@
     </copy>
 
     <copy todir="${mux_zip_dir}/">
-      <fileset dir="${checkout_base_dir}/core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/">
+      <fileset dir="../core/mux/sar-${JBOSS5_SAR_CONFIGURATION}/target/">
         <include name="restcomm-diameter-mux*/**" />
         <exclude name="restcomm-diameter-mux*.sar" />
       </fileset>
@@ -472,7 +472,7 @@
     <move file="${mux-name}" tofile="${mux-name}.sar" />
 
     <copy todir="${mux_zip_dir}/restcomm-diameter-mux-${CORE_MUX_VERSION}.sar/">
-      <fileset dir="${checkout_base_dir}/core/mux/jar/target">
+      <fileset dir="../core/mux/jar/target">
         <include name="restcomm-diameter-mux-${CORE_MUX_VERSION}.jar" />
       </fileset>
     </copy>
@@ -485,7 +485,7 @@
   </target>
 
   <target name="build-and-package-mux-wildfly" description="Create zip file: ${basedir}/${alt_mux_zip_file_name}">
-    <exec executable="${mvn.executable}" dir="${checkout_base_dir}/core/mux">
+    <exec executable="${mvn.executable}" dir="../core/mux">
       <arg line="-f pom.xml ${release.build.goals} -Pwildfly" />
     </exec>
 
@@ -503,13 +503,13 @@
     -->
 
     <copy todir="${alt_mux_zip_dir}">
-      <fileset dir="${checkout_base_dir}/core/mux/sar-${WILDFLY_SAR_CONFIGURATION}/target" includes="modules/**, deployments/**"/>
+      <fileset dir="../core/mux/sar-${WILDFLY_SAR_CONFIGURATION}/target" includes="modules/**, deployments/**"/>
     </copy>
 
-    <copy file="${checkout_base_dir}/release/release-build-wildfly.xml" tofile="${alt_mux_zip_dir}/build.xml"
+    <copy file="../release/release-build-wildfly.xml" tofile="${alt_mux_zip_dir}/build.xml"
           failonerror="true"/>
 
-    <copy file="${checkout_base_dir}/release/xmltask.jar" tofile="${alt_mux_zip_dir}/xmltask.jar"
+    <copy file="../release/xmltask.jar" tofile="${alt_mux_zip_dir}/xmltask.jar"
           failonerror="true"/>
 
     <zip destfile="${basedir}/${alt_mux_zip_file_name}" basedir="${alt_mux_zip_dir}"/>
@@ -524,7 +524,7 @@
   </target>
 
   <target name="clean" unless="skip.clean" description="Remove everything that we created.">
-    <delete dir="${checkout_base_dir}" verbose="false" />
+    <delete dir="./diameter" verbose="false" />
   </target>
 
 </project>

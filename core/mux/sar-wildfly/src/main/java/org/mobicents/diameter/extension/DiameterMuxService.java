@@ -31,7 +31,7 @@ public class DiameterMuxService implements Service<DiameterMuxService> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        log.info("Starting DiameterMuxService");
+        log.info("EJD-25 Starting DiameterMuxService");
 
         diameterMuxBean = new DiameterStackMultiplexer();
         try {

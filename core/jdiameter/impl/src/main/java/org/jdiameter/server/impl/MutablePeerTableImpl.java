@@ -372,7 +372,8 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
         ips += " " + ip.getHostAddress() + ":" + p.getUri().getPort();
       }
       logger.error("Unable to create server socket for LocalPeer '{}' at{} ({}).", new Object[]{p.getUri().getFQDN(), ips, t.getMessage()});
-      logger.debug("Unable to create server socket", e);
+      logger.error("Unable to create server socket", e);
+      logger.error("Unable to create server socket", e.getCause());
     }
     // Connect to predefined peers
     for (Peer p : peerTable.values()) {

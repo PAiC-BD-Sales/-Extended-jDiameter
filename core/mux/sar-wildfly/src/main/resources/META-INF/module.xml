@@ -76,6 +76,7 @@
         <path name="org/xml/sax/helpers"/>
       </paths>
     </system>
+    <module name="sun.jdk"/>
     <module name="org.apache.log4j"/>
     <module name="javax.annotation.api" export="true"/>
   </dependencies>

@@ -74,7 +74,7 @@ public class SCTPTransportClient {
   }
 
   public void initialize() throws IOException, NotInitializedException {
-    logger.debug("Initializing SCTPTransportClient. Origin address is [{}] and destination address is [{}]", origAddress,
+    logger.info("Initializing SCTPTransportClient. Origin address is [{}] and destination address is [{}]", origAddress,
         destAddress);
     if (destAddress == null) {
       throw new NotInitializedException("Destination address is not set");
@@ -85,13 +85,15 @@ public class SCTPTransportClient {
     clientAssociationName = origAddress.getAddress().getHostAddress() + "." + origAddress.getPort() + "_" +
         destAddress.getAddress().getHostAddress() + "." + destAddress.getPort();
 
+    logger.info("ESMSC Initializing SCTP client " + clientAssociationName);
+
     try {
 
       if (this.management == null) {
         this.management = new ManagementImpl(clientAssociationName);
         this.management.setSingleThread(true);
         this.management.setBufferSize(Integer.valueOf(System.getProperty(SCTP_BUFFER_SIZE_PARAMETER, SCTP_BUFFER_SIZE_DEFAULT)));
-        logger.debug("SCTP Client Buffer Size set to {}", this.management.getBufferSize());
+        logger.info("SCTP Client Buffer Size set to {}", this.management.getBufferSize());
         this.management.start();
         this.management.setConnectDelay(1000); // Try connecting every 1 secs -- Note: 1st attempt is also delayed!
         // Clear any saved connections, we will get them from jdiameter-config.xml
@@ -102,13 +104,13 @@ public class SCTPTransportClient {
       }
 
       if (this.clientAssociation == null) {
-        logger.debug("Creating CLIENT ASSOCIATION '{}'. Origin Address [{}] <=> Dest Address [{}]", new Object[]{
+        logger.info("ESMSC Creating CLIENT ASSOCIATION '{}'. Origin Address [{}] <=> Dest Address [{}]", new Object[]{
             clientAssociationName, origAddress, destAddress});
         this.clientAssociation = this.management.addAssociation(origAddress.getAddress().getHostAddress(),
             origAddress.getPort(), destAddress.getAddress().getHostAddress(), destAddress.getPort(), clientAssociationName,
             IpChannelType.SCTP, extraHostAddress);
       } else {
-        logger.debug("CLIENT ASSOCIATION '{}'. Origin Address [{}:{}] <=> Dest Address [{}:{}] already present. Re-using it.",
+        logger.info("CLIENT ASSOCIATION '{}'. Origin Address [{}:{}] <=> Dest Address [{}:{}] already present. Re-using it.",
             new Object[]{clientAssociation.getName(), clientAssociation.getHostAddress(), clientAssociation.getHostPort(),
                 clientAssociation.getPeerAddress(), clientAssociation.getPeerPort()});
       }

@@ -114,8 +114,8 @@ public class SCTPClientConnection implements IConnection {
     //client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     this.remotePort = remotePort;
     //client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
-    // this.localPort = localPort;
-    this.localPort = 3868;
+    this.localPort = localPort;
+    //this.localPort = 3868;
     //client.setExtraHostAddress(extraHostAddresses);
     listeners.add(listener);
 

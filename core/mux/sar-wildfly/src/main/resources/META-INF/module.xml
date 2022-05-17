@@ -38,7 +38,7 @@
 
     <resource-root path="sctp-api-@EXTENDED_SCTP_VERSION@.jar"/>
     <resource-root path="sctp-impl-@EXTENDED_SCTP_VERSION@.jar"/>
-    <resource-root path="javolution-5.5.1.jar"/>
+    <resource-root path="javolution-@JAVOLUTION_VERSION@.jar"/>
     <!-- Insert resources here -->
   </resources>
 

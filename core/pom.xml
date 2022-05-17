@@ -26,6 +26,7 @@
     <picocontainer.version>2.13.5</picocontainer.version>
     <commons-pool.version>1.5.5</commons-pool.version>
     <extended-sctp.version>2.0.2-13</extended-sctp.version>
+    <javolution.version>5.5.1</javolution.version>
   </properties>
 
   <build>

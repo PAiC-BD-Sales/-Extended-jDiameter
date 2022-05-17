@@ -124,7 +124,7 @@ public class SCTPTransportClient {
 
   public void start() throws NotInitializedException, IOException {
     // for client
-    logger.debug("Starting SCTP client");
+    logger.info("ESMSC Starting SCTP client");
     try {
       this.clientAssociation.setAssociationListener(new ClientAssociationListener());
       this.management.startAssociation(clientAssociationName);

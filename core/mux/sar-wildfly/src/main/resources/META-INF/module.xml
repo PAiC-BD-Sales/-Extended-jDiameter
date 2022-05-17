@@ -35,6 +35,10 @@
     <resource-root path="jdiameter-impl-@JDIAMETER_VERSION@.jar"/>
     <resource-root path="jdiameter-ha-api-@JDIAMETER_VERSION@.jar"/>
     <resource-root path="jdiameter-ha-impl-@JDIAMETER_VERSION@.jar"/>
+
+    <resource-root path="sctp-api-@EXTENDED_SCTP_VERSION@.jar"/>
+    <resource-root path="sctp-impl-@EXTENDED_SCTP_VERSION@.jar"/>
+    <resource-root path="javolution-5.5.1.jar"/>
     <!-- Insert resources here -->
   </resources>
 

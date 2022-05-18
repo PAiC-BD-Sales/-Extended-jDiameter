@@ -38,7 +38,6 @@
 
     <resource-root path="sctp-api-@EXTENDED_SCTP_VERSION@.jar"/>
     <resource-root path="sctp-impl-@EXTENDED_SCTP_VERSION@.jar"/>
-    <resource-root path="javolution-@JAVOLUTION_VERSION@.jar"/>
     <!-- Insert resources here -->
   </resources>
 
@@ -78,6 +77,7 @@
     </system>
     <module name="sun.jdk"/>
     <module name="org.apache.log4j"/>
+    <module name="org.restcomm.ss7.commons"/>
     <module name="javax.annotation.api" export="true"/>
   </dependencies>
 

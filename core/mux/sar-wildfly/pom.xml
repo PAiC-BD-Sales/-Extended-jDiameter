@@ -175,7 +175,6 @@
                     <filter token="SLF4J_VERSION" value="${slf4j.version}"/>
                     <filter token="JDIAMETER_VERSION" value="${project.version}"/>
                     <filter token="EXTENDED_SCTP_VERSION" value="${extended-sctp.version}"/>
-                    <filter token="JAVOLUTION_VERSION" value="${javolution.version}"/>
                   </filterset>
                 </copy>
                 <copy todir="${basedir}/target/modules/${DIAMETER}/main"
@@ -186,7 +185,6 @@
                     <include name="lib/slf4j*"/>
                     <include name="lib/jdiameter*"/>
                     <include name="lib/sctp*"/>
-                    <include name="lib/javolution*"/>
                   </fileset>
                 </copy>
                 <copy todir="${basedir}/target/modules/${DIAMETER}/main/config">

@@ -38,6 +38,7 @@
 
     <resource-root path="sctp-api-@EXTENDED_SCTP_VERSION@.jar"/>
     <resource-root path="sctp-impl-@EXTENDED_SCTP_VERSION@.jar"/>
+    <resource-root path="netty-all-@NETTY_ALL_VERSION@.jar"/>
     <!-- Insert resources here -->
   </resources>
 

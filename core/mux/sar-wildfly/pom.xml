@@ -176,12 +176,13 @@
                     <filter token="JDIAMETER_VERSION" value="${project.version}"/>
                     <filter token="EXTENDED_SCTP_VERSION" value="${extended-sctp.version}"/>
                     <filter token="NETTY_ALL_VERSION" value="${netty-all.version}"/>
+                    <filter token="COMMONS_HEX_VERSION" value="${commons-hex-tools.vesion}"/>
                   </filterset>
                 </copy>
                 <copy todir="${basedir}/target/modules/${DIAMETER}/main"
                       flatten="true">
                   <fileset dir="target/${project.build.finalName}">
-                    <include name="lib/commons-pool-*"/>
+                    <include name="lib/commons-*"/>
                     <include name="lib/picocontainer*"/>
                     <include name="lib/slf4j*"/>
                     <include name="lib/jdiameter*"/>

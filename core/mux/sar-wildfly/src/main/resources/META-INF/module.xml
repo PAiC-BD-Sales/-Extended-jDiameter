@@ -36,9 +36,11 @@
     <resource-root path="jdiameter-ha-api-@JDIAMETER_VERSION@.jar"/>
     <resource-root path="jdiameter-ha-impl-@JDIAMETER_VERSION@.jar"/>
 
+    <!-- SCTP resources -->
     <resource-root path="sctp-api-@EXTENDED_SCTP_VERSION@.jar"/>
     <resource-root path="sctp-impl-@EXTENDED_SCTP_VERSION@.jar"/>
     <resource-root path="netty-all-@NETTY_ALL_VERSION@.jar"/>
+    <resource-root path="commons-@COMMONS_HEX_VERSION@.jar"/>
     <!-- Insert resources here -->
   </resources>
 
@@ -78,7 +80,8 @@
     </system>
     <module name="sun.jdk"/>
     <module name="org.apache.log4j"/>
-    <module name="org.restcomm.ss7.commons"/>
+    <module name="org.restcomm.ss7.modules" export="true"/>
+    <module name="org.restcomm.ss7.commons" export="true"/>
     <module name="javax.annotation.api" export="true"/>
   </dependencies>
 

@@ -84,8 +84,7 @@ public class SCTPTransportClient {
 
     clientAssociationName = origAddress.getAddress().getHostAddress() + "." + origAddress.getPort() + "_" +
         destAddress.getAddress().getHostAddress() + "." + destAddress.getPort();
-
-
+    
     try {
 
       if (this.management == null) {

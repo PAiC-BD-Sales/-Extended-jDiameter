@@ -341,7 +341,7 @@ public class PeerImpl extends AbstractPeer implements IPeer {
           boolean portNotAvailable = false;
           int limit = 0;
           int maxTries = endRange - startRange + 1;
-          logger.info("Selecting local port randomly from range '{}-{}'. Doing {} tries (some ports may not be tested, others tested more than once).",
+          logger.debug("Selecting local port randomly from range '{}-{}'. Doing {} tries (some ports may not be tested, others tested more than once).",
               new Object[]{startRange, endRange, maxTries});
 
           do {

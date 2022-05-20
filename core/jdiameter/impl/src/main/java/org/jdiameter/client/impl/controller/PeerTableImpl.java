@@ -125,14 +125,14 @@ public class PeerTableImpl implements IPeerTable {
   protected void init( IContainer stack, IRouter router, Configuration globalConfig, MetaData metaData, IFsmFactory fsmFactory,
       ITransportLayerFactory transportFactory, IStatisticManager statisticFactory,
       IConcurrentFactory concurrentFactory, IMessageParser parser) {
-    logger.info("ESMSC Initializing Peer Table.");
+    logger.debug("Initializing Peer Table.");
     this.router = router;
     this.metaData = metaData;
     this.concurrentFactory = concurrentFactory;
     this.stopTimeOut = globalConfig.getLongValue(StopTimeOut.ordinal(), (Long) StopTimeOut.defValue());
     this.sessionDatasource = stack.getAssemblerFacility().getComponentInstance(ISessionDatasource.class);
 
-    logger.info("ESMSC Populating peerTable from configuration");
+    logger.debug("Populating peerTable from configuration");
     Configuration[] peers = globalConfig.getChildren(Parameters.PeerTable.ordinal());
     if (peers != null && peers.length > 0) {
       for (Configuration peerConfig : peers) {

@@ -109,13 +109,12 @@ public class SCTPClientConnection implements IConnection {
                               int remotePort, InetAddress localAddress, int localPort, String[] extraHostAddresses,
                               String standbyAddresses, IConnectionListener listener, IMessageParser parser, String ref) {
     this(parser);
-    logger.info("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (with extra host addresses)",
+    logger.debug("SCTP Client constructor (with ref). Remote [{}:{}] Local [{}:{}] (with extra host addresses)",
         new Object[]{remoteAddress, remotePort, localAddress, localPort});
     //client.setDestAddress(new InetSocketAddress(remoteAddress, remotePort));
     this.remotePort = remotePort;
     //client.setOrigAddress(new InetSocketAddress(localAddress, localPort));
     this.localPort = localPort;
-    //this.localPort = 3868;
     //client.setExtraHostAddress(extraHostAddresses);
     listeners.add(listener);
 

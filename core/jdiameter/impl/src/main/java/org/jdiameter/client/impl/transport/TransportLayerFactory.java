@@ -60,8 +60,6 @@ import org.jdiameter.client.impl.helpers.ExtensionPoint;
 import org.jdiameter.client.impl.helpers.Parameters;
 import org.jdiameter.common.api.concurrent.DummyConcurrentFactory;
 import org.jdiameter.common.api.concurrent.IConcurrentFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
  /**
  *
@@ -75,7 +73,7 @@ public class TransportLayerFactory implements ITransportLayerFactory {
   private Constructor<IConnection> constructorIAi, constructorIAiCL, constructorIAiCLEha;
   protected IMessageParser parser;
   protected Configuration config = null;
-  private static final Logger logger = LoggerFactory.getLogger(TransportLayerFactory.class);
+
   public TransportLayerFactory(Configuration config, IMessageParser parser) throws TransportException {
     this.config = config;
     Configuration[] children = config.getChildren(Parameters.Extensions.ordinal());
@@ -138,11 +136,9 @@ public class TransportLayerFactory implements ITransportLayerFactory {
                                       IConnectionListener listener, String ref) throws TransportException {
     try {
       factory = factory == null ? new DummyConcurrentFactory() : factory;
-      logger.info("ESMSC constructorIAiCLEha -> " + constructorIAiCLEha);
       return constructorIAiCLEha.newInstance(config, factory, remoteAddress, remotePort, localAddress, localPort,
           extraHostAddresses, standbyRemoteAddresses, listener, parser, ref);
     } catch (Exception e) {
-      logger.error("ESMSC error " + e.getCause());
       throw new TransportException("Cannot create an instance of " + connectionClass, TransportError.Internal, e);
     }
   }

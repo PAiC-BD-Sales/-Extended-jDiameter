@@ -655,10 +655,10 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
 
   }
 
-  @Override
-  public Peer addPeer(URI peerURI, String realm, boolean connecting) {
+  private Peer addPeerAction(URI peerURI, String realm, boolean connecting, String ip) {
     //TODO: add sKey here, now it adds peer to all realms.
     //TODO: better, separate addPeer from realm!
+    logger.info("EJD-37 adding Peer");
     try {
       Configuration peerConfig = null;
       Configuration[] peers = config.getChildren(PeerTable.ordinal());
@@ -672,8 +672,8 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       if (peerConfig == null) {
         peerConfig = new EmptyConfiguration(false).add(PeerAttemptConnection, connecting);
       }
-      IPeer peer = (IPeer) createPeer(0, peerURI.toString(), null, null, metaData, config, peerConfig, fsmFactory,
-          transportFactory, statisticFactory, concurrentFactory, parser);
+      IPeer peer = (IPeer) createPeer(0, peerURI.toString(), ip, null, metaData, config, peerConfig, fsmFactory,
+              transportFactory, statisticFactory, concurrentFactory, parser);
       if (peer == null) {
         return null;
       }
@@ -702,6 +702,16 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       return null;
     }
   }
+  @Override
+  public Peer addPeer(URI peerURI, String realm, boolean connecting, String ip) {
+    return addPeerAction(peerURI, realm, connecting, ip);
+  }
+
+  @Override
+  public Peer addPeer(URI peerURI, String realm, boolean connecting) {
+    return addPeerAction(peerURI, realm, connecting, null);
+  }
+
 
   public Set<Realm> getAllRealms() {
     return new HashSet<Realm>(router.getRealmTable().getRealms());

@@ -72,8 +72,9 @@ public interface MutablePeerTable extends PeerTable {
    * @param connecting attempt connect
    * @return peer instance
    */
-  Peer addPeer(URI peer, String realmName, boolean connecting);
+  Peer addPeer(URI peer, String realmName, boolean connecting, String ip);
 
+  Peer addPeer(URI peer, String realmName, boolean connecting);
   /**
    * Remove peer from peer table
    * @param peerHost host of peer

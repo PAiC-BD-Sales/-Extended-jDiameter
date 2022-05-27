@@ -171,6 +171,10 @@ public class PeerTableImpl implements IPeerTable {
 
   @Override
   public List<Peer> getPeerTable() {
+    for (String f : peerTable.keySet()) {
+      logger.info("EJD-37 -> Listing keys");
+      logger.info("key -> " + f);
+    }
     return new ArrayList<Peer>(peerTable.values());
   }
 

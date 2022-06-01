@@ -735,8 +735,11 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
 
   public Peer removePeerAction(String host, int disconnectCause) {
     try {
+      host = new URI(host).getFQDN();
       String fqdn = null;
       for (String f : peerTable.keySet()) {
+        logger.info("PeerName Key - > " + f);
+        logger.info("Host - > " + host);
         if (f.equals(host)) {
           fqdn = f;
           peerTable.get(fqdn).disconnect(disconnectCause);

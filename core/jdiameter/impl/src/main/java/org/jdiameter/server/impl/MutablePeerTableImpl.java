@@ -119,6 +119,7 @@ import org.slf4j.LoggerFactory;
  * @author erick.svenson@yahoo.com
  * @author <a href="mailto:brainslog@gmail.com"> Alexandre Mendonca </a>
  * @author <a href="mailto:baranowb@gmail.com"> Bartosz Baranowski </a>
+ * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
  */
 public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerTable, ConfigurationListener {
 
@@ -682,6 +683,11 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       boolean found = false;
 
       Collection<Realm> realms =  this.router.getRealmTable().getRealms(realm);
+      Collection<Realm> realmsAll =  this.router.getRealmTable().getRealms();
+      for (Realm r : realmsAll) {
+        logger.info("RealmName -> " + r.getName());
+        logger.info("RealmInfo -> " + r);
+      }
       for (Realm r : realms) {
         if (r.getName().equals(realm)) {
           ((IRealm) r).addPeerName(peerURI.toString());
@@ -719,12 +725,21 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
 
   @Override
   public Peer removePeer(String host) {
+    return removePeerAction(host, DisconnectCause.BUSY);
+  }
+
+  @Override
+  public Peer removePeer(String peerHost, int disconnectCause) {
+    return removePeerAction(peerHost, disconnectCause);
+  }
+
+  public Peer removePeerAction(String host, int disconnectCause) {
     try {
       String fqdn = null;
       for (String f : peerTable.keySet()) {
         if (f.equals(host)) {
           fqdn = f;
-          peerTable.get(fqdn).disconnect(DisconnectCause.BUSY);
+          peerTable.get(fqdn).disconnect(disconnectCause);
         }
       }
       if (fqdn != null) {

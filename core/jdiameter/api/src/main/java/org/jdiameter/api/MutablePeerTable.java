@@ -71,16 +71,17 @@ public interface MutablePeerTable extends PeerTable {
    * for example: aaa://host.example.com:6666;transport=tcp;protocol=diameter
    * @param realmName name of realm
    * @param connecting attempt connect
-   * @param ip the ip to connect
+   * @param ip The direction IP of the Peer
    * @return peer instance
    */
   Peer addPeer(URI peer, String realmName, boolean connecting, String ip);
 
   /**
    * Add new peer to peer table
-   * @param peer URI of peer (host, port and other connection information)
-   * for example: aaa://host.example.com:6666;transport=tcp;protocol=diameter
-   * @param realmName name of realm
+   *
+   * @param peer       URI of peer (host, port and other connection information)
+   *                   for example: aaa://host.example.com:6666;transport=tcp;protocol=diameter
+   * @param realmName  name of realm
    * @param connecting attempt connect
    * @return peer instance
    */

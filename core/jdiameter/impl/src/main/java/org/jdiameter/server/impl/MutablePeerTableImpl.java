@@ -660,7 +660,6 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
   private Peer addPeerAction(URI peerURI, String realm, boolean connecting, String ip) {
     //TODO: add sKey here, now it adds peer to all realms.
     //TODO: better, separate addPeer from realm!
-    logger.info("EJD-37 adding Peer");
     try {
       Configuration peerConfig = null;
       Configuration[] peers = config.getChildren(PeerTable.ordinal());
@@ -684,11 +683,6 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       boolean found = false;
 
       Collection<Realm> realms =  this.router.getRealmTable().getRealms(realm);
-      Collection<Realm> realmsAll =  this.router.getRealmTable().getRealms();
-      for (Realm r : realmsAll) {
-        logger.info("RealmName -> " + r.getName());
-        logger.info("RealmInfo -> " + r);
-      }
       for (Realm r : realms) {
         if (r.getName().equals(realm)) {
           ((IRealm) r).addPeerName(peerURI.toString());
@@ -709,6 +703,7 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       return null;
     }
   }
+
   @Override
   public Peer addPeer(URI peerURI, String realm, boolean connecting, String ip) {
     return addPeerAction(peerURI, realm, connecting, ip);
@@ -740,8 +735,6 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       host = new URI(host).getFQDN();
       String fqdn = null;
       for (String f : peerTable.keySet()) {
-        logger.info("PeerName Key - > " + f);
-        logger.info("Host - > " + host);
         if (f.equals(host)) {
           fqdn = f;
           peerToDisconnect = (IPeer) peerTable.get(fqdn);

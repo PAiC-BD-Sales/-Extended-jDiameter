@@ -98,5 +98,5 @@ public interface MutablePeerTable extends PeerTable {
    * @param disconnectCause the disconnect cause (REBOOTING, BUSY, DO_NOT_WANT_TO_TALK_TO_YOU)
    * @return removed peer instance
    */
-  Peer removePeer(String peerHost, int disconnectCause);
+  Peer removePeer(String peerHost, int disconnectCause, boolean connecting);
 }

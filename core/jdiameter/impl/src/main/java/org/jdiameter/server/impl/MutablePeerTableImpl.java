@@ -235,12 +235,13 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
       IStatisticManager statisticFactory, IConcurrentFactory concurrentFactory,
       IMessageParser parser) throws InternalException, TransportException, URISyntaxException, UnknownServiceException {
     logger.debug("Creating Peer for URI [{}]", uri);
+    String fqdn = new URI(uri).getFQDN();
     if (predefinedPeerTable == null) {
       logger.debug("Creating new empty predefined peer table");
       predefinedPeerTable = new CopyOnWriteArraySet<String>();
     }
     logger.debug("Adding URI [{}] to predefinedPeerTable", uri);
-    predefinedPeerTable.add(new URI(uri).getFQDN());
+    predefinedPeerTable.add(fqdn);
     if (peerConfig.getBooleanValue(PeerAttemptConnection.ordinal(), false)) {
       logger.debug("Peer at URI [{}] is configured to attempt a connection (acting as a client) and a new peer instance will be created and returned", uri);
       return newPeerInstance(rating, new URI(uri), ip, portRange, true, null,
@@ -725,16 +726,17 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
 
   @Override
   public Peer removePeer(String host) {
-    return removePeerAction(host, DisconnectCause.BUSY);
+    return removePeerAction(host, DisconnectCause.BUSY, false);
   }
 
   @Override
-  public Peer removePeer(String peerHost, int disconnectCause) {
-    return removePeerAction(peerHost, disconnectCause);
+  public Peer removePeer(String peerHost, int disconnectCause, boolean connecting) {
+    return removePeerAction(peerHost, disconnectCause, connecting);
   }
 
-  public Peer removePeerAction(String host, int disconnectCause) {
+  public Peer removePeerAction(String host, int disconnectCause, boolean isPeerAttemptConnect) {
     try {
+      IPeer peerToDisconnect = null;
       host = new URI(host).getFQDN();
       String fqdn = null;
       for (String f : peerTable.keySet()) {
@@ -742,6 +744,7 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
         logger.info("Host - > " + host);
         if (f.equals(host)) {
           fqdn = f;
+          peerToDisconnect = (IPeer) peerTable.get(fqdn);
           peerTable.get(fqdn).disconnect(disconnectCause);
         }
       }
@@ -751,14 +754,22 @@ public class MutablePeerTableImpl extends PeerTableImpl implements IMutablePeerT
         if (peerTableListener != null) {
           peerTableListener.peerRemoved(removedPeer);
         }
-
+        if (isPeerAttemptConnect) {
+          if (peerToDisconnect != null) {
+            try {
+              if (peerToDisconnect.getConnection() != null) {
+                peerToDisconnect.getConnection().disconnect();
+              }
+            } catch (Exception ex) {
+              logger.warn("Trying to disconnect peer " + host + " " + ex.getMessage());
+            }
+          }
+        }
         return removedPeer;
-      }
-      else {
+      } else {
         return null;
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       logger.debug("Unable to remove peer", e);
       return null;
     }

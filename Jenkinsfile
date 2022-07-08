@@ -53,7 +53,7 @@ pipeline {
     	}
 
     	stage('Push Artifacts') {
-            when{ anyOf { branch 'master'; branch 'release'; branch 'fix/EDRA-83'}}
+            when{ anyOf { branch 'master'; branch 'release'}}
             steps{
                 script{
                     ROOT_PATH = "/var/www/html/PAIC_Extended/extended_jdiameter/${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}/"
@@ -66,7 +66,7 @@ pipeline {
     	}
 
         stage('Push to jFrog') {
-            when {anyOf {branch 'master'; branch 'release'; branch 'fix/EDRA-83'}}
+            when {anyOf {branch 'master'; branch 'release'}}
             steps {
                 sh 'mvn deploy -DskipTests'
             }

@@ -513,7 +513,8 @@ public class PeerImpl extends AbstractPeer implements IPeer {
         FsmEvent event = new FsmEvent(STOP_EVENT);
         event.setData(disconnectCause);
         fsm.handleEvent(event);
-      } catch (OverloadException e) {
+        Thread.sleep(2000);
+      } catch (OverloadException | InterruptedException e) {
         stopping = false;
         logger.warn("Error during stopping procedure", e);
       }

@@ -17,10 +17,8 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 public interface ISWmMessageFactory {
 
     SWmAbortSessionRequest createAbortSessionRequest(Request request);
-
     SWmAbortSessionAnswer createAbortSessionAnswer(Answer answer);
-
     SWmDiameterEAPRequest createDiameterEAPRequest(Request request);
-
     SWmDiameterEAPAnswer createDiameterEAPAnswer(Answer answer);
+    long[] getApplicationIds();
 }

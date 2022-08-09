@@ -26,12 +26,12 @@ public class ClientSWmSessionDataLocalImpl extends AppSessionDataLocalImpl imple
     }
 
     @Override
-    public ClientSWmSessionState getClientSwmSessionState() {
+    public ClientSWmSessionState getClientSWmSessionState() {
         return null;
     }
 
     @Override
-    public void setClientSwmSessionState(ClientSWmSessionState state) {
+    public void setClientSWmSessionState(ClientSWmSessionState state) {
 
     }
 }

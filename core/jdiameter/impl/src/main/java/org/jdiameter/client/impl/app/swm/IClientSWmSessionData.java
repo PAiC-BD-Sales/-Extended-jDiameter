@@ -12,7 +12,7 @@ public interface IClientSWmSessionData extends ISWmSessionData {
 
     void setRequestTypeSet(boolean b);
 
-    ClientSWmSessionState getClientSwmSessionState();
+    ClientSWmSessionState getClientSWmSessionState();
 
-    void setClientSwmSessionState(ClientSWmSessionState state);
+    void setClientSWmSessionState(ClientSWmSessionState state);
 }

@@ -1,4 +1,6 @@
 package org.jdiameter.api.s6b.events;
 
-public interface S6bAbortSessionRequest {
+import org.jdiameter.api.app.AppAnswerEvent;
+
+public interface S6bAbortSessionRequest extends AppAnswerEvent {
 }

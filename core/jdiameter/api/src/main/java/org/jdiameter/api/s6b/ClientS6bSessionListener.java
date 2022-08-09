@@ -1,4 +1,4 @@
-package org.jdiameter.api.S6b;
+package org.jdiameter.api.s6b;
 
 public interface ClientS6bSessionListener {
 }

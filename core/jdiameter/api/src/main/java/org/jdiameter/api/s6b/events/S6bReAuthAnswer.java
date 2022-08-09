@@ -1,4 +1,4 @@
 package org.jdiameter.api.s6b.events;
 
-public interface AbortSessionRequest {
+public interface S6bReAuthAnswer {
 }

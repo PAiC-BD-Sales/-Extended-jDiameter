@@ -1,4 +1,4 @@
 package org.jdiameter.api.s6b.events;
 
-public interface DiameterEAPRequest {
+public interface S6bReAuthRequest {
 }

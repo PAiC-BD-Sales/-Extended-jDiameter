@@ -1,4 +1,4 @@
 package org.jdiameter.api.swm.events;
 
-public interface DiameterAAAnswer {
+public interface SWmDiameterAAAnswer {
 }

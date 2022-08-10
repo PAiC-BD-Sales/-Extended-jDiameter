@@ -47,7 +47,6 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.slh.ClientSLhSessionListener;
 import org.jdiameter.api.slh.ServerSLhSessionListener;
 import org.jdiameter.common.api.app.IAppSessionFactory;
-// import org.jdiameter.common.api.app.slh.ISLhMessageFactory;
 
 /**
  * @author <a href="mailto:fernando.mendioroz@gmail.com"> Fernando Mendioroz </a>

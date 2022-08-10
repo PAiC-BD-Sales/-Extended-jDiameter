@@ -14,28 +14,28 @@ import org.jdiameter.common.api.app.IAppSessionFactory;
  */
 public interface ISWmSessionFactory extends IAppSessionFactory {
 
-    ClientSWmSessionListener getClientSessionListener();
+  ClientSWmSessionListener getClientSessionListener();
 
-    void setClientSessionListener(ClientSWmSessionListener clientSessionListener);
+  void setClientSessionListener(ClientSWmSessionListener clientSessionListener);
 
-    ServerSWmSessionListener getServerSessionListener();
+  ServerSWmSessionListener getServerSessionListener();
 
-    void setServerSessionListener(ServerSWmSessionListener serverSessionListener);
+  void setServerSessionListener(ServerSWmSessionListener serverSessionListener);
 
-    IServerSWmSessionContext getServerContextListener();
+  IServerSWmSessionContext getServerContextListener();
 
-    void setServerContextListener(IServerSWmSessionContext serverContextListener);
+  void setServerContextListener(IServerSWmSessionContext serverContextListener);
 
-    IClientSWmSessionContext getClientContextListener();
+  IClientSWmSessionContext getClientContextListener();
 
-    void setClientContextListener(IClientSWmSessionContext clientContextListener);
+  void setClientContextListener(IClientSWmSessionContext clientContextListener);
 
-    ISWmMessageFactory getMessageFactory();
+  ISWmMessageFactory getMessageFactory();
 
-    void setMessageFactory(ISWmMessageFactory messageFactory);
+  void setMessageFactory(ISWmMessageFactory messageFactory);
 
-    StateChangeListener<AppSession> getStateListener();
+  StateChangeListener<AppSession> getStateListener();
 
-    void setStateListener(StateChangeListener<AppSession> stateListener);
+  void setStateListener(StateChangeListener<AppSession> stateListener);
 
 }

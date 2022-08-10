@@ -280,16 +280,19 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
   }
 
   @Override
-  public void sendDiameterEAPAnswer(SWmDiameterEAPAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+  public void sendDiameterEAPAnswer(SWmDiameterEAPAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
     handleEvent(new Event(false, null, answer));
   }
 
   @Override
-  public void sendAbortSessionRequest(SWmAbortSessionRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void sendAbortSessionRequest(SWmAbortSessionRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     send(Event.Type.SEND_ASR, request, null);
   }
 
-  protected void send(Event.Type type, AppRequestEvent request, AppAnswerEvent answer) throws InternalException {
+  protected void send(Event.Type type, AppRequestEvent request, AppAnswerEvent answer)
+          throws InternalException {
     try {
       sendAndStateLock.lock();
       if (type != null) {
@@ -393,8 +396,9 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
     ServerSWmSessionImpl other = (ServerSWmSessionImpl) obj;
     if (sessionData == null) {
       return other.sessionData == null;
+    } else {
+      return sessionData.equals(other.sessionData);
     }
-    else return sessionData.equals(other.sessionData);
   }
 
   private class RequestDelivery implements Runnable {
@@ -439,7 +443,8 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
         switch (request.getCommandCode()) {
                     /*
                     case RxReAuthRequest.code:
-                        handleEvent(new org.jdiameter.server.impl.app.rx.Event(org.jdiameter.server.impl.app.rx.Event.Type.RECEIVE_RAA, factory.createReAuthRequest(request), factory.createReAuthAnswer(answer)));
+                        handleEvent(new org.jdiameter.server.impl.app.rx.Event(org.jdiameter.server.impl.app.rx.Event.Type.RECEIVE_RAA,
+                        factory.createReAuthRequest(request), factory.createReAuthAnswer(answer)));
                         break;
 
                      */

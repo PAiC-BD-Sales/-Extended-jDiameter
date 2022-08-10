@@ -11,13 +11,13 @@ import org.jdiameter.api.swm.ClientSWmSession;
  */
 public interface IClientSWmSessionContext {
 
-    void grantAccessOnDeliverFailure(ClientSWmSession clientCCASessionImpl, Message request);
+  void grantAccessOnDeliverFailure(ClientSWmSession clientCCASessionImpl, Message request);
 
-    void denyAccessOnDeliverFailure(ClientSWmSession clientCCASessionImpl, Message request);
+  void denyAccessOnDeliverFailure(ClientSWmSession clientCCASessionImpl, Message request);
 
-    void grantAccessOnFailureMessage(ClientSWmSession clientCCASessionImpl);
+  void grantAccessOnFailureMessage(ClientSWmSession clientCCASessionImpl);
 
-    void denyAccessOnFailureMessage(ClientSWmSession clientCCASessionImpl);
+  void denyAccessOnFailureMessage(ClientSWmSession clientCCASessionImpl);
 
-    void indicateServiceError(ClientSWmSession clientCCASessionImpl);
+  void indicateServiceError(ClientSWmSession clientCCASessionImpl);
 }

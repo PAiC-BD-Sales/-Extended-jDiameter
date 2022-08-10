@@ -85,27 +85,32 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
 
   // Default implementation of methods so there are no exception!
   @Override
-  public void doDiameterEAPAnswer(ClientSWmSession session, SWmDiameterEAPRequest request, SWmDiameterEAPAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void doDiameterEAPAnswer(ClientSWmSession session, SWmDiameterEAPRequest request, SWmDiameterEAPAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
 
   @Override
-  public void doAbortSessionRequest(ClientSWmSession session, SWmAbortSessionRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void doAbortSessionRequest(ClientSWmSession session, SWmAbortSessionRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
 
   @Override
-  public void doDiameterEAPRequest(ServerSWmSession session, SWmDiameterEAPRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void doDiameterEAPRequest(ServerSWmSession session, SWmDiameterEAPRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
 
   @Override
-  public void doAbortSessionAnswer(ServerSWmSession session, SWmAbortSessionRequest request, SWmAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void doAbortSessionAnswer(ServerSWmSession session, SWmAbortSessionRequest request, SWmAbortSessionAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
 
   @Override
-  public void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
 

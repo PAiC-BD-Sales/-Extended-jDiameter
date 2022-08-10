@@ -12,22 +12,21 @@ import org.slf4j.LoggerFactory;
 
 public class SWmLocalSessionDataFactory implements IAppSessionDataFactory<ISWmSessionData> {
 
-    protected static final Logger logger = LoggerFactory.getLogger(SWmLocalSessionDataFactory.class);
+  protected static final Logger logger = LoggerFactory.getLogger(SWmLocalSessionDataFactory.class);
 
-    @Override
-    public ISWmSessionData getAppSessionData(Class<? extends AppSession> clazz, String sessionId) {
-        if (clazz.equals(ClientSWmSession.class)) {
-            logger.info("EJD -> is Client session");
-            ClientSWmSessionDataLocalImpl data = new ClientSWmSessionDataLocalImpl();
-            data.setSessionId(sessionId);
-            return data;
-        }
-        else if (clazz.equals(ServerRxSession.class)) {
-            logger.info("EJD -> is Server session");
-            ServerSWmSessionDataLocalImpl data = new ServerSWmSessionDataLocalImpl();
-            data.setSessionId(sessionId);
-            return data;
-        }
-        throw new IllegalArgumentException(clazz.toString());
+  @Override
+  public ISWmSessionData getAppSessionData(Class<? extends AppSession> clazz, String sessionId) {
+    if (clazz.equals(ClientSWmSession.class)) {
+      logger.info("EJD -> is Client session");
+      ClientSWmSessionDataLocalImpl data = new ClientSWmSessionDataLocalImpl();
+      data.setSessionId(sessionId);
+      return data;
+    } else if (clazz.equals(ServerRxSession.class)) {
+      logger.info("EJD -> is Server session");
+      ServerSWmSessionDataLocalImpl data = new ServerSWmSessionDataLocalImpl();
+      data.setSessionId(sessionId);
+      return data;
     }
+    throw new IllegalArgumentException(clazz.toString());
+  }
 }

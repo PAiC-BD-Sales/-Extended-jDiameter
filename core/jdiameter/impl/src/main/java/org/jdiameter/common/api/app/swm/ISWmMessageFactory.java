@@ -8,7 +8,6 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 
 
-
 /**
  * Diameter 3GPP IMS SWm Reference Point Message Factory
  *
@@ -16,9 +15,13 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
  */
 public interface ISWmMessageFactory {
 
-    SWmAbortSessionRequest createAbortSessionRequest(Request request);
-    SWmAbortSessionAnswer createAbortSessionAnswer(Answer answer);
-    SWmDiameterEAPRequest createDiameterEAPRequest(Request request);
-    SWmDiameterEAPAnswer createDiameterEAPAnswer(Answer answer);
-    long[] getApplicationIds();
+  SWmAbortSessionRequest createAbortSessionRequest(Request request);
+
+  SWmAbortSessionAnswer createAbortSessionAnswer(Answer answer);
+
+  SWmDiameterEAPRequest createDiameterEAPRequest(Request request);
+
+  SWmDiameterEAPAnswer createDiameterEAPAnswer(Answer answer);
+
+  long[] getApplicationIds();
 }

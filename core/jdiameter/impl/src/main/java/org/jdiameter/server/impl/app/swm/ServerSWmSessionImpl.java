@@ -1,6 +1,7 @@
 package org.jdiameter.server.impl.app.swm;
 
 import org.jdiameter.api.Answer;
+import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.EventListener;
 import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
@@ -279,13 +280,13 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
   }
 
   @Override
-  public void sendDiameterEAPAnswer(SWmDiameterEAPAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-
+  public void sendDiameterEAPAnswer(SWmDiameterEAPAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+    handleEvent(new Event(false, null, answer));
   }
 
   @Override
   public void sendAbortSessionRequest(SWmAbortSessionRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-
+    send(Event.Type.SEND_ASR, request, null);
   }
 
   protected void send(Event.Type type, AppRequestEvent request, AppAnswerEvent answer) throws InternalException {
@@ -368,6 +369,32 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
       //throw new InternalException(e);
       logger.debug("Failure trying to dispatch event", e);
     }
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((sessionData == null) ? 0 : sessionData.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (!super.equals(obj)) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    ServerSWmSessionImpl other = (ServerSWmSessionImpl) obj;
+    if (sessionData == null) {
+      return other.sessionData == null;
+    }
+    else return sessionData.equals(other.sessionData);
   }
 
   private class RequestDelivery implements Runnable {

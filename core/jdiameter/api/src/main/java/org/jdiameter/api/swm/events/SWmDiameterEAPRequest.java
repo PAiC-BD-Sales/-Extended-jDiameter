@@ -10,8 +10,8 @@ import org.jdiameter.api.app.AppRequestEvent;
  */
 public interface SWmDiameterEAPRequest extends AppRequestEvent {
 
-    String _SHORT_NAME = "DER";
-    String _LONG_NAME = "Diameter-EAP-Request";
+  String _SHORT_NAME = "DER";
+  String _LONG_NAME = "Diameter-EAP-Request";
 
-    int code = 268;
+  int code = 268;
 }

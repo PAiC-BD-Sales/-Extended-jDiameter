@@ -5,16 +5,15 @@ import org.jdiameter.common.api.app.swm.ServerSWmSessionState;
 
 
 /**
- *
  * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
  */
 public interface IServerSWmSessionData extends ISWmSessionData {
 
-    boolean isStateless();
+  boolean isStateless();
 
-    void setStateless(boolean stateless);
+  void setStateless(boolean stateless);
 
-    ServerSWmSessionState getServerSWmSessionState();
+  ServerSWmSessionState getServerSWmSessionState();
 
-    void setServerSWmSessionState(ServerSWmSessionState state);
+  void setServerSWmSessionState(ServerSWmSessionState state);
 }

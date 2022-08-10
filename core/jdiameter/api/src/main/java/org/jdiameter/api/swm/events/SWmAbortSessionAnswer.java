@@ -4,8 +4,8 @@ import org.jdiameter.api.app.AppAnswerEvent;
 
 public interface SWmAbortSessionAnswer extends AppAnswerEvent {
 
-    String _SHORT_NAME = "ASA";
-    String _LONG_NAME = "Abort-Session-Answer";
+  String _SHORT_NAME = "ASA";
+  String _LONG_NAME = "Abort-Session-Answer";
 
-    int code = 274;
+  int code = 274;
 }

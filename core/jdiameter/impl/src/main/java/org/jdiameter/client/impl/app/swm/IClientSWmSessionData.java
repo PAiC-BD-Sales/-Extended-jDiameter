@@ -4,15 +4,15 @@ import org.jdiameter.common.api.app.swm.ClientSWmSessionState;
 import org.jdiameter.common.api.app.swm.ISWmSessionData;
 
 public interface IClientSWmSessionData extends ISWmSessionData {
-    boolean isEventBased();
+  boolean isEventBased();
 
-    void setEventBased(boolean b);
+  void setEventBased(boolean b);
 
-    boolean isRequestTypeSet();
+  boolean isRequestTypeSet();
 
-    void setRequestTypeSet(boolean b);
+  void setRequestTypeSet(boolean b);
 
-    ClientSWmSessionState getClientSWmSessionState();
+  ClientSWmSessionState getClientSWmSessionState();
 
-    void setClientSWmSessionState(ClientSWmSessionState state);
+  void setClientSWmSessionState(ClientSWmSessionState state);
 }

@@ -14,34 +14,34 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
- *
  * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
  */
-public abstract class AppSWmSessionImpl extends AppSessionImpl implements NetworkReqListener, StateMachine  {
+public abstract class AppSWmSessionImpl extends AppSessionImpl implements NetworkReqListener, StateMachine {
 
 
-    protected Lock sendAndStateLock = new ReentrantLock();
-    //FIXME: those must be recreated from local resources!
-    //FIXME: change this to single ref!
-    protected transient List<StateChangeListener> stateListeners = new CopyOnWriteArrayList<StateChangeListener>();
-    public AppSWmSessionImpl(ISessionFactory sf, ISWmSessionData sessionData) {
-        super(sf, sessionData);
+  protected Lock sendAndStateLock = new ReentrantLock();
+  //FIXME: those must be recreated from local resources!
+  //FIXME: change this to single ref!
+  protected transient List<StateChangeListener> stateListeners = new CopyOnWriteArrayList<StateChangeListener>();
+
+  public AppSWmSessionImpl(ISessionFactory sf, ISWmSessionData sessionData) {
+    super(sf, sessionData);
+  }
+
+  @Override
+  public void addStateChangeNotification(StateChangeListener listener) {
+    if (!stateListeners.contains(listener)) {
+      stateListeners.add(listener);
     }
+  }
 
-    @Override
-    public void addStateChangeNotification(StateChangeListener listener) {
-        if (!stateListeners.contains(listener)) {
-            stateListeners.add(listener);
-        }
-    }
+  @Override
+  public void removeStateChangeNotification(StateChangeListener listener) {
+    stateListeners.remove(listener);
+  }
 
-    @Override
-    public void removeStateChangeNotification(StateChangeListener listener) {
-        stateListeners.remove(listener);
-    }
-
-    @Override
-    public void release() {
-        super.release();
-    }
+  @Override
+  public void release() {
+    super.release();
+  }
 }

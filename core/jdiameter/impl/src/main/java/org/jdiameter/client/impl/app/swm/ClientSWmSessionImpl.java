@@ -40,313 +40,301 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWmSession, NetworkReqListener, EventListener<Request, Answer> {
 
-//TODO Add the DER command
-    private static final Logger logger = LoggerFactory.getLogger(ClientSWmSessionImpl.class);
+  //TODO Add the DER command
+  private static final Logger logger = LoggerFactory.getLogger(ClientSWmSessionImpl.class);
 
-    protected Lock sendAndStateLock = new ReentrantLock();
+  protected Lock sendAndStateLock = new ReentrantLock();
 
-    // Factories and Listeners --------------------------------------------------
-    protected transient ISWmMessageFactory factory;
-    protected transient ClientSWmSessionListener listener;
-    protected transient IClientSWmSessionContext context;
-    protected transient IMessageParser parser;
-    protected IClientSWmSessionData sessionData;
+  // Factories and Listeners --------------------------------------------------
+  protected transient ISWmMessageFactory factory;
+  protected transient ClientSWmSessionListener listener;
+  protected transient IClientSWmSessionContext context;
+  protected transient IMessageParser parser;
+  protected IClientSWmSessionData sessionData;
 
-    protected long[] authAppIds;
+  protected long[] authAppIds;
 
-    protected byte[] buffer;
+  protected byte[] buffer;
 
-    protected String originHost, originRealm;
+  protected String originHost, originRealm;
 
-    protected ArrayList<Event> eventQueue = new ArrayList<>();
+  protected ArrayList<Event> eventQueue = new ArrayList<>();
 
 
-    public ClientSWmSessionImpl(IClientSWmSessionData sessionData, ISWmMessageFactory fct, ISessionFactory sf, ClientSWmSessionListener lst,
-                                IClientSWmSessionContext ctx, StateChangeListener<AppSession> stLst) {
-        super(sf, sessionData);
-        if (lst == null) {
-            throw new IllegalArgumentException("Listener can not be null");
-        }
-        if (fct.getApplicationIds() == null) {
-            throw new IllegalArgumentException("ApplicationId can not be less than zero");
-        }
-
-        this.context = ctx;
-
-        this.authAppIds = fct.getApplicationIds();
-        this.listener = lst;
-        this.factory = fct;
-
-        IContainer icontainer = sf.getContainer();
-        this.parser = icontainer.getAssemblerFacility().getComponentInstance(IMessageParser.class);
-        this.sessionData = sessionData;
-        super.addStateChangeNotification(stLst);
+  public ClientSWmSessionImpl(IClientSWmSessionData sessionData, ISWmMessageFactory fct, ISessionFactory sf, ClientSWmSessionListener lst,
+                              IClientSWmSessionContext ctx, StateChangeListener<AppSession> stLst) {
+    super(sf, sessionData);
+    if (lst == null) {
+      throw new IllegalArgumentException("Listener can not be null");
+    }
+    if (fct.getApplicationIds() == null) {
+      throw new IllegalArgumentException("ApplicationId can not be less than zero");
     }
 
+    this.context = ctx;
 
-    public boolean isEventBased() {
-        return sessionData.isEventBased();
-    }
+    this.authAppIds = fct.getApplicationIds();
+    this.listener = lst;
+    this.factory = fct;
 
-    @Override
-    public void receivedSuccessMessage(Request request, Answer answer) {
-
-    }
-
-    @Override
-    public void timeoutExpired(Request request) {
-
-    }
-
-    @Override
-    public Answer processRequest(Request request) {
-        return null;
-    }
-
-    @Override
-    public boolean isStateless() {
-        return false;
-    }
-
-    @Override
-    public boolean handleEvent(StateEvent event) throws InternalException, OverloadException {
-        return this.isEventBased() ? handleEventForEventBased(event) : handleEventForSessionBased(event);
-    }
+    IContainer icontainer = sf.getContainer();
+    this.parser = icontainer.getAssemblerFacility().getComponentInstance(IMessageParser.class);
+    this.sessionData = sessionData;
+    super.addStateChangeNotification(stLst);
+  }
 
 
-    /**
-     * This makes checks on queue, moves it to proper state if event there is
-     * present on Open state ;
-     */
-    protected void dispatch() {
-        // Event Based ----------------------------------------------------------
-        if (isEventBased()) {
-            // Current State: IDLE
-            // Event: Request in storage
-            // Action: Send stored request
-            // New State: PENDING_B
-            if (buffer != null) {
-                setState(ClientSWmSessionState.PENDING_BUFFERED);
-                try {
-                    dispatchEvent(new AppRequestEventImpl(messageFromBuffer(ByteBuffer.wrap(buffer))));
-                }
-                catch (Exception e) {
-                    try {
-                        handleSendFailure(e, Event.Type.SEND_EVENT_REQUEST, messageFromBuffer(ByteBuffer.wrap(buffer)));
-                    }
-                    catch (Exception e1) {
-                        logger.error("Failure handling buffer send failure", e1);
-                    }
-                }
-            }
-        } // Session Based --------------------------------------------------------
-        else {
-            if (sessionData.getClientSWmSessionState() == ClientSWmSessionState.OPEN && eventQueue.size() > 0) {
-                try {
-                    this.handleEvent(eventQueue.remove(0));
-                }
-                catch (Exception e) {
-                    logger.error("Failure handling queued event", e);
-                }
-            }
-        }
-    }
+  public boolean isEventBased() {
+    return sessionData.isEventBased();
+  }
 
-    private Message messageFromBuffer(ByteBuffer request) throws InternalException {
-        if (request != null) {
-            Message m;
-            try {
-                m = parser.createMessage(request);
-                return m;
-            }
-            catch (AvpDataException e) {
-                throw new InternalException("Failed to decode message.", e);
-            }
-        }
-        return null;
-    }
+  @Override
+  public void receivedSuccessMessage(Request request, Answer answer) {
 
-    protected void handleSendFailure(Exception e, Event.Type eventType, Message request) throws Exception {
-        logger.debug("Failed to send message, type: {} message: {}, failure: {}", eventType, request, e != null ? e.getLocalizedMessage() : "");
-    }
+  }
 
-    protected void handleFailureMessage(final AppAnswerEvent event, final AppRequestEvent request, final Event.Type eventType) {
+  @Override
+  public void timeoutExpired(Request request) {
+
+  }
+
+  @Override
+  public Answer processRequest(Request request) {
+    return null;
+  }
+
+  @Override
+  public boolean isStateless() {
+    return false;
+  }
+
+  @Override
+  public boolean handleEvent(StateEvent event) throws InternalException, OverloadException {
+    return this.isEventBased() ? handleEventForEventBased(event) : handleEventForSessionBased(event);
+  }
+
+
+  /**
+   * This makes checks on queue, moves it to proper state if event there is
+   * present on Open state ;
+   */
+  protected void dispatch() {
+    // Event Based ----------------------------------------------------------
+    if (isEventBased()) {
+      // Current State: IDLE
+      // Event: Request in storage
+      // Action: Send stored request
+      // New State: PENDING_B
+      if (buffer != null) {
+        setState(ClientSWmSessionState.PENDING_BUFFERED);
         try {
-            setState(ClientSWmSessionState.IDLE);
+          dispatchEvent(new AppRequestEventImpl(messageFromBuffer(ByteBuffer.wrap(buffer))));
+        } catch (Exception e) {
+          try {
+            handleSendFailure(e, Event.Type.SEND_EVENT_REQUEST, messageFromBuffer(ByteBuffer.wrap(buffer)));
+          } catch (Exception e1) {
+            logger.error("Failure handling buffer send failure", e1);
+          }
         }
-        catch (Exception e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failure handling failure message for Event " + event + " (" + eventType + ") and Request " + request, e);
-            }
-        }
-    }
-
-    protected void dispatchEvent(AppEvent event) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-        session.send(event.getMessage(), this);
-    }
-
-    protected boolean isProvisional(long resultCode) {
-        return resultCode >= 1000 && resultCode < 2000;
-    }
-
-    protected boolean isSuccess(long resultCode) {
-        return resultCode >= 2000 && resultCode < 3000;
-    }
-
-    protected boolean isFailure(long code) {
-        //return (!isProvisional(code) && !isSuccess(code) && ((code >= 3000 && code < 6000)) && !temporaryErrorCodes.contains(code));
-        return (!isProvisional(code) && !isSuccess(code) && ((code >= 3000 && code < 6000)) );
-    }
-    protected void setState(ClientSWmSessionState newState) {
-        setState(newState, true);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void setState(ClientSWmSessionState newState, boolean release) {
+      }
+    } // Session Based --------------------------------------------------------
+    else {
+      if (sessionData.getClientSWmSessionState() == ClientSWmSessionState.OPEN && eventQueue.size() > 0) {
         try {
-            IAppSessionState<ClientSWmSessionState> oldState = this.sessionData.getClientSWmSessionState();
-            this.sessionData.setClientSWmSessionState(newState);
-            for (StateChangeListener i : stateListeners) {
-                i.stateChanged(this, (Enum) oldState, (Enum) newState);
-            }
+          this.handleEvent(eventQueue.remove(0));
+        } catch (Exception e) {
+          logger.error("Failure handling queued event", e);
+        }
+      }
+    }
+  }
 
-            if (newState == ClientSWmSessionState.IDLE) {
-                if (release) {
-                    this.release();
+  private Message messageFromBuffer(ByteBuffer request) throws InternalException {
+    if (request != null) {
+      Message m;
+      try {
+        m = parser.createMessage(request);
+        return m;
+      } catch (AvpDataException e) {
+        throw new InternalException("Failed to decode message.", e);
+      }
+    }
+    return null;
+  }
+
+  protected void handleSendFailure(Exception e, Event.Type eventType, Message request) throws Exception {
+    logger.debug("Failed to send message, type: {} message: {}, failure: {}", eventType, request, e != null ? e.getLocalizedMessage() : "");
+  }
+
+  protected void handleFailureMessage(final AppAnswerEvent event, final AppRequestEvent request, final Event.Type eventType) {
+    try {
+      setState(ClientSWmSessionState.IDLE);
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Failure handling failure message for Event " + event + " (" + eventType + ") and Request " + request, e);
+      }
+    }
+  }
+
+  protected void dispatchEvent(AppEvent event) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    session.send(event.getMessage(), this);
+  }
+
+  protected boolean isProvisional(long resultCode) {
+    return resultCode >= 1000 && resultCode < 2000;
+  }
+
+  protected boolean isSuccess(long resultCode) {
+    return resultCode >= 2000 && resultCode < 3000;
+  }
+
+  protected boolean isFailure(long code) {
+    //return (!isProvisional(code) && !isSuccess(code) && ((code >= 3000 && code < 6000)) && !temporaryErrorCodes.contains(code));
+    return (!isProvisional(code) && !isSuccess(code) && ((code >= 3000 && code < 6000)));
+  }
+
+  protected void setState(ClientSWmSessionState newState) {
+    setState(newState, true);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected void setState(ClientSWmSessionState newState, boolean release) {
+    try {
+      IAppSessionState<ClientSWmSessionState> oldState = this.sessionData.getClientSWmSessionState();
+      this.sessionData.setClientSWmSessionState(newState);
+      for (StateChangeListener i : stateListeners) {
+        i.stateChanged(this, (Enum) oldState, (Enum) newState);
+      }
+
+      if (newState == ClientSWmSessionState.IDLE) {
+        if (release) {
+          this.release();
+        }
+
+      }
+    } catch (Exception e) {
+      if (logger.isDebugEnabled()) {
+        logger.debug("Failure switching to state " + this.sessionData.getClientSWmSessionState() + " (release=" + release + ")", e);
+      }
+    }
+  }
+
+  @Override
+  public void release() {
+    if (isValid()) {
+      try {
+        this.sendAndStateLock.lock();
+        super.release();
+      } catch (Exception e) {
+        logger.debug("Failed to release session", e);
+      } finally {
+        sendAndStateLock.unlock();
+      }
+    } else {
+      logger.debug("Trying to release an already invalid session, with Session ID '{}'", getSessionId());
+    }
+  }
+
+  protected boolean handleEventForEventBased(StateEvent event) throws InternalException {
+    try {
+      sendAndStateLock.lock();
+      final ClientSWmSessionState state = this.sessionData.getClientSWmSessionState();
+      Event localEvent = (Event) event;
+      Event.Type eventType = (Event.Type) localEvent.getType();
+      switch (state) {
+        case IDLE:
+          switch (eventType) {
+            case SEND_EVENT_REQUEST:
+              // Current State: IDLE
+              // Event: Client or device requests a one-time service
+              // Action: Send AA event request
+              // New State: PENDING_E
+              setState(ClientSWmSessionState.PENDING_EVENT);
+              try {
+                dispatchEvent(localEvent.getRequest());
+              } catch (Exception e) {
+                // This handles failure to send in PendingI state in FSM table
+                logger.debug("Failure handling send event request", e);
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
+            default:
+              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
+          break;
+
+        case PENDING_EVENT:
+          switch (eventType) {
+            case RECEIVE_EVENT_ANSWER:
+              AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
+              try {
+                long resultCode = answer.getResultCodeAvp().getUnsigned32();
+                if (isSuccess(resultCode)) {
+                  // Current State: PENDING_E
+                  // Event: Successful AA event answer received
+                  // Action: Grant service to end user
+                  // New State: IDLE
+                  setState(ClientSWmSessionState.IDLE, false);
                 }
+                if (isProvisional(resultCode) || isFailure(resultCode)) {
+                  handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
+                }
+                //TODO check AAAnswer
+                // deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
+              } catch (AvpDataException e) {
+                logger.debug("Failure handling received answer event", e);
+                setState(ClientSWmSessionState.IDLE, false);
+              }
+              break;
+            default:
+              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
+          break;
 
-            }
-        }
-        catch (Exception e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Failure switching to state " + this.sessionData.getClientSWmSessionState() + " (release=" + release + ")", e);
-            }
-        }
+        case PENDING_BUFFERED:
+          switch (eventType) {
+            case RECEIVE_EVENT_ANSWER:
+              // Current State: PENDING_B
+              // Event: Successful CC answer received
+              // Action: Delete request
+              // New State: IDLE
+              setState(ClientSWmSessionState.IDLE, false);
+              //this.sessionData.setBuffer(null);
+              buffer = null;
+              //TODO check AAAnswer
+              // deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
+              break;
+            default:
+              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
+          break;
+
+        default:
+          logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
+          break;
+      }
+
+      dispatch();
+      return true;
+    } catch (Exception e) {
+      throw new InternalException(e);
+    } finally {
+      sendAndStateLock.unlock();
     }
+  }
 
-    @Override
-    public void release() {
-        if (isValid()) {
-            try {
-                this.sendAndStateLock.lock();
-                super.release();
-            }
-            catch (Exception e) {
-                logger.debug("Failed to release session", e);
-            }
-            finally {
-                sendAndStateLock.unlock();
-            }
-        }
-        else {
-            logger.debug("Trying to release an already invalid session, with Session ID '{}'", getSessionId());
-        }
-    }
-
-    protected boolean handleEventForEventBased(StateEvent event) throws InternalException {
-        try {
-            sendAndStateLock.lock();
-            final ClientSWmSessionState state = this.sessionData.getClientSWmSessionState();
-            Event localEvent = (Event) event;
-            Event.Type eventType = (Event.Type) localEvent.getType();
-            switch (state) {
-                case IDLE:
-                    switch (eventType) {
-                        case SEND_EVENT_REQUEST:
-                            // Current State: IDLE
-                            // Event: Client or device requests a one-time service
-                            // Action: Send AA event request
-                            // New State: PENDING_E
-                            setState(ClientSWmSessionState.PENDING_EVENT);
-                            try {
-                                dispatchEvent(localEvent.getRequest());
-                            }
-                            catch (Exception e) {
-                                // This handles failure to send in PendingI state in FSM table
-                                logger.debug("Failure handling send event request", e);
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
-                        default:
-                            logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
-
-                case PENDING_EVENT:
-                    switch (eventType) {
-                        case RECEIVE_EVENT_ANSWER:
-                            AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
-                            try {
-                                long resultCode = answer.getResultCodeAvp().getUnsigned32();
-                                if (isSuccess(resultCode)) {
-                                    // Current State: PENDING_E
-                                    // Event: Successful AA event answer received
-                                    // Action: Grant service to end user
-                                    // New State: IDLE
-                                    setState(ClientSWmSessionState.IDLE, false);
-                                }
-                                if (isProvisional(resultCode) || isFailure(resultCode)) {
-                                    handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
-                                }
-                                //TODO check AAAnswer
-                                // deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
-                            }
-                            catch (AvpDataException e) {
-                                logger.debug("Failure handling received answer event", e);
-                                setState(ClientSWmSessionState.IDLE, false);
-                            }
-                            break;
-                        default:
-                            logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
-
-                case PENDING_BUFFERED:
-                    switch (eventType) {
-                        case RECEIVE_EVENT_ANSWER:
-                            // Current State: PENDING_B
-                            // Event: Successful CC answer received
-                            // Action: Delete request
-                            // New State: IDLE
-                            setState(ClientSWmSessionState.IDLE, false);
-                            //this.sessionData.setBuffer(null);
-                            buffer = null;
-                            //TODO check AAAnswer
-                            // deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
-                            break;
-                        default:
-                            logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
-
-                default:
-                    logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                    break;
-            }
-
-            dispatch();
-            return true;
-        }
-        catch (Exception e) {
-            throw new InternalException(e);
-        }
-        finally {
-            sendAndStateLock.unlock();
-        }
-    }
-
-    protected boolean handleEventForSessionBased(StateEvent event) throws InternalException {
-        try {
-            sendAndStateLock.lock();
-            final ClientSWmSessionState state = this.sessionData.getClientSWmSessionState();
-            Event localEvent = (Event) event;
-            Event.Type eventType = (Event.Type) localEvent.getType();
-            switch (state) {
-                case IDLE:
-                    switch (eventType) {
+  protected boolean handleEventForSessionBased(StateEvent event) throws InternalException {
+    try {
+      sendAndStateLock.lock();
+      final ClientSWmSessionState state = this.sessionData.getClientSWmSessionState();
+      Event localEvent = (Event) event;
+      Event.Type eventType = (Event.Type) localEvent.getType();
+      switch (state) {
+        case IDLE:
+          switch (eventType) {
                         /*
                         case SEND_AAR:
                             // Current State: IDLE
@@ -364,11 +352,11 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
                             break;
 
                          */
-                        default:
-                            logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
+            default:
+              logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
+          break;
                     /*
                     case PENDING_AAR:
                     AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
@@ -487,8 +475,8 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
                     break;
 
                  */
-                case OPEN:
-                    switch (eventType) {
+        case OPEN:
+          switch (eventType) {
                         /*
                         case SEND_AAR:
                             // Current State: OPEN
@@ -539,74 +527,69 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
 
 
                          */
-                        case SEND_DER:
-                            try {
-                                dispatchEvent(localEvent.getRequest());
-                            }
-                            catch (Exception e) {
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
+            case SEND_DER:
+              try {
+                dispatchEvent(localEvent.getRequest());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
 
-                        case RECEIVE_ASR:
-                            deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
-                            break;
-                        case SEND_ASA:
-                            try {
-                                dispatchEvent(localEvent.getAnswer());
-                            }
-                            catch (Exception e) {
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
-                        default:
-                            logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
-                default:
-                    // any other state is bad
-                    setState(ClientSWmSessionState.IDLE, true);
-                    break;
-            }
-            dispatch();
-            return true;
-        }
-        catch (Exception e) {
-            throw new InternalException(e);
-        }
-        finally {
-            sendAndStateLock.unlock();
-        }
+            case RECEIVE_ASR:
+              deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
+              break;
+            case SEND_ASA:
+              try {
+                dispatchEvent(localEvent.getAnswer());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
+            default:
+              logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
+          break;
+        default:
+          // any other state is bad
+          setState(ClientSWmSessionState.IDLE, true);
+          break;
+      }
+      dispatch();
+      return true;
+    } catch (Exception e) {
+      throw new InternalException(e);
+    } finally {
+      sendAndStateLock.unlock();
     }
-    @Override
-    public <E> E getState(Class<E> stateType) {
-        return null;
+  }
+
+  @Override
+  public <E> E getState(Class<E> stateType) {
+    return null;
+  }
+
+
+  @Override
+  public void onTimer(String timerName) {
+
+  }
+
+  @Override
+  public void sendDiameterEAPRequest(SWmDiameterEAPRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_DER, request, null));
+  }
+
+  @Override
+  public void sendAbortSessionAnswer(SWmAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_ASA, null, answer));
+  }
+
+  protected void deliverAbortSessionRequest(SWmAbortSessionRequest request) {
+    try {
+      listener.doAbortSessionRequest(this, request);
+    } catch (Exception e) {
+      logger.debug("Failure delivering ASR", e);
     }
-
-
-
-    @Override
-    public void onTimer(String timerName) {
-
-    }
-
-    @Override
-    public void sendDiameterEAPRequest(SWmDiameterEAPRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-        this.handleEvent(new Event(Event.Type.SEND_DER, request, null));
-    }
-
-    @Override
-    public void sendAbortSessionAnswer(SWmAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-        this.handleEvent(new Event(Event.Type.SEND_ASA, null, answer));
-    }
-
-    protected void deliverAbortSessionRequest(SWmAbortSessionRequest request) {
-        try {
-            listener.doAbortSessionRequest(this, request);
-        }
-        catch (Exception e) {
-            logger.debug("Failure delivering ASR", e);
-        }
-    }
+  }
 }

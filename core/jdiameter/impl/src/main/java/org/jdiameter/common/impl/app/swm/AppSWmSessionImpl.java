@@ -12,6 +12,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+
+/**
+ *
+ * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
+ */
 public abstract class AppSWmSessionImpl extends AppSessionImpl implements NetworkReqListener, StateMachine  {
 
 

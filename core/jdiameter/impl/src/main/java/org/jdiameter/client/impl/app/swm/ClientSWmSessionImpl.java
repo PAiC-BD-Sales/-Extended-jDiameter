@@ -16,24 +16,15 @@ import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
-import org.jdiameter.api.auth.events.ReAuthRequest;
-import org.jdiameter.api.rx.events.RxAAAnswer;
-import org.jdiameter.api.rx.events.RxAARequest;
-import org.jdiameter.api.rx.events.RxAbortSessionRequest;
-import org.jdiameter.api.rx.events.RxReAuthRequest;
-import org.jdiameter.api.rx.events.RxSessionTermAnswer;
-import org.jdiameter.api.rx.events.RxSessionTermRequest;
 import org.jdiameter.api.swm.ClientSWmSession;
 import org.jdiameter.api.swm.ClientSWmSessionListener;
 import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
-import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.client.api.IContainer;
 import org.jdiameter.client.api.ISessionFactory;
 import org.jdiameter.client.api.parser.IMessageParser;
 import org.jdiameter.common.api.app.IAppSessionState;
-import org.jdiameter.common.api.app.rx.ClientRxSessionState;
 import org.jdiameter.common.api.app.swm.ClientSWmSessionState;
 import org.jdiameter.common.api.app.swm.IClientSWmSessionContext;
 import org.jdiameter.common.api.app.swm.ISWmMessageFactory;
@@ -44,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -550,6 +539,15 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
 
 
                          */
+                        case SEND_DER:
+                            try {
+                                dispatchEvent(localEvent.getRequest());
+                            }
+                            catch (Exception e) {
+                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+                            }
+                            break;
+
                         case RECEIVE_ASR:
                             deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
                             break;

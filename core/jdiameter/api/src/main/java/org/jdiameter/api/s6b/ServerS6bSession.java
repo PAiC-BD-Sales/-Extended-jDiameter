@@ -16,6 +16,7 @@ import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
  */
 public interface ServerS6bSession extends AppSession, StateMachine {
 
-  void sendSessionTerminationAnswer(S6bSessionTerminationAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+  void sendSessionTerminationAnswer(S6bSessionTerminationAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
 }

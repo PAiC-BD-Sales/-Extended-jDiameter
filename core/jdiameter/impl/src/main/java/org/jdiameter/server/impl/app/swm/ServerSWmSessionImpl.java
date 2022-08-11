@@ -126,6 +126,9 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
             case RECEIVE_DER:
               listener.doDiameterEAPRequest(this, (SWmDiameterEAPRequest) localEvent.getRequest());
               break;
+            case SEND_DEA:
+              dispatchEvent(localEvent.getAnswer());
+              break;
             case RECEIVE_AAR:
               //listener.doAARequest(this, (RxAARequest) localEvent.getRequest());
               break;
@@ -138,7 +141,7 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               //listener.doAARequest(this, (RxAARequest) localEvent.getRequest());
               break;
 
-            // case SEND_EVENT_ANSWER:
+            case SEND_EVENT_ANSWER:
             // // Current State: IDLE
             // // Event: AAR event request received and successfully processed
             // // Action: Send AA event answer
@@ -184,6 +187,11 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
           switch (eventType) {
             case RECEIVE_DER:
               listener.doDiameterEAPRequest(this, (SWmDiameterEAPRequest) localEvent.getRequest());
+              break;
+
+            case SEND_DEA:
+              dispatchEvent(localEvent.getAnswer());
+              break;
             case RECEIVE_AAR:
               // listener.doAARequest(this, (RxAARequest) localEvent.getRequest());
               break;
@@ -410,6 +418,10 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
     public void run() {
       try {
         switch (request.getCommandCode()) {
+          case SWmDiameterEAPRequest.code:
+            handleEvent(new Event(true,factory.createDiameterEAPRequest(request),null));
+            break;
+
                     /*
                     case RxAARequest.code:
                         handleEvent(new org.jdiameter.server.impl.app.rx.Event(true, factory.createAARequest(request), null));

@@ -1,6 +1,5 @@
 package org.jdiameter.client.impl.app.swm;
 
-import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
 import org.jdiameter.api.app.AppRequestEvent;
@@ -28,7 +27,7 @@ public class Event implements StateEvent {
     this.request = request;
   }
 
-  Event(boolean isRequest, AppRequestEvent request, AppAnswerEvent answer) throws AvpDataException {
+  Event(boolean isRequest, AppRequestEvent request, AppAnswerEvent answer) {
 
     this.answer = answer;
     this.request = request;
@@ -39,7 +38,7 @@ public class Event implements StateEvent {
           type = Type.SEND_DER;
           break;
         case SWmAbortSessionRequest.code:
-          type = Event.Type.RECEIVE_ASR;
+          type = Type.RECEIVE_ASR;
           break;
         //case RxReAuthRequest.code:
         //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_RAR;
@@ -48,7 +47,7 @@ public class Event implements StateEvent {
         //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_ASR;
         //break;
         case 5:  //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does Rx do event?
-          type = Event.Type.SEND_EVENT_REQUEST;
+          type = Type.SEND_EVENT_REQUEST;
           break;
         default:
           throw new RuntimeException("Wrong command code value: " + request.getCommandCode());
@@ -56,10 +55,10 @@ public class Event implements StateEvent {
     } else {
       switch (answer.getCommandCode()) {
         case SWmDiameterEAPAnswer.code:
-          type = Event.Type.RECEIVE_DEA;
+          type = Type.RECEIVE_DEA;
           break;
         case SWmAbortSessionAnswer.code:
-          type = Event.Type.SEND_ASA;
+          type = Type.SEND_ASA;
           break;
 
                     /*
@@ -71,7 +70,7 @@ public class Event implements StateEvent {
 
                      */
         case 6: //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does Rx do event?
-          type = Event.Type.RECEIVE_EVENT_ANSWER;
+          type = Type.RECEIVE_EVENT_ANSWER;
           break;
         default:
           throw new RuntimeException("Wrong CC-Request-Type value: " + answer.getCommandCode());

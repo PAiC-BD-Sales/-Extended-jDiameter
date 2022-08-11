@@ -20,8 +20,7 @@ public abstract class AppSWmSessionImpl extends AppSessionImpl implements Networ
 
 
   protected Lock sendAndStateLock = new ReentrantLock();
-  //FIXME: those must be recreated from local resources!
-  //FIXME: change this to single ref!
+
   protected transient List<StateChangeListener> stateListeners = new CopyOnWriteArrayList<StateChangeListener>();
 
   public AppSWmSessionImpl(ISessionFactory sf, ISWmSessionData sessionData) {

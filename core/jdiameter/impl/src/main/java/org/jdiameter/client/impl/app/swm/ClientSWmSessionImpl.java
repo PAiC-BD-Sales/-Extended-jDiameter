@@ -20,14 +20,18 @@ import org.jdiameter.api.swm.ClientSWmSession;
 import org.jdiameter.api.swm.ClientSWmSessionListener;
 import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
+import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.client.api.IContainer;
+import org.jdiameter.client.api.IMessage;
 import org.jdiameter.client.api.ISessionFactory;
 import org.jdiameter.client.api.parser.IMessageParser;
+import org.jdiameter.client.api.parser.ParseException;
 import org.jdiameter.common.api.app.IAppSessionState;
 import org.jdiameter.common.api.app.swm.ClientSWmSessionState;
 import org.jdiameter.common.api.app.swm.IClientSWmSessionContext;
 import org.jdiameter.common.api.app.swm.ISWmMessageFactory;
+import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.jdiameter.common.impl.app.swm.AppSWmSessionImpl;
 import org.slf4j.Logger;
@@ -35,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -59,6 +64,9 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
   protected String originHost, originRealm;
 
   protected ArrayList<Event> eventQueue = new ArrayList<>();
+
+  // Session State Handling ---------------------------------------------------
+  protected boolean isEventBased = false;
 
 
   public ClientSWmSessionImpl(IClientSWmSessionData sessionData, ISWmMessageFactory fct, ISessionFactory sf, ClientSWmSessionListener lst,
@@ -89,18 +97,27 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
   }
 
   @Override
+  public Answer processRequest(Request request) {
+    ClientSWmSessionImpl.RequestDelivery rd = new ClientSWmSessionImpl.RequestDelivery();
+    rd.session = this;
+    rd.request = request;
+    super.scheduler.execute(rd);
+    return null;
+  }
+
+  @Override
   public void receivedSuccessMessage(Request request, Answer answer) {
+    ClientSWmSessionImpl.AnswerDelivery ad = new ClientSWmSessionImpl.AnswerDelivery();
+    ad.session = this;
+    ad.request = request;
+    ad.answer = answer;
+    super.scheduler.execute(ad);
 
   }
 
   @Override
   public void timeoutExpired(Request request) {
 
-  }
-
-  @Override
-  public Answer processRequest(Request request) {
-    return null;
   }
 
   @Override
@@ -147,19 +164,6 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
         }
       }
     }
-  }
-
-  private Message messageFromBuffer(ByteBuffer request) throws InternalException {
-    if (request != null) {
-      Message m;
-      try {
-        m = parser.createMessage(request);
-        return m;
-      } catch (AvpDataException e) {
-        throw new InternalException("Failed to decode message.", e);
-      }
-    }
-    return null;
   }
 
   protected void handleSendFailure(Exception e, Event.Type eventType, Message request) throws Exception {
@@ -535,6 +539,10 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               }
               break;
 
+            case RECEIVE_DEA:
+              deliverDiameterEAPAnswer((SWmDiameterEAPRequest) localEvent.getRequest(), (SWmDiameterEAPAnswer) localEvent.getAnswer());
+              break;
+
             case RECEIVE_ASR:
               deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
               break;
@@ -590,6 +598,148 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       listener.doAbortSessionRequest(this, request);
     } catch (Exception e) {
       logger.debug("Failure delivering ASR", e);
+    }
+  }
+
+  protected void deliverDiameterEAPAnswer(SWmDiameterEAPRequest request, SWmDiameterEAPAnswer answer) {
+    try {
+      listener.doDiameterEAPAnswer(this, request, answer);
+    } catch (Exception e) {
+      logger.debug("Failure delivering DEA", e);
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + Arrays.hashCode(authAppIds);
+    result = prime * result + (isEventBased ? 1231 : 1237);
+    result = prime * result + ((originHost == null) ? 0 : originHost.hashCode());
+    result = prime * result + ((originRealm == null) ? 0 : originRealm.hashCode());
+    result = prime * result + ((sessionData == null) ? 0 : (sessionData.getClientSWmSessionState() == null ? 0 :
+            sessionData.getClientSWmSessionState().hashCode()));
+    return result;
+  }
+
+
+  private Message messageFromBuffer(ByteBuffer request) throws InternalException {
+    if (request != null) {
+      Message m;
+      try {
+        m = parser.createMessage(request);
+        return m;
+      } catch (AvpDataException e) {
+        throw new InternalException("Failed to decode message.", e);
+      }
+    }
+    return null;
+  }
+
+  private ByteBuffer messageToBuffer(IMessage msg) throws InternalException {
+    try {
+      return parser.encodeMessage(msg);
+    } catch (ParseException e) {
+      throw new InternalException("Failed to encode message.", e);
+    }
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+
+    ClientSWmSessionImpl other = (ClientSWmSessionImpl) obj;
+    if (!Arrays.equals(authAppIds, other.authAppIds)) {
+      return false;
+    }
+    if (isEventBased != other.isEventBased) {
+      return false;
+    }
+    if (originHost == null) {
+      if (other.originHost != null) {
+        return false;
+      }
+    } else if (!originHost.equals(other.originHost)) {
+      return false;
+    }
+    if (originRealm == null) {
+      if (other.originRealm != null) {
+        return false;
+      }
+    } else if (!originRealm.equals(other.originRealm)) {
+      return false;
+    }
+    if (sessionData == null) {
+      return other.sessionData == null;
+    } else if (sessionData.getClientSWmSessionState() == null) {
+      return other.sessionData.getClientSWmSessionState() == null;
+    } else {
+      return sessionData.getClientSWmSessionState().equals(other.sessionData.getClientSWmSessionState());
+    }
+  }
+
+  private class RequestDelivery implements Runnable {
+    ClientSWmSession session;
+    Request request;
+
+    @Override
+    public void run() {
+      try {
+        switch (request.getCommandCode()) {
+          //case RxReAuthRequest.code:
+          //handleEvent(new org.jdiameter.client.impl.app.rx.Event(org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_RAR, factory.createReAuthRequest(request), null));
+          //break;
+          case SWmAbortSessionRequest.code:
+            handleEvent(new Event(Event.Type.RECEIVE_ASR, factory.createAbortSessionRequest(request), null));
+            break;
+          default:
+            listener.doOtherEvent(session, new AppRequestEventImpl(request), null);
+            break;
+        }
+      } catch (Exception e) {
+        logger.debug("Failure processing request", e);
+      }
+    }
+  }
+
+  private class AnswerDelivery implements Runnable {
+
+    ClientSWmSession session;
+    Answer answer;
+    Request request;
+
+    @Override
+    public void run() {
+      try {
+        switch (request.getCommandCode()) {
+          case SWmDiameterEAPRequest.code:
+            handleEvent(new Event(Event.Type.SEND_DER, factory.createDiameterEAPRequest(request), null));
+            break;
+          //case RxAAAnswer.code:
+          //final RxAARequest myAARequest = factory.createAARequest(request);
+          //final RxAAAnswer myAAAnswer = factory.createAAAnswer(answer);
+          //handleEvent(new org.jdiameter.client.impl.app.rx.Event(false, myAARequest, myAAAnswer));
+          //break;
+          //case RxSessionTermAnswer.code:
+          //final RxSessionTermRequest mySTRequest = factory.createSessionTermRequest(request);
+          //final RxSessionTermAnswer mySTAnswer = factory.createSessionTermAnswer(answer);
+          //handleEvent(new org.jdiameter.client.impl.app.rx.Event(false, mySTRequest, mySTAnswer));
+          //break;
+          default:
+            listener.doOtherEvent(session, new AppRequestEventImpl(request), new AppAnswerEventImpl(answer));
+            break;
+        }
+      } catch (Exception e) {
+        logger.debug("Failure processing success message", e);
+      }
     }
   }
 }

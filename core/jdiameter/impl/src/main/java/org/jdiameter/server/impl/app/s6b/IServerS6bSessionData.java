@@ -8,12 +8,12 @@ import org.jdiameter.common.api.app.s6b.ServerS6bSessionState;
  */
 public interface IServerS6bSessionData extends IS6bSessionData {
 
-    boolean isStateless();
+  boolean isStateless();
 
-    void setStateless(boolean stateless);
+  void setStateless(boolean stateless);
 
-    ServerS6bSessionState getServerS6bSessionState();
+  ServerS6bSessionState getServerS6bSessionState();
 
-    void setServerS6bSessionState(ServerS6bSessionState state);
+  void setServerS6bSessionState(ServerS6bSessionState state);
 
 }

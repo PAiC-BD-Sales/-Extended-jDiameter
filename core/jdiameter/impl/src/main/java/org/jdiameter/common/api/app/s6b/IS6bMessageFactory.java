@@ -12,10 +12,10 @@ import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
  */
 public interface IS6bMessageFactory {
 
-    S6bSessionTerminationRequest createSessionTermRequest(Request request);
+  S6bSessionTerminationRequest createSessionTermRequest(Request request);
 
-    S6bSessionTerminationAnswer createSessionTermAnswer(Answer answer);
+  S6bSessionTerminationAnswer createSessionTermAnswer(Answer answer);
 
-    long[] getApplicationIds();
+  long[] getApplicationIds();
 
 }

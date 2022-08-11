@@ -8,34 +8,34 @@ import org.jdiameter.common.api.app.s6b.ServerS6bSessionState;
  */
 public class ServerS6bSessionDataLocalImpl extends AppSessionDataLocalImpl implements IServerS6bSessionData {
 
-    protected boolean stateless = true;
-    protected ServerS6bSessionState state = ServerS6bSessionState.IDLE;
+  protected boolean stateless = true;
+  protected ServerS6bSessionState state = ServerS6bSessionState.IDLE;
 
-    /**
-     *
-     */
-    public ServerS6bSessionDataLocalImpl() {
+  /**
+   *
+   */
+  public ServerS6bSessionDataLocalImpl() {
 
-    }
+  }
 
-    @Override
-    public boolean isStateless() {
-        return stateless;
-    }
+  @Override
+  public boolean isStateless() {
+    return stateless;
+  }
 
-    @Override
-    public void setStateless(boolean stateless) {
-        this.stateless = stateless;
-    }
+  @Override
+  public void setStateless(boolean stateless) {
+    this.stateless = stateless;
+  }
 
-    @Override
-    public ServerS6bSessionState getServerS6bSessionState() {
-        return state;
-    }
+  @Override
+  public ServerS6bSessionState getServerS6bSessionState() {
+    return state;
+  }
 
-    @Override
-    public void setServerS6bSessionState(ServerS6bSessionState state) {
-        this.state = state;
-    }
+  @Override
+  public void setServerS6bSessionState(ServerS6bSessionState state) {
+    this.state = state;
+  }
 
 }

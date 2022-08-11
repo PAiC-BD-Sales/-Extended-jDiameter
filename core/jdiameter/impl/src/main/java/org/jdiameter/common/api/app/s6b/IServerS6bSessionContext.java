@@ -12,18 +12,18 @@ import java.util.concurrent.ScheduledFuture;
  */
 public interface IServerS6bSessionContext {
 
-    void sessionSupervisionTimerExpired(ServerS6bSession session);
+  void sessionSupervisionTimerExpired(ServerS6bSession session);
 
-    /**
-     * This is called always when Tcc starts
-     *
-     * @param session
-     * @param future
-     */
-    void sessionSupervisionTimerStarted(ServerS6bSession session, ScheduledFuture future);
+  /**
+   * This is called always when Tcc starts
+   *
+   * @param session
+   * @param future
+   */
+  void sessionSupervisionTimerStarted(ServerS6bSession session, ScheduledFuture future);
 
-    void sessionSupervisionTimerReStarted(ServerS6bSession session, ScheduledFuture future);
+  void sessionSupervisionTimerReStarted(ServerS6bSession session, ScheduledFuture future);
 
-    void sessionSupervisionTimerStopped(ServerS6bSession session, ScheduledFuture future);
+  void sessionSupervisionTimerStopped(ServerS6bSession session, ScheduledFuture future);
 
 }

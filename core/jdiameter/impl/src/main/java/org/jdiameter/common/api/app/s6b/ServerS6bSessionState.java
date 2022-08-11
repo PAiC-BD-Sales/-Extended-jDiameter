@@ -9,32 +9,32 @@ import org.jdiameter.common.api.app.IAppSessionState;
  */
 public enum ServerS6bSessionState implements IAppSessionState<ServerS6bSessionState> {
 
-    IDLE(0),
-    OPEN(1);
+  IDLE(0),
+  OPEN(1);
 
-    private int stateRepresentation = -1;
+  private int stateRepresentation = -1;
 
-    ServerS6bSessionState(int v) {
-        this.stateRepresentation = v;
+  ServerS6bSessionState(int v) {
+    this.stateRepresentation = v;
+  }
+
+  @Override
+  public ServerS6bSessionState fromInt(int v) throws IllegalArgumentException {
+    switch (v) {
+      case 0:
+        return IDLE;
+
+      case 1:
+        return OPEN;
+
+      default:
+        throw new IllegalArgumentException("Illegal value of int representation!!!!");
     }
+  }
 
-    @Override
-    public ServerS6bSessionState fromInt(int v) throws IllegalArgumentException {
-        switch (v) {
-            case 0:
-                return IDLE;
-
-            case 1:
-                return OPEN;
-
-            default:
-                throw new IllegalArgumentException("Illegal value of int representation!!!!");
-        }
-    }
-
-    @Override
-    public int getValue() {
-        return stateRepresentation;
-    }
+  @Override
+  public int getValue() {
+    return stateRepresentation;
+  }
 
 }

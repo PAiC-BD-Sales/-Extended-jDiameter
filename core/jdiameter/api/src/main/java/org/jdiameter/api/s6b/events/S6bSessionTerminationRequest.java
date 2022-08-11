@@ -7,11 +7,11 @@ import org.jdiameter.api.app.AppRequestEvent;
  * set in the Command Flags field, is sent from a PDN GW to a 3GPP AAA server.
  *
  * @author <a href="mailto:giokast90@gmail.com"> Giovanni Castillo </a>
- * */
+ */
 public interface S6bSessionTerminationRequest extends AppRequestEvent {
 
-    String _SHORT_NAME = "STR";
-    String _LONG_NAME = "Session-Termination-Request";
+  String _SHORT_NAME = "STR";
+  String _LONG_NAME = "Session-Termination-Request";
 
-    int code = 275;
+  int code = 275;
 }

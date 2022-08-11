@@ -11,13 +11,13 @@ import org.jdiameter.api.s6b.ClientS6bSession;
  */
 public interface IClientS6bSessionContext {
 
-    void grantAccessOnDeliverFailure(ClientS6bSession clientS6bSessionImpl, Message request);
+  void grantAccessOnDeliverFailure(ClientS6bSession clientS6bSessionImpl, Message request);
 
-    void denyAccessOnDeliverFailure(ClientS6bSession clientS6bSessionImpl, Message request);
+  void denyAccessOnDeliverFailure(ClientS6bSession clientS6bSessionImpl, Message request);
 
-    void grantAccessOnFailureMessage(ClientS6bSession clientS6bSessionImpl);
+  void grantAccessOnFailureMessage(ClientS6bSession clientS6bSessionImpl);
 
-    void denyAccessOnFailureMessage(ClientS6bSession clientS6bSessionImpl);
+  void denyAccessOnFailureMessage(ClientS6bSession clientS6bSessionImpl);
 
-    void indicateServiceError(ClientS6bSession clientS6bSessionImpl);
+  void indicateServiceError(ClientS6bSession clientS6bSessionImpl);
 }

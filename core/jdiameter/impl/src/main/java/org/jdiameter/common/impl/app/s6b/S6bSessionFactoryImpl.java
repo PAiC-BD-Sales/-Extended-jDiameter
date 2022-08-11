@@ -203,13 +203,15 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
     try {
       if (aClass == ClientS6bSession.class) {
         IClientS6bSessionData sessionData = (IClientS6bSessionData) this.sessionDataFactory.getAppSessionData(ClientS6bSession.class, sessionId);
-        ClientS6bSessionImpl clientSession = new ClientS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getClientSessionListener(), this.getClientContextListener(), this.getStateListener());
+        ClientS6bSessionImpl clientSession = new ClientS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getClientSessionListener(),
+                this.getClientContextListener(), this.getStateListener());
 
         clientSession.getSessions().get(0).setRequestListener(clientSession);
         appSession = clientSession;
       } else if (aClass == ServerS6bSession.class) {
         IServerS6bSessionData sessionData = (IServerS6bSessionData) this.sessionDataFactory.getAppSessionData(ServerS6bSession.class, sessionId);
-        ServerS6bSessionImpl serverSession = new ServerS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getServerSessionListener(), this.getServerContextListener(), this.getStateListener());
+        ServerS6bSessionImpl serverSession = new ServerS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getServerSessionListener(),
+                this.getServerContextListener(), this.getStateListener());
 
         serverSession.getSessions().get(0).setRequestListener(serverSession);
         appSession = serverSession;
@@ -240,7 +242,8 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
         }
         IClientS6bSessionData sessionData = (IClientS6bSessionData) this.sessionDataFactory.getAppSessionData(ClientS6bSession.class, sessionId);
         sessionData.setApplicationId(applicationId);
-        ClientS6bSessionImpl clientSession = new ClientS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getClientSessionListener(), this.getClientContextListener(), this.getStateListener());
+        ClientS6bSessionImpl clientSession = new ClientS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getClientSessionListener(),
+                this.getClientContextListener(), this.getStateListener());
         // this goes first!
         iss.addSession(clientSession);
         clientSession.getSessions().get(0).setRequestListener(clientSession);
@@ -256,7 +259,8 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
         }
         IServerS6bSessionData sessionData = (IServerS6bSessionData) this.sessionDataFactory.getAppSessionData(ServerS6bSession.class, sessionId);
         sessionData.setApplicationId(applicationId);
-        ServerS6bSessionImpl serverSession = new ServerS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getServerSessionListener(), this.getServerContextListener(), this.getStateListener());
+        ServerS6bSessionImpl serverSession = new ServerS6bSessionImpl(sessionData, this.getMessageFactory(), sessionFactory, this.getServerSessionListener(),
+                this.getServerContextListener(), this.getStateListener());
         iss.addSession(serverSession);
         serverSession.getSessions().get(0).setRequestListener(serverSession);
         appSession = serverSession;
@@ -279,7 +283,8 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
   }
 
   @Override
-  public void doSessionTerminationAnswer(ClientS6bSession session, S6bSessionTerminationRequest request, S6bSessionTerminationAnswer answer) throws InternalException {
+  public void doSessionTerminationAnswer(ClientS6bSession session, S6bSessionTerminationRequest request, S6bSessionTerminationAnswer answer)
+          throws InternalException {
   }
 
   @Override

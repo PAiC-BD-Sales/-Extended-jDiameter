@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
  */
 public class S6bSessionTerminationAnswerImpl extends AppAnswerEventImpl implements S6bSessionTerminationAnswer {
 
-    private static final long serialVersionUID = 1L;
-    protected static final Logger logger = LoggerFactory.getLogger(S6bSessionTerminationAnswerImpl.class);
+  private static final long serialVersionUID = 1L;
+  protected static final Logger logger = LoggerFactory.getLogger(S6bSessionTerminationAnswerImpl.class);
 
-    public S6bSessionTerminationAnswerImpl(Request message, long resultCode) {
-        super(message.createAnswer(resultCode));
-    }
+  public S6bSessionTerminationAnswerImpl(Request message, long resultCode) {
+    super(message.createAnswer(resultCode));
+  }
 
-    public S6bSessionTerminationAnswerImpl(Answer message) {
-        super(message);
-    }
+  public S6bSessionTerminationAnswerImpl(Answer message) {
+    super(message);
+  }
 }

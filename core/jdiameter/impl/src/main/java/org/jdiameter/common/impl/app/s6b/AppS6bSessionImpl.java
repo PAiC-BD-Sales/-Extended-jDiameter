@@ -17,29 +17,29 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public abstract class AppS6bSessionImpl extends AppSessionImpl implements NetworkReqListener, StateMachine {
 
-    protected Lock sendAndStateLock = new ReentrantLock();
-    //FIXME: those must be recreated from local resources!
-    //FIXME: change this to single ref!
-    protected transient List<StateChangeListener> stateListeners = new CopyOnWriteArrayList<>();
+  protected Lock sendAndStateLock = new ReentrantLock();
+  //FIXME: those must be recreated from local resources!
+  //FIXME: change this to single ref!
+  protected transient List<StateChangeListener> stateListeners = new CopyOnWriteArrayList<>();
 
-    public AppS6bSessionImpl(ISessionFactory sf, IS6bSessionData sessionData) {
-        super(sf, sessionData);
-    }
+  public AppS6bSessionImpl(ISessionFactory sf, IS6bSessionData sessionData) {
+    super(sf, sessionData);
+  }
 
-    @Override
-    public void addStateChangeNotification(StateChangeListener listener) {
-        if (!stateListeners.contains(listener)) {
-            stateListeners.add(listener);
-        }
+  @Override
+  public void addStateChangeNotification(StateChangeListener listener) {
+    if (!stateListeners.contains(listener)) {
+      stateListeners.add(listener);
     }
+  }
 
-    @Override
-    public void removeStateChangeNotification(StateChangeListener listener) {
-        stateListeners.remove(listener);
-    }
+  @Override
+  public void removeStateChangeNotification(StateChangeListener listener) {
+    stateListeners.remove(listener);
+  }
 
-    @Override
-    public void release() {
-        super.release();
-    }
+  @Override
+  public void release() {
+    super.release();
+  }
 }

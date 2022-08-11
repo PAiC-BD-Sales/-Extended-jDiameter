@@ -57,7 +57,7 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
   }
 
   @Override
-  public void sendSessionTerminationAnswer(S6bSessionTerminationAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void sendSessionTerminationAnswer(S6bSessionTerminationAnswer answer) throws InternalException, OverloadException {
     handleEvent(new Event(false, null, answer));
   }
 
@@ -95,15 +95,8 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
             case RECEIVE_EVENT_REQUEST:
               break;
 
-            // case SEND_EVENT_ANSWER:
-            // // Current State: IDLE
-            // // Event: AAR event request received and successfully processed
-            // // Action: Send AA event answer
-            // // New State: IDLE
-            //
-            // newState = ServerS6bSessionState.IDLE;
-            // dispatchEvent(localEvent.getAnswer());
-            // break;
+             case SEND_EVENT_ANSWER:
+             break;
 
             case SEND_AAA:
               break;

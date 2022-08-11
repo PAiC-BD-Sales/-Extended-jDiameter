@@ -150,18 +150,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
         case IDLE:
           switch (eventType) {
             case SEND_EVENT_REQUEST:
-              // Current State: IDLE
-              // Event: Client or device requests a one-time service
-              // Action: Send AA event request
-              // New State: PENDING_E
-              setState(ClientS6bSessionState.PENDING_EVENT);
-              try {
-                dispatchEvent(localEvent.getRequest());
-              } catch (Exception e) {
-                // This handles failure to send in PendingI state in FSM table
-                logger.debug("Failure handling send event request", e);
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
               break;
             default:
               logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -172,26 +160,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
         case PENDING_EVENT:
           switch (eventType) {
             case RECEIVE_EVENT_ANSWER:
-//              AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
-//              try {
-//                long resultCode = answer.getResultCodeAvp().getUnsigned32();
-//                if (isSuccess(resultCode)) {
-//                  // Current State: PENDING_E
-//                  // Event: Successful AA event answer received
-//                  // Action: Grant service to end user
-//                  // New State: IDLE
-//                  setState(ClientS6bSessionState.IDLE, false);
-//                }
-//                if (isProvisional(resultCode) || isFailure(resultCode)) {
-//                  handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
-//                }
-//
-//                deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
-//              }
-//              catch (AvpDataException e) {
-//                logger.debug("Failure handling received answer event", e);
-//                setState(ClientS6bSessionState.IDLE, false);
-//              }
               break;
             default:
               logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -201,14 +169,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
         case PENDING_BUFFERED:
           switch (eventType) {
             case RECEIVE_EVENT_ANSWER:
-              // Current State: PENDING_B
-              // Event: Successful CC answer received
-              // Action: Delete request
-              // New State: IDLE
-              setState(ClientS6bSessionState.IDLE, false);
-              //this.sessionData.setBuffer(null);
-              buffer = null;
-//              deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
               break;
             default:
               logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -240,18 +200,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
         case IDLE:
           switch (eventType) {
             case SEND_AAR:
-              // Current State: IDLE
-              // Event: Client or device requests access/service
-              // Action: Send AAR
-              // New State: PENDING_AAR
-//              setState(ClientS6bSessionState.PENDING_AAR);
-//              try {
-//                dispatchEvent(localEvent.getRequest());
-//              }
-//              catch (Exception e) {
-//                // This handles failure to send in PendingI state in FSM table
-//                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-//              }
               break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -262,17 +210,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
           AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
           switch (eventType) {
             case RECEIVE_AAA:
-//              long resultCode = answer.getResultCodeAvp().getUnsigned32();
-//              if (isSuccess(resultCode)) {
-//                // Current State: PENDING_AAR
-//                // Event: Successful AA answer received
-//                // New State: OPEN
-//                setState(ClientS6bSessionState.OPEN);
-//              }
-//              else if (isProvisional(resultCode) || isFailure(resultCode)) {
-//                handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
-//              }
-//              deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
               break;
             case SEND_AAR:
             case SEND_STR:
@@ -288,7 +225,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               eventQueue.add(localEvent);
               break;
             case RECEIVE_RAR:
-//              deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
               break;
             case SEND_RAA:
               // Current State: PENDING_U
@@ -302,14 +238,8 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               }
               break;
             case RECEIVE_ASR:
-//              deliverAbortSessionRequest((RxAbortSessionRequest) localEvent.getRequest());
               break;
             case SEND_ASA:
-              try {
-                dispatchEvent(localEvent.getAnswer());
-              } catch (Exception e) {
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
               break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -333,35 +263,7 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               deliverS6bSessionTerminationAnswer((S6bSessionTerminationRequest) localEvent.getRequest(), (S6bSessionTerminationAnswer) localEvent.getAnswer());
               break;
             case SEND_AAR:
-              try {
-                // Current State: PENDING_STR
-                // Event: Change in AA request
-                // Action: -
-                // New State: PENDING_STR
-                dispatchEvent(localEvent.getRequest());
-                // No transition
-              } catch (Exception e) {
-                // This handles failure to send in PendingI state in FSM table
-                // handleSendFailure(e, eventType);
-              }
               break;
-            //                        case RECEIVE_STA:
-            //                            // Current State: PENDING_T
-            //                            // Event: Successful CC termination answer received
-            //                            // Action: -
-            //                            // New State: IDLE
-            //
-            //                            // Current State: PENDING_T
-            //                            // Event: Failure to send, temporary error, or failed answer
-            //                            // Action: -
-            //                            // New State: IDLE
-            //
-            //                            //FIXME: Alex broke this, setting back "true" ?
-            //                            setState(ClientS6bSessionState.IDLE, false);
-            //                            //setState(ClientS6bSessionState.IDLE, true);
-            //                            deliverRxSessionTermAnswer((RxSessionTermRequest) localEvent.getRequest(), (RxSessionTermAnswer) localEvent.getAnswer());
-            //                            //setState(ClientS6bSessionState.IDLE, true);
-            //                            break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
               break;
@@ -370,19 +272,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
         case OPEN:
           switch (eventType) {
             case SEND_AAR:
-              // Current State: OPEN
-              // Event: Updated AAR send by AF
-              // Action: Send AAR update request
-              // New State: PENDING_AAR
-
-//              setState(ClientS6bSessionState.PENDING_AAR);
-//              try {
-//                dispatchEvent(localEvent.getRequest());
-//              }
-//              catch (Exception e) {
-//                // This handles failure to send in PendingI state in FSM table
-//                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-//              }
               break;
             case SEND_STR:
               // Current State: OPEN
@@ -398,24 +287,12 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               }
               break;
             case RECEIVE_RAR:
-//              deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
               break;
             case SEND_RAA:
-              try {
-                dispatchEvent(localEvent.getAnswer());
-              } catch (Exception e) {
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
               break;
             case RECEIVE_ASR:
-//              deliverAbortSessionRequest((RxAbortSessionRequest) localEvent.getRequest());
               break;
             case SEND_ASA:
-              try {
-                dispatchEvent(localEvent.getAnswer());
-              } catch (Exception e) {
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
               break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -457,14 +334,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
 
   @Override
   public void timeoutExpired(Request request) {
-    //        if (request.getCommandCode() == RxAAAnswer.code) {
-    //            try {
-    //                handleSendFailure(null, null, request);
-    //            }
-    //            catch (Exception e) {
-    //                logger.debug("Failure processing timeout message for request", e);
-    //            }
-    //        }
   }
 
   protected void setState(ClientS6bSessionState newState) {
@@ -622,12 +491,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     public void run() {
       try {
         switch (request.getCommandCode()) {
-//          case RxReAuthRequest.code:
-//            handleEvent(new Event(Type.RECEIVE_RAR, factory.createReAuthRequest(request), null));
-//            break;
-//          case RxAbortSessionRequest.code:
-//            handleEvent(new Event(Type.RECEIVE_ASR, factory.createAbortSessionRequest(request), null));
-//            break;
           default:
             listener.doOtherEvent(session, new AppRequestEventImpl(request), null);
             break;
@@ -648,11 +511,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     public void run() {
       try {
         switch (request.getCommandCode()) {
-//          case RxAAAnswer.code:
-//            final RxAARequest myAARequest = factory.createAARequest(request);
-//            final RxAAAnswer myAAAnswer = factory.createAAAnswer(answer);
-//            handleEvent(new Event(false, myAARequest, myAAAnswer));
-//            break;
           case S6bSessionTerminationAnswer.code:
             final S6bSessionTerminationRequest mySTRequest = factory.createSessionTermRequest(request);
             final S6bSessionTerminationAnswer mySTAnswer = factory.createSessionTermAnswer(answer);

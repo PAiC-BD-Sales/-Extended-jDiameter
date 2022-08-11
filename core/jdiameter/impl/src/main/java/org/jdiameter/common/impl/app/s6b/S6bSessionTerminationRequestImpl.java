@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
  */
 public class S6bSessionTerminationRequestImpl extends AppRequestEventImpl implements S6bSessionTerminationRequest {
 
-    private static final long serialVersionUID = 1L;
-    protected static final Logger logger = LoggerFactory.getLogger(S6bSessionTerminationRequestImpl.class);
+  private static final long serialVersionUID = 1L;
+  protected static final Logger logger = LoggerFactory.getLogger(S6bSessionTerminationRequestImpl.class);
 
-    public S6bSessionTerminationRequestImpl(AppSession session, String destRealm, String destHost) {
-        super(session.getSessions().get(0).createRequest(code, session.getSessionAppId(), destRealm, destHost));
-    }
+  public S6bSessionTerminationRequestImpl(AppSession session, String destRealm, String destHost) {
+    super(session.getSessions().get(0).createRequest(code, session.getSessionAppId(), destRealm, destHost));
+  }
 
-    public S6bSessionTerminationRequestImpl(Request request) {
-        super(request);
-    }
+  public S6bSessionTerminationRequestImpl(Request request) {
+    super(request);
+  }
 }

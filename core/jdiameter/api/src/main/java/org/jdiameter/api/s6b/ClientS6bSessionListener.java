@@ -18,7 +18,13 @@ import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
  */
 public interface ClientS6bSessionListener {
 
-  void doSessionTerminationAnswer(ClientS6bSession session, S6bSessionTerminationRequest request, S6bSessionTerminationAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+  void doSessionTerminationAnswer(ClientS6bSession session,
+                                  S6bSessionTerminationRequest request,
+                                  S6bSessionTerminationAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
-  void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+  void doOtherEvent(AppSession session,
+                    AppRequestEvent request,
+                    AppAnswerEvent answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 }

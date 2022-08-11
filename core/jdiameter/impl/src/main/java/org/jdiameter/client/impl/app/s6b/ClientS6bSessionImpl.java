@@ -150,6 +150,19 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
         case IDLE:
           switch (eventType) {
             case SEND_EVENT_REQUEST:
+              // Current State: IDLE
+              // Event: Client or device requests a one-time service
+              // Action: Send AA event request
+              // New State: PENDING_E
+              setState(ClientS6bSessionState.PENDING_EVENT);
+              try {
+                dispatchEvent(localEvent.getRequest());
+              }
+              catch (Exception e) {
+                // This handles failure to send in PendingI state in FSM table
+                logger.debug("Failure handling send event request", e);
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
               break;
             default:
               logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -207,7 +220,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
           }
           break;
         case PENDING_AAR:
-          AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
           switch (eventType) {
             case RECEIVE_AAA:
               break;
@@ -227,15 +239,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
             case RECEIVE_RAR:
               break;
             case SEND_RAA:
-              // Current State: PENDING_U
-              // Event: RAR received
-              // Action: Send RAA
-              // New State: PENDING_U
-              try {
-                dispatchEvent(localEvent.getAnswer());
-              } catch (Exception e) {
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
               break;
             case RECEIVE_ASR:
               break;

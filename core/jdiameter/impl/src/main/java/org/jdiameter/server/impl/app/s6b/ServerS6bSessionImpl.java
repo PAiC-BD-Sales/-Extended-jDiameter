@@ -1,7 +1,18 @@
 package org.jdiameter.server.impl.app.s6b;
 
-import org.jdiameter.api.*;
-import org.jdiameter.api.app.*;
+import org.jdiameter.api.Answer;
+import org.jdiameter.api.AvpDataException;
+import org.jdiameter.api.EventListener;
+import org.jdiameter.api.InternalException;
+import org.jdiameter.api.NetworkReqListener;
+import org.jdiameter.api.OverloadException;
+import org.jdiameter.api.Request;
+import org.jdiameter.api.app.AppAnswerEvent;
+import org.jdiameter.api.app.AppEvent;
+import org.jdiameter.api.app.AppRequestEvent;
+import org.jdiameter.api.app.AppSession;
+import org.jdiameter.api.app.StateChangeListener;
+import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ServerS6bSession;
 import org.jdiameter.api.s6b.ServerS6bSessionListener;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
@@ -95,8 +106,8 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
             case RECEIVE_EVENT_REQUEST:
               break;
 
-             case SEND_EVENT_ANSWER:
-             break;
+            case SEND_EVENT_ANSWER:
+              break;
 
             case SEND_AAA:
               break;

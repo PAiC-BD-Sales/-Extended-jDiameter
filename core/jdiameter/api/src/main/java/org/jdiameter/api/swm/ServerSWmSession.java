@@ -8,6 +8,7 @@ import org.jdiameter.api.RouteException;
 import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.app.StateMachine;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
+import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 
 
@@ -21,6 +22,9 @@ public interface ServerSWmSession extends AppSession, StateMachine {
 
   void sendDiameterEAPAnswer(SWmDiameterEAPAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
+
+  void sendDiameterAAAnswer(SWmDiameterAAAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
   void sendAbortSessionRequest(SWmAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;

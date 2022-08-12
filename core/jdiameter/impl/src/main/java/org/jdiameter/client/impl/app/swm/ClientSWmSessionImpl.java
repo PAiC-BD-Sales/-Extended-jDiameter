@@ -720,8 +720,10 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
     public void run() {
       try {
         switch (request.getCommandCode()) {
-          case SWmDiameterEAPRequest.code:
-            handleEvent(new Event(Event.Type.SEND_DER, factory.createDiameterEAPRequest(request), null));
+          case SWmDiameterEAPAnswer.code:
+            final SWmDiameterEAPRequest _DERequest = factory.createDiameterEAPRequest(request);
+            final SWmDiameterEAPAnswer _DEAnswer = factory.createDiameterEAPAnswer(answer);
+            handleEvent(new Event(false, _DERequest, _DEAnswer));
             break;
           //case RxAAAnswer.code:
           //final RxAARequest myAARequest = factory.createAARequest(request);

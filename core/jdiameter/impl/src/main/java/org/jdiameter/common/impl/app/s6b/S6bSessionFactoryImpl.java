@@ -39,7 +39,7 @@ import java.util.concurrent.ScheduledFuture;
  * @author <a href="mailto:giokast90@gmail.com"> Giovanni Castillo </a>
  */
 public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessionListener, ServerS6bSessionListener, StateChangeListener<AppSession>,
-                                                      IS6bMessageFactory, IServerS6bSessionContext, IClientS6bSessionContext {
+        IS6bMessageFactory, IServerS6bSessionContext, IClientS6bSessionContext {
 
   // Message timeout value (in milliseconds)
   protected int defaultDirectDebitingFailureHandling = 0;

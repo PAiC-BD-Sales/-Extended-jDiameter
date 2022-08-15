@@ -173,7 +173,7 @@ public class ZhServerSessionImpl extends ZhSession
         sendAndStateLock.lock();
         try {
           handleEvent(
-            new Event(Event.Type.TIMEOUT_EXPIRES, new AppRequestEventImpl(this.sessionData.getBuffer()), null));
+              new Event(Event.Type.TIMEOUT_EXPIRES, new AppRequestEventImpl(this.sessionData.getBuffer()), null));
         } catch (Exception e) {
           logger.debug("Failure handling Timeout event.");
         }

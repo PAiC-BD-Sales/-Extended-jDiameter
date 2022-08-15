@@ -13,18 +13,18 @@ import org.jdiameter.server.impl.app.zh.ServerZhSessionDataLocalImp;
  *
  */
 public class ZhLocalSessionDataFactory implements IAppSessionDataFactory<IZhSessionData> {
-    @Override
-    public IZhSessionData getAppSessionData(Class<? extends AppSession> clazz, String sessionId) {
-        if (clazz.equals(ClientZhSession.class)) {
-            ClientZhSessionDataLocalImpl data = new ClientZhSessionDataLocalImpl();
-            data.setSessionId(sessionId);
-            return data;
-        } else if (clazz.equals(ServerZhSession.class)) {
-            ServerZhSessionDataLocalImp data = new ServerZhSessionDataLocalImp();
-            data.setSessionId(sessionId);
-            return data;
-        } else {
-            throw new IllegalArgumentException("Invalid Session Class: " + clazz);
-        }
+  @Override
+  public IZhSessionData getAppSessionData(Class<? extends AppSession> clazz, String sessionId) {
+    if (clazz.equals(ClientZhSession.class)) {
+      ClientZhSessionDataLocalImpl data = new ClientZhSessionDataLocalImpl();
+      data.setSessionId(sessionId);
+      return data;
+    } else if (clazz.equals(ServerZhSession.class)) {
+      ServerZhSessionDataLocalImp data = new ServerZhSessionDataLocalImp();
+      data.setSessionId(sessionId);
+      return data;
+    } else {
+      throw new IllegalArgumentException("Invalid Session Class: " + clazz);
     }
+  }
 }

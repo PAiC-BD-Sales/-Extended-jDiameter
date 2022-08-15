@@ -54,12 +54,12 @@ public class ZhClientSessionImpl extends ZhSession
 
   @Override
   public Answer processRequest(Request request) {
-        return null;
-    }
+    return null;
+  }
   @Override
   public boolean isStateless() {
-        return false;
-    }
+    return false;
+  }
 
   @Override
   public void addStateChangeNotification(StateChangeListener listener) {
@@ -73,12 +73,12 @@ public class ZhClientSessionImpl extends ZhSession
   }
   @Override
   public <E> E getState(Class<E> stateType) {
-        return null;
-    }
+    return null;
+  }
   @Override
-  public void sendMultimediaAuthRequest(MultimediaAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-
-    }
+  public void sendMultimediaAuthRequest(MultimediaAuthRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  }
   @Override
   public void onTimer(String timerName) {
   }

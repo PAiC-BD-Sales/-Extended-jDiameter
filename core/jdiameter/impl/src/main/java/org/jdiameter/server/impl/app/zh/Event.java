@@ -55,8 +55,8 @@ public class Event implements StateEvent {
 
   @Override
   public Object getData() {
-        return request != null ? request : answer;
-    }
+    return request != null ? request : answer;
+  }
 
   @Override
   public int compareTo(Object o) {

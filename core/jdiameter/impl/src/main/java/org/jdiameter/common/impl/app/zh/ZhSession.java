@@ -95,7 +95,7 @@ public abstract class ZhSession extends AppSessionImpl implements NetworkReqList
         return false;
       }
     } else if (!sessionData.equals(other.sessionData)) {
-        return false;
+      return false;
     }
     return true;
   }

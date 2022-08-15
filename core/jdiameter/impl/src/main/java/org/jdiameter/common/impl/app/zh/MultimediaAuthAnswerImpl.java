@@ -23,8 +23,8 @@ public class MultimediaAuthAnswerImpl extends AppRequestEventImpl implements Mul
      * @param answer
      */
   public MultimediaAuthAnswerImpl(Answer answer) {
-        super(answer);
-    }
+    super(answer);
+  }
     /**
      *
      * @param request

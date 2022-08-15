@@ -18,31 +18,31 @@ public class ZhLocalSessionDataImpl extends AppSessionDataLocalImpl implements I
 
   @Override
   public void setZhSessionState(ZhSessionState state) {
-        this.state = state;
-    }
+    this.state = state;
+  }
 
   @Override
   public ZhSessionState getZhSessionState() {
-        return state;
-    }
+    return state;
+  }
 
   @Override
   public Serializable getTsTimerId() {
-        return tsTimerId;
-    }
+    return tsTimerId;
+  }
 
   @Override
   public void setTsTimerId(Serializable tid) {
-        this.tsTimerId = tid;
-    }
+    this.tsTimerId = tid;
+  }
 
   @Override
   public void setBuffer(Request buffer) {
-        this.buffer = buffer;
-    }
+    this.buffer = buffer;
+  }
 
   @Override
   public Request getBuffer() {
-        return buffer;
-    }
+    return buffer;
+  }
 }

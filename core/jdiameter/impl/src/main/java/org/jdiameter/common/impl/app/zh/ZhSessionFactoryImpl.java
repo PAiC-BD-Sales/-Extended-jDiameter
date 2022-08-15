@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:kennymendieta89@gmail.com"> Kenny Mendieta </a>
  *
  */
-public class ZhSessionFactoryImpl implements IZhSessionFactory, ServerZhSessionListener, ClientZhSessionListener, IZhMessageFactory, StateChangeListener<AppSession> {
+public class ZhSessionFactoryImpl
+        implements IZhSessionFactory, ServerZhSessionListener, ClientZhSessionListener, IZhMessageFactory, StateChangeListener<AppSession> {
   private static final Logger logger = LoggerFactory.getLogger(ZhSessionFactoryImpl.class);
   protected ISessionFactory sessionFactory;
   protected ServerZhSessionListener serverSessionListener;
@@ -60,66 +61,67 @@ public class ZhSessionFactoryImpl implements IZhSessionFactory, ServerZhSessionL
   }
 
   @Override
-  public void doMultimediaAuthAnswerEvent(ClientZhSession session, MultimediaAuthRequest request, MultimediaAuthAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+  public void doMultimediaAuthAnswerEvent(ClientZhSession session, MultimediaAuthRequest request, MultimediaAuthAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
     logger.info(
-      "Diameter Zh Session Factory :: doMultimediaAuthAnswerEvent :: session[{}], Request[{}], Answer[{}]",
-      new Object[] { session, request, answer });
+        "Diameter Zh Session Factory :: doMultimediaAuthAnswerEvent :: session[{}], Request[{}], Answer[{}]",
+        new Object[] { session, request, answer });
   }
 
   @Override
-  public void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     logger.info("Diameter Zh Session Factory :: doOtherEvent :: session[{}], Request[{}], Answer[{}]", new Object[] { session, request, answer });
   }
 
   @Override
-  public void doMultimediaAuthRequestEvent(ServerZhSession session, MultimediaAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+  public void doMultimediaAuthRequestEvent(ServerZhSession session, MultimediaAuthRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
     logger.info("Diameter Zh Session Factory :: doMultimediaAuthRequestEvent :: session[{}], Request[{}]", session, request);
   }
 
   @Override
   public AppSession getNewSession(String sessionId, Class<? extends AppSession> aClass, ApplicationId applicationId, Object[] args) {
     AppSession appSession = null;
-
-      try {
-        if (aClass == ServerZhSession.class) {
-          if (sessionId == null) {
-            if (args != null && args.length > 0 && args[0] instanceof Request) {
-              Request request = (Request) args[0];
-              sessionId = request.getSessionId();
-            } else {
-              sessionId = this.sessionFactory.getSessionId();
-            }
+    try {
+      if (aClass == ServerZhSession.class) {
+        if (sessionId == null) {
+          if (args != null && args.length > 0 && args[0] instanceof Request) {
+            Request request = (Request) args[0];
+            sessionId = request.getSessionId();
+          } else {
+            sessionId = this.sessionFactory.getSessionId();
           }
-          IServerZhSessionData sessionData = (IServerZhSessionData) this.sessionDataFactory.getAppSessionData(ServerZhSession.class, sessionId);
-          sessionData.setApplicationId(applicationId);
-          ZhServerSessionImpl serverSession = new ZhServerSessionImpl(sessionData, getMessageFactory(), sessionFactory, getServerZhSessionListener());
-          iss.addSession(serverSession);
-          serverSession.getSessions().get(0).setRequestListener(serverSession);
-          appSession = serverSession;
-        } else if (aClass == ClientZhSession.class) {
-          if (sessionId == null) {
-            if (args != null && args.length > 0 && args[0] instanceof Request) {
-              Request request = (Request) args[0];
-              sessionId = request.getSessionId();
-            } else {
-              sessionId = this.sessionFactory.getSessionId();
-            }
-          }
-          IClientZhSessionData sessionData = (IClientZhSessionData) this.sessionDataFactory.getAppSessionData(ClientZhSession.class, sessionId);
-          sessionData.setApplicationId(applicationId);
-          ZhClientSessionImpl clientSession = new ZhClientSessionImpl(sessionData, getMessageFactory(), sessionFactory, getClientSessionListener());
-          iss.addSession(clientSession);
-          clientSession.getSessions().get(0).setRequestListener(clientSession);
-          appSession = clientSession;
-        } else {
-          throw new IllegalArgumentException(
-                        "Wrong session class: " + aClass + ". Supported[" + ServerZhSession.class + ", " + ClientZhSession.class + "]");
         }
-
-      } catch (Exception e) {
-        logger.error("Failure to obtain new Zh Session.", e);
+        IServerZhSessionData sessionData = (IServerZhSessionData) this.sessionDataFactory.getAppSessionData(ServerZhSession.class, sessionId);
+        sessionData.setApplicationId(applicationId);
+        ZhServerSessionImpl serverSession = new ZhServerSessionImpl(sessionData, getMessageFactory(), sessionFactory, getServerZhSessionListener());
+        iss.addSession(serverSession);
+        serverSession.getSessions().get(0).setRequestListener(serverSession);
+        appSession = serverSession;
+      } else if (aClass == ClientZhSession.class) {
+        if (sessionId == null) {
+          if (args != null && args.length > 0 && args[0] instanceof Request) {
+            Request request = (Request) args[0];
+            sessionId = request.getSessionId();
+          } else {
+            sessionId = this.sessionFactory.getSessionId();
+          }
+        }
+        IClientZhSessionData sessionData = (IClientZhSessionData) this.sessionDataFactory.getAppSessionData(ClientZhSession.class, sessionId);
+        sessionData.setApplicationId(applicationId);
+        ZhClientSessionImpl clientSession = new ZhClientSessionImpl(sessionData, getMessageFactory(), sessionFactory, getClientSessionListener());
+        iss.addSession(clientSession);
+        clientSession.getSessions().get(0).setRequestListener(clientSession);
+        appSession = clientSession;
+      } else {
+        throw new IllegalArgumentException(
+                      "Wrong session class: " + aClass + ". Supported[" + ServerZhSession.class + ", " + ClientZhSession.class + "]");
       }
-      return appSession;
+    } catch (Exception e) {
+      logger.error("Failure to obtain new Zh Session.", e);
+    }
+    return appSession;
   }
 
   @Override

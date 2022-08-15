@@ -7,13 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MultimediaAuthRequestImpl extends AppRequestEventImpl implements MultimediaAuthRequest {
-    private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-    protected static final Logger logger = LoggerFactory.getLogger(MultimediaAuthRequestImpl.class);
-    public MultimediaAuthRequestImpl(Message message) {
-        super(message);
-        message.setRequest(true);
-    }
-
-
+  protected static final Logger logger = LoggerFactory.getLogger(MultimediaAuthRequestImpl.class);
+  public MultimediaAuthRequestImpl(Message message) {
+    super(message);
+    message.setRequest(true);
+  }
 }

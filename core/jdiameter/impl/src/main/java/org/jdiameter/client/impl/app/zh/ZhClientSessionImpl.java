@@ -26,72 +26,60 @@ import org.slf4j.LoggerFactory;
 public class ZhClientSessionImpl extends ZhSession
         implements ClientZhSession, EventListener<Request, Answer>, NetworkReqListener {
 
-    private static final Logger logger = LoggerFactory.getLogger(ZhClientSessionImpl.class);
-    private transient ClientZhSessionListener listener;
-    protected long appId = -1;
-    protected IClientZhSessionData sessionData;
-    public ZhClientSessionImpl(IClientZhSessionData sessionData, IZhMessageFactory fct, ISessionFactory sf, ClientZhSessionListener lst) {
-        super(sf, sessionData);
-        if (lst == null) {
-            throw new IllegalArgumentException("Listener can not be null");
-        }
-        if (fct.getApplicationId() < 0) {
-            throw new IllegalArgumentException("ApplicationId can not be less than zero");
-        }
-
-        this.appId = fct.getApplicationId();
-        this.listener = lst;
-        super.messageFactory = fct;
-        this.sessionData = sessionData;
+  private static final Logger logger = LoggerFactory.getLogger(ZhClientSessionImpl.class);
+  private transient ClientZhSessionListener listener;
+  protected long appId = -1;
+  protected IClientZhSessionData sessionData;
+  public ZhClientSessionImpl(IClientZhSessionData sessionData, IZhMessageFactory fct, ISessionFactory sf, ClientZhSessionListener lst) {
+    super(sf, sessionData);
+    if (lst == null) {
+      throw new IllegalArgumentException("Listener can not be null");
+    }
+    if (fct.getApplicationId() < 0) {
+      throw new IllegalArgumentException("ApplicationId can not be less than zero");
     }
 
-    @Override
-    public void receivedSuccessMessage(Request request, Answer answer) {
+    this.appId = fct.getApplicationId();
+    this.listener = lst;
+    super.messageFactory = fct;
+    this.sessionData = sessionData;
+  }
+  @Override
+  public void receivedSuccessMessage(Request request, Answer answer) {
+  }
 
-    }
+  @Override
+  public void timeoutExpired(Request request) {
+  }
 
-    @Override
-    public void timeoutExpired(Request request) {
-
-    }
-
-    @Override
-    public Answer processRequest(Request request) {
+  @Override
+  public Answer processRequest(Request request) {
         return null;
     }
-
-    @Override
-    public boolean isStateless() {
+  @Override
+  public boolean isStateless() {
         return false;
     }
 
-    @Override
-    public void addStateChangeNotification(StateChangeListener listener) {
-
-    }
-
-    @Override
-    public void removeStateChangeNotification(StateChangeListener listener) {
-
-    }
-
-    @Override
-    public boolean handleEvent(StateEvent event) throws InternalException, OverloadException {
-        return false;
-    }
-
-    @Override
-    public <E> E getState(Class<E> stateType) {
+  @Override
+  public void addStateChangeNotification(StateChangeListener listener) {
+  }
+  @Override
+  public void removeStateChangeNotification(StateChangeListener listener) {
+  }
+  @Override
+  public boolean handleEvent(StateEvent event) throws InternalException, OverloadException {
+    return false;
+  }
+  @Override
+  public <E> E getState(Class<E> stateType) {
         return null;
     }
-
-    @Override
-    public void sendMultimediaAuthRequest(MultimediaAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-
-    }
-
-    @Override
-    public void onTimer(String timerName) {
+  @Override
+  public void sendMultimediaAuthRequest(MultimediaAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
     }
+  @Override
+  public void onTimer(String timerName) {
+  }
 }

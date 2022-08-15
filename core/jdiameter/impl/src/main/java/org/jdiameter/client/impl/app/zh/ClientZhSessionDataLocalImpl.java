@@ -7,5 +7,5 @@ import org.jdiameter.common.impl.app.zh.ZhLocalSessionDataImpl;
  *
  */
 public class ClientZhSessionDataLocalImpl extends ZhLocalSessionDataImpl implements IClientZhSessionData {
-    public ClientZhSessionDataLocalImpl() {}
+  public ClientZhSessionDataLocalImpl() {}
 }

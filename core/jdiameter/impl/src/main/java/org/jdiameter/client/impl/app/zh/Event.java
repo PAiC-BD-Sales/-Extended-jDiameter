@@ -9,49 +9,49 @@ import org.jdiameter.api.app.StateEvent;
  *
  */
 public class Event implements StateEvent {
-    enum Type {
-        SEND_MESSAGE, TIMEOUT_EXPIRES, RECEIVE_MAR;
-    }
-    AppEvent request;
-    AppEvent answer;
-    Type type;
+  enum Type {
+    SEND_MESSAGE, TIMEOUT_EXPIRES, RECEIVE_MAR;
+  }
+  AppEvent request;
+  AppEvent answer;
+  Type type;
 
-    public Event(Type type, AppEvent request, AppEvent answer) {
-        this.request = request;
-        this.answer = answer;
-        this.type = type;
-    }
+  public Event(Type type, AppEvent request, AppEvent answer) {
+    this.request = request;
+    this.answer = answer;
+    this.type = type;
+  }
 
-    @Override
-    public <E> E encodeType(Class<E> enumType) {
-        return enumType == Type.class ? (E) type : null;
-    }
+  @Override
+  public <E> E encodeType(Class<E> enumType) {
+    return enumType == Type.class ? (E) type : null;
+  }
 
-    @Override
-    public Enum getType() {
-        return type;
-    }
+  @Override
+  public Enum getType() {
+    return type;
+  }
 
-    public AppEvent getRequest() {
-        return request;
-    }
+  public AppEvent getRequest() {
+    return request;
+  }
 
-    public AppEvent getAnswer() {
-        return answer;
-    }
+  public AppEvent getAnswer() {
+    return answer;
+  }
 
-    @Override
-    public void setData(Object data) {
-        try {
-            if (((AppEvent) data).getMessage().isRequest()) {
-                request = (AppEvent) data;
-            } else {
-                answer = (AppEvent) data;
-            }
-        } catch (InternalException e) {
-            throw new IllegalArgumentException(e);
-        }
+  @Override
+  public void setData(Object data) {
+    try {
+      if (((AppEvent) data).getMessage().isRequest()) {
+        request = (AppEvent) data;
+      } else {
+        answer = (AppEvent) data;
+      }
+    } catch (InternalException e) {
+      throw new IllegalArgumentException(e);
     }
+  }
 
     @Override
     public Object getData() {

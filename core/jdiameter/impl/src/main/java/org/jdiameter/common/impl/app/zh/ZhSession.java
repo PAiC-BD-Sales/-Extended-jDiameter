@@ -35,19 +35,19 @@ public abstract class ZhSession extends AppSessionImpl implements NetworkReqList
     }
   }
 
-    @SuppressWarnings("rawtypes")
+  @SuppressWarnings("rawtypes")
   public void removeStateChangeNotification(StateChangeListener listener) {
-        stateListeners.remove(listener);
-    }
+    stateListeners.remove(listener);
+  }
 
   public boolean isStateless() {
-        return true;
-    }
+    return true;
+  }
 
   @Override
   public boolean isReplicable() {
-        return false;
-    }
+    return false;
+  }
 
   protected void startMsgTimer() {
     try {

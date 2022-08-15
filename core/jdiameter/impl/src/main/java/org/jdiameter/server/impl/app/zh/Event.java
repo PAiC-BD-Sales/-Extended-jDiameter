@@ -24,21 +24,21 @@ public class Event implements StateEvent {
 
   @Override
   public <E> E encodeType(Class<E> enumType) {
-        return enumType == Type.class ? (E) type : null;
-    }
+    return enumType == Type.class ? (E) type : null;
+  }
 
   @Override
   public Enum getType() {
-        return type;
-    }
+    return type;
+  }
 
   public AppEvent getRequest() {
-        return request;
-    }
+    return request;
+  }
 
   public AppEvent getAnswer() {
-        return answer;
-    }
+    return answer;
+  }
 
   @Override
   public void setData(Object data) {

@@ -13,7 +13,6 @@ import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.app.StateChangeListener;
-import org.jdiameter.api.slh.ServerSLhSession;
 import org.jdiameter.api.zh.ClientZhSession;
 import org.jdiameter.api.zh.ClientZhSessionListener;
 import org.jdiameter.api.zh.ServerZhSession;

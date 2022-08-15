@@ -11,8 +11,8 @@ import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.zh.events.MultimediaAuthRequest;
 
 public interface ServerZhSessionListener {
-    void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer)
-        throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
-    void doMultimediaAuthRequestEvent(ServerZhSession session, MultimediaAuthRequest request)
-        throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
+  void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer)
+    throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+  void doMultimediaAuthRequestEvent(ServerZhSession session, MultimediaAuthRequest request)
+    throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
 }

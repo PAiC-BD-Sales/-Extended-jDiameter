@@ -18,6 +18,5 @@ public interface ClientZhSession extends AppSession, StateMachine {
      * @throws RouteException The NoRouteException signals that no route exist for a given realm.
      * @throws OverloadException The OverloadException signals that destination host is overloaded.
      */
-    void sendMultimediaAuthRequest(MultimediaAuthRequest request)
-        throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;;
+  void sendMultimediaAuthRequest(MultimediaAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;;
 }

@@ -17,42 +17,42 @@ public interface IZhSessionFactory extends IAppSessionFactory {
      *
      * @return the serverSessionListener
      */
-    ServerZhSessionListener getServerZhSessionListener();
+  ServerZhSessionListener getServerZhSessionListener();
     /**
      * Set stack wide listener for sessions. In local mode it has similar effect
      * as setting this directly in app session. However clustered session use this value when recreated!
      *
      * @param serverSessionListener the serverSessionListener to set
      */
-    void setServerSessionListener(ServerZhSessionListener serverSessionListener);
+  void setServerSessionListener(ServerZhSessionListener serverSessionListener);
     /**
      * Get stack wide listener for sessions. In local mode it has similar effect
      * as setting this directly in app session. However clustered session use this value when recreated!
      *
      * @return the clientSessionListener
      */
-    ClientZhSessionListener getClientSessionListener();
+  ClientZhSessionListener getClientSessionListener();
     /**
      * Set stack wide listener for sessions. In local mode it has similar effect
      * as setting this directly in app session. However clustered session use this value when recreated!
      *
      * @param clientSessionListener the clientSessionListener to set
      */
-    void setClientSessionListener(ClientZhSessionListener clientSessionListener);
+  void setClientSessionListener(ClientZhSessionListener clientSessionListener);
     /**
      * @return the messageFactory
      */
-    IZhMessageFactory getMessageFactory();
+  IZhMessageFactory getMessageFactory();
     /**
      * @param messageFactory the messageFactory to set
      */
-    void setMessageFactory(IZhMessageFactory messageFactory);
+  void setMessageFactory(IZhMessageFactory messageFactory);
     /**
      * @return the stateListener
      */
-    StateChangeListener<AppSession> getStateListener();
+  StateChangeListener<AppSession> getStateListener();
     /**
      * @param stateListener the stateListener to set
      */
-    void setStateListener(StateChangeListener<AppSession> stateListener);
+  void setStateListener(StateChangeListener<AppSession> stateListener);
 }

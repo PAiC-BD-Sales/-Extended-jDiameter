@@ -10,13 +10,13 @@ import org.jdiameter.api.zh.events.MultimediaAuthRequest;
  *
  */
 public interface IZhMessageFactory {
-    MultimediaAuthRequest createMultimediaAuthRequest(Request request);
-    MultimediaAuthAnswer createMultimediaAuthAnswer(Answer answer);
+  MultimediaAuthRequest createMultimediaAuthRequest(Request request);
+  MultimediaAuthAnswer createMultimediaAuthAnswer(Answer answer);
     /**
      * Returns the Application-Id that this message factory is related to
      *
      * @return the Application-Id value
      */
-    long getApplicationId();
+  long getApplicationId();
 
 }

@@ -19,6 +19,8 @@ import org.jdiameter.api.swm.ServerSWmSession;
 import org.jdiameter.api.swm.ServerSWmSessionListener;
 import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
+import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
+import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.client.api.ISessionFactory;
@@ -91,6 +93,12 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
   }
 
   @Override
+  public void doDiameterAAAnswer(ClientSWmSession session, SWmDiameterAARequest request, SWmDiameterAAAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
   public void doAbortSessionRequest(ClientSWmSession session, SWmAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
@@ -98,6 +106,12 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
 
   @Override
   public void doDiameterEAPRequest(ServerSWmSession session, SWmDiameterEAPRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
+  public void doDiameterAARequest(ServerSWmSession session, SWmDiameterAARequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
@@ -112,6 +126,17 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
   public void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
+  }
+
+
+  @Override
+  public SWmDiameterAARequest createDiameterAARequest(Request request) {
+    return new SWmDiameterAARequestImpl(request);
+  }
+
+  @Override
+  public SWmDiameterAAAnswer createDiameterAAAnswer(Answer answer) {
+    return new SWmDiameterAAAnswerImpl(answer);
   }
 
   // Message Factory Methods -------------------------------------------------

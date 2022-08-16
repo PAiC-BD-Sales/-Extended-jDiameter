@@ -11,12 +11,11 @@ import org.jdiameter.common.api.app.IAppSessionState;
 public enum ClientSWmSessionState implements IAppSessionState<ClientSWmSessionState> {
 
   IDLE(0),
-  PENDING_EVENT(1),
-  PENDING_INITIAL(2),
-  PENDING_UPDATE(3),
-  PENDING_TERMINATION(4),
-  PENDING_BUFFERED(5),
-  OPEN(6);
+  PENDING_AAR(1),
+  PENDING_STR(2),
+  PENDING_EVENT(3),
+  PENDING_BUFFERED(4),
+  OPEN(5);
 
   private int stateValue = -1;
 
@@ -35,16 +34,14 @@ public enum ClientSWmSessionState implements IAppSessionState<ClientSWmSessionSt
       case 0:
         return IDLE;
       case 1:
-        return PENDING_EVENT;
+        return PENDING_AAR;
       case 2:
-        return PENDING_INITIAL;
+        return PENDING_STR;
       case 3:
-        return PENDING_UPDATE;
+        return PENDING_EVENT;
       case 4:
-        return PENDING_TERMINATION;
-      case 5:
         return PENDING_BUFFERED;
-      case 6:
+      case 5:
         return OPEN;
       default:
         throw new IllegalArgumentException("Illegal value of int representation!!!!");

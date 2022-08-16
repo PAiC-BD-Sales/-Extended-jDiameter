@@ -19,6 +19,8 @@ import org.jdiameter.api.swm.ServerSWmSession;
 import org.jdiameter.api.swm.ServerSWmSessionListener;
 import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
+import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
+import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.client.api.ISessionFactory;
@@ -130,7 +132,7 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               dispatchEvent(localEvent.getAnswer());
               break;
             case RECEIVE_AAR:
-              //listener.doAARequest(this, (RxAARequest) localEvent.getRequest());
+              listener.doDiameterAARequest(this, (SWmDiameterAARequest) localEvent.getRequest());
               break;
 
             case RECEIVE_EVENT_REQUEST:
@@ -142,40 +144,36 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               break;
 
             case SEND_EVENT_ANSWER:
-            // // Current State: IDLE
-            // // Event: AAR event request received and successfully processed
-            // // Action: Send AA event answer
-            // // New State: IDLE
-            //
-            // newState = ServerRxSessionState.IDLE;
-            // dispatchEvent(localEvent.getAnswer());
-            // break;
+              // // Current State: IDLE
+              // // Event: AAR event request received and successfully processed
+              // // Action: Send AA event answer
+              // // New State: IDLE
+              //
+              // newState = ServerRxSessionState.IDLE;
+              // dispatchEvent(localEvent.getAnswer());
+              // break;
 
             case SEND_AAA:
-                            /*
-                            RxAAAnswer answer = (RxAAAnswer) localEvent.getAnswer();
-                            try {
-                                long resultCode = answer.getResultCodeAvp().getUnsigned32();
-                                // Current State: IDLE
-                                // Event: AA initial request received and successfully processed
-                                // Action: Send AAinitial answer
-                                // New State: OPEN
-                                if (isSuccess(resultCode)) {
-                                    newState = ServerRxSessionState.OPEN;
-                                } // Current State: IDLE
-                                // Event: AA initial request received but not successfully processed
-                                // Action: Send AA initial answer with Result-Code != SUCCESS
-                                // New State: IDLE
-                                else {
-                                    newState = ServerRxSessionState.IDLE;
-                                }
-                                dispatchEvent(localEvent.getAnswer());
-                            }
-                            catch (AvpDataException e) {
-                                throw new InternalException(e);
-                            }
-
-                             */
+              SWmDiameterAAAnswer answer = (SWmDiameterAAAnswer) localEvent.getAnswer();
+              try {
+                long resultCode = answer.getResultCodeAvp().getUnsigned32();
+                // Current State: IDLE
+                // Event: AA initial request received and successfully processed
+                // Action: Send AAinitial answer
+                // New State: OPEN
+                if (isSuccess(resultCode)) {
+                  newState = ServerSWmSessionState.OPEN;
+                } // Current State: IDLE
+                // Event: AA initial request received but not successfully processed
+                // Action: Send AA initial answer with Result-Code != SUCCESS
+                // New State: IDLE
+                else {
+                  newState = ServerSWmSessionState.IDLE;
+                }
+                dispatchEvent(localEvent.getAnswer());
+              } catch (AvpDataException e) {
+                throw new InternalException(e);
+              }
               break;
             default:
               throw new InternalException("Wrong state: " + ServerSWmSessionState.IDLE + " one event: " + eventType + " " + localEvent.getRequest() + " " +
@@ -193,34 +191,31 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               dispatchEvent(localEvent.getAnswer());
               break;
             case RECEIVE_AAR:
-              // listener.doAARequest(this, (RxAARequest) localEvent.getRequest());
+              listener.doDiameterAARequest(this, (SWmDiameterAARequest) localEvent.getRequest());
               break;
 
             case SEND_AAA:
-                            /*
-                            RxAAAnswer answer = (RxAAAnswer) localEvent.getAnswer();
-                            try {
-                                if (isSuccess(answer.getResultCodeAvp().getUnsigned32())) {
-                                    // Current State: OPEN
-                                    // Event: AA update request received and successfully processed
-                                    // Action: Send AA update answer
-                                    // New State: OPEN
-                                }
-                                else {
-                                    // Current State: OPEN
-                                    // Event: AA update request received but not successfully processed
-                                    // Action: Send AA update answer with Result-Code != SUCCESS
-                                    // New State: IDLE
-                                    // It's a failure, we wait for Tcc to fire -- FIXME: Alexandre: Should we?
-                                    newState = ServerRxSessionState.IDLE;
-                                }
-                            }
-                            catch (AvpDataException e) {
-                                throw new InternalException(e);
-                            }
-                            dispatchEvent(localEvent.getAnswer());
+              SWmDiameterAAAnswer answer = (SWmDiameterAAAnswer) localEvent.getAnswer();
+              try {
+                if (isSuccess(answer.getResultCodeAvp().getUnsigned32())) {
+                  logger.info("Sending AAA with result code " + answer.getResultCodeAvp().getUnsigned32());
+                  // Current State: OPEN
+                  // Event: AA update request received and successfully processed
+                  // Action: Send AA update answer
+                  // New State: OPEN
+                } else {
+                  // Current State: OPEN
+                  // Event: AA update request received but not successfully processed
+                  // Action: Send AA update answer with Result-Code != SUCCESS
+                  // New State: IDLE
+                  newState = ServerSWmSessionState.IDLE;
+                }
+              } catch (AvpDataException e) {
+                throw new InternalException(e);
+              }
+              dispatchEvent(localEvent.getAnswer());
 
-                             */
+
               break;
             case RECEIVE_STR:
               // listener.doSessionTermRequest(this, (RxSessionTermRequest) localEvent.getRequest());
@@ -294,6 +289,12 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
   }
 
   @Override
+  public void sendDiameterAAAnswer(SWmDiameterAAAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+    handleEvent(new Event(false, null, answer));
+  }
+
+  @Override
   public void sendAbortSessionRequest(SWmAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     send(Event.Type.SEND_ASR, request, null);
@@ -324,8 +325,7 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
 
   @Override
   public void timeoutExpired(Request request) {
-    //  context.timeoutExpired(request);
-    //FIXME: Should we release ?
+    logger.warn("Received an timeout Expired from request '{}' for Session-ID '{}'", request.getCommandCode(), getSessionId());
   }
 
   protected boolean isProvisional(long resultCode) {
@@ -419,13 +419,13 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
       try {
         switch (request.getCommandCode()) {
           case SWmDiameterEAPRequest.code:
-            handleEvent(new Event(true,factory.createDiameterEAPRequest(request),null));
+            handleEvent(new Event(true, factory.createDiameterEAPRequest(request), null));
             break;
 
-                    /*
-                    case RxAARequest.code:
-                        handleEvent(new org.jdiameter.server.impl.app.rx.Event(true, factory.createAARequest(request), null));
-                        break;
+          case SWmDiameterAARequest.code:
+            handleEvent(new Event(true, factory.createDiameterAARequest(request), null));
+            break;
+                        /*
                     case RxSessionTermRequest.code:
                         handleEvent(new org.jdiameter.server.impl.app.rx.Event(true, factory.createSessionTermRequest(request), null));
                         break;

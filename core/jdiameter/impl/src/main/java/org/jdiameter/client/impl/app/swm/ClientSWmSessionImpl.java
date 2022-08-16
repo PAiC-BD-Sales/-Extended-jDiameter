@@ -20,6 +20,8 @@ import org.jdiameter.api.swm.ClientSWmSession;
 import org.jdiameter.api.swm.ClientSWmSessionListener;
 import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
+import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
+import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.client.api.IContainer;
@@ -45,7 +47,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWmSession, NetworkReqListener, EventListener<Request, Answer> {
 
-  //TODO Add the DER command
   private static final Logger logger = LoggerFactory.getLogger(ClientSWmSessionImpl.class);
 
   protected Lock sendAndStateLock = new ReentrantLock();
@@ -247,24 +248,21 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       Event.Type eventType = (Event.Type) localEvent.getType();
       switch (state) {
         case IDLE:
-          switch (eventType) {
-            case SEND_EVENT_REQUEST:
-              // Current State: IDLE
-              // Event: Client or device requests a one-time service
-              // Action: Send AA event request
-              // New State: PENDING_E
-              setState(ClientSWmSessionState.PENDING_EVENT);
-              try {
-                dispatchEvent(localEvent.getRequest());
-              } catch (Exception e) {
-                // This handles failure to send in PendingI state in FSM table
-                logger.debug("Failure handling send event request", e);
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
-              break;
-            default:
-              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-              break;
+          if (eventType == Event.Type.SEND_EVENT_REQUEST) {
+            // Current State: IDLE
+            // Event: Client or device requests a one-time service
+            // Action: Send AA event request
+            // New State: PENDING_EVENT
+            setState(ClientSWmSessionState.PENDING_EVENT);
+            try {
+              dispatchEvent(localEvent.getRequest());
+            } catch (Exception e) {
+              // This handles failure to send in PendingI state in FSM table
+              logger.debug("Failure handling send event request", e);
+              handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+            }
+          } else {
+            logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
           }
           break;
 
@@ -275,7 +273,7 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               try {
                 long resultCode = answer.getResultCodeAvp().getUnsigned32();
                 if (isSuccess(resultCode)) {
-                  // Current State: PENDING_E
+                  // Current State: PENDING_EVENT
                   // Event: Successful AA event answer received
                   // Action: Grant service to end user
                   // New State: IDLE
@@ -284,8 +282,7 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
                 if (isProvisional(resultCode) || isFailure(resultCode)) {
                   handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
                 }
-                //TODO check AAAnswer
-                // deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
+                deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
               } catch (AvpDataException e) {
                 logger.debug("Failure handling received answer event", e);
                 setState(ClientSWmSessionState.IDLE, false);
@@ -305,10 +302,8 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               // Action: Delete request
               // New State: IDLE
               setState(ClientSWmSessionState.IDLE, false);
-              //this.sessionData.setBuffer(null);
               buffer = null;
-              //TODO check AAAnswer
-              // deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
+              deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
               break;
             default:
               logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -338,199 +333,178 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       Event.Type eventType = (Event.Type) localEvent.getType();
       switch (state) {
         case IDLE:
-          switch (eventType) {
-                        /*
-                        case SEND_AAR:
-                            // Current State: IDLE
-                            // Event: Client or device requests access/service
-                            // Action: Send AAR
-                            // New State: PENDING_AAR
-                            setState(ClientRxSessionState.PENDING_AAR);
-                            try {
-                                dispatchEvent(localEvent.getRequest());
-                            }
-                            catch (Exception e) {
-                                // This handles failure to send in PendingI state in FSM table
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
+          if (eventType == Event.Type.SEND_AAR) {
+            // Current State: IDLE
+            // Event: Client or device requests access/service
+            // Action: Send AAR
+            // New State: PENDING_AAR
+            setState(ClientSWmSessionState.PENDING_AAR);
+            try {
+              dispatchEvent(localEvent.getRequest());
+            } catch (Exception e) {
+              // This handles failure to send in PendingI state in FSM table
+              handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+            }
+          } else {
+            logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
+          }
+          break;
 
-                         */
+        case PENDING_AAR:
+          AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
+          switch (eventType) {
+            case RECEIVE_AAA:
+              long resultCode = answer.getResultCodeAvp().getUnsigned32();
+              if (isSuccess(resultCode)) {
+                // Current State: PENDING_AAR
+                // Event: Successful AA answer received
+                // New State: OPEN
+                setState(ClientSWmSessionState.OPEN);
+              } else if (isProvisional(resultCode) || isFailure(resultCode)) {
+                handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
+              }
+              deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
+              break;
+            case SEND_AAR:
+              eventQueue.add(localEvent);
+              break;
+
+              /*
+              case SEND_STR:
+              // Current State: PENDING_AAR
+              // Event: User service terminated
+              // Action: Queue termination event
+              // New State: PENDING_AAR
+
+              // Current State: PENDING_AAR
+              // Event: Change in request
+              // Action: Queue changed rating condition event
+              // New State: PENDING_AAR
+              eventQueue.add(localEvent);
+              break;
+            case RECEIVE_RAR:
+              deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
+              break;
+            case SEND_RAA:
+              // Current State: PENDING_U
+              // Event: RAR received
+              // Action: Send RAA
+              // New State: PENDING_U
+              try {
+                dispatchEvent(localEvent.getAnswer());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
+
+               */
+
+
+            case RECEIVE_ASR:
+              deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
+              break;
+            case SEND_ASA:
+              try {
+                dispatchEvent(localEvent.getAnswer());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
               break;
           }
           break;
-                    /*
-                    case PENDING_AAR:
-                    AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
-                    switch (eventType) {
-                        case RECEIVE_AAA:
-                            long resultCode = answer.getResultCodeAvp().getUnsigned32();
-                            if (isSuccess(resultCode)) {
-                                // Current State: PENDING_AAR
-                                // Event: Successful AA answer received
-                                // New State: OPEN
-                                setState(ClientRxSessionState.OPEN);
-                            }
-                            else if (isProvisional(resultCode) || isFailure(resultCode)) {
-                                handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
-                            }
-                            deliverRxAAAnswer((RxAARequest) localEvent.getRequest(), (RxAAAnswer) localEvent.getAnswer());
-                            break;
-                        case SEND_AAR:
-                        case SEND_STR:
-                            // Current State: PENDING_AAR
-                            // Event: User service terminated
-                            // Action: Queue termination event
-                            // New State: PENDING_AAR
 
-                            // Current State: PENDING_AAR
-                            // Event: Change in request
-                            // Action: Queue changed rating condition event
-                            // New State: PENDING_AAR
-                            eventQueue.add(localEvent);
-                            break;
-                        case RECEIVE_RAR:
-                            deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
-                            break;
-                        case SEND_RAA:
-                            // Current State: PENDING_U
-                            // Event: RAR received
-                            // Action: Send RAA
-                            // New State: PENDING_U
-                            try {
-                                dispatchEvent(localEvent.getAnswer());
-                            }
-                            catch (Exception e) {
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
-                        case RECEIVE_ASR:
-                            deliverAbortSessionRequest((RxAbortSessionRequest) localEvent.getRequest());
-                            break;
-                        case SEND_ASA:
-                            try {
-                                dispatchEvent(localEvent.getAnswer());
-                            }
-                            catch (Exception e) {
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
-                        default:
-                            logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
-                     */
 
-                /*
-                case PENDING_STR:
-                    AppAnswerEvent stanswer = (AppAnswerEvent) localEvent.getAnswer();
-                    switch (eventType) {
-                        case RECEIVE_STA:
-                            long resultCode = stanswer.getResultCodeAvp().getUnsigned32();
-                            if (isSuccess(resultCode)) {
-                                // Current State: PENDING_STR
-                                // Event: Successful ST answer received
-                                // New State: IDLE
-                                setState(ClientRxSessionState.IDLE, false);
-                            }
-                            else if (isProvisional(resultCode) || isFailure(resultCode)) {
-                                handleFailureMessage(stanswer, (AppRequestEvent) localEvent.getRequest(), eventType);
-                            }
-                            deliverRxSessionTermAnswer((RxSessionTermRequest) localEvent.getRequest(), (RxSessionTermAnswer) localEvent.getAnswer());
-                            break;
-                        case SEND_AAR:
-                            try {
-                                // Current State: PENDING_STR
-                                // Event: Change in AA request
-                                // Action: -
-                                // New State: PENDING_STR
-                                dispatchEvent(localEvent.getRequest());
-                                // No transition
-                            }
-                            catch (Exception e) {
-                                // This handles failure to send in PendingI state in FSM table
-                                // handleSendFailure(e, eventType);
-                            }
-                            break;
-                        //                        case RECEIVE_STA:
-                        //                            // Current State: PENDING_T
-                        //                            // Event: Successful CC termination answer received
-                        //                            // Action: -
-                        //                            // New State: IDLE
-                        //
-                        //                            // Current State: PENDING_T
-                        //                            // Event: Failure to send, temporary error, or failed answer
-                        //                            // Action: -
-                        //                            // New State: IDLE
-                        //
-                        //                            //FIXME: Alex broke this, setting back "true" ?
-                        //                            setState(ClientRxSessionState.IDLE, false);
-                        //                            //setState(ClientRxSessionState.IDLE, true);
-                        //                            deliverRxSessionTermAnswer((RxSessionTermRequest) localEvent.getRequest(), (RxSessionTermAnswer) localEvent.getAnswer());
-                        //                            //setState(ClientRxSessionState.IDLE, true);
-                        //                            break;
-                        default:
-                            logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
-                            break;
-                    }
-                    break;
+        case PENDING_STR:
+          AppAnswerEvent stanswer = (AppAnswerEvent) localEvent.getAnswer();
+          switch (eventType) {
+            /*
+            case RECEIVE_STA:
+              long resultCode = stanswer.getResultCodeAvp().getUnsigned32();
+              if (isSuccess(resultCode)) {
+                // Current State: PENDING_STR
+                // Event: Successful ST answer received
+                // New State: IDLE
+                setState(ClientRxSessionState.IDLE, false);
+              } else if (isProvisional(resultCode) || isFailure(resultCode)) {
+                handleFailureMessage(stanswer, (AppRequestEvent) localEvent.getRequest(), eventType);
+              }
+              deliverRxSessionTermAnswer((RxSessionTermRequest) localEvent.getRequest(), (RxSessionTermAnswer) localEvent.getAnswer());
+              break;
 
-                 */
+             */
+            case SEND_AAR:
+              try {
+                // Current State: PENDING_STR
+                // Event: Change in AA request
+                // Action: -
+                // New State: PENDING_STR
+                dispatchEvent(localEvent.getRequest());
+                // No transition
+              } catch (Exception e) {
+                logger.error("Error on send AAR in handleEventForSessionBased.");
+              }
+              break;
+            default:
+              logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
+          break;
+
         case OPEN:
           switch (eventType) {
-                        /*
-                        case SEND_AAR:
-                            // Current State: OPEN
-                            // Event: Updated AAR send by AF
-                            // Action: Send AAR update request
-                            // New State: PENDING_AAR
 
-                            setState(ClientRxSessionState.PENDING_AAR);
-                            try {
-                                dispatchEvent(localEvent.getRequest());
-                            }
-                            catch (Exception e) {
-                                // This handles failure to send in PendingI state in FSM table
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
+            case SEND_AAR:
+              // Current State: OPEN
+              // Event: Updated AAR send by AF
+              // Action: Send AAR update request
+              // New State: PENDING_AAR
 
-                         */
-                        /*
-                        case SEND_STR:
-                            // Current State: OPEN
-                            // Event: Session Termination event request received to be sent
-                            // Action: Terminate end user's service, send STR termination request
-                            // New State: PENDING STR
-
-                            setState(ClientRxSessionState.PENDING_STR);
-                            try {
-                                dispatchEvent(localEvent.getRequest());
-                            }
-                            catch (Exception e) {
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
-
-                         */
-                        /*
-                        case RECEIVE_RAR:
-                            deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
-                            break;
-                        case SEND_RAA:
-                            try {
-                                dispatchEvent(localEvent.getAnswer());
-                            }
-                            catch (Exception e) {
-                                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-                            }
-                            break;
+              setState(ClientSWmSessionState.PENDING_AAR);
+              try {
+                dispatchEvent(localEvent.getRequest());
+              } catch (Exception e) {
+                // This handles failure to send in PendingI state in FSM table
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
 
 
-                         */
+              /*
+            case SEND_STR:
+              // Current State: OPEN
+              // Event: Session Termination event request received to be sent
+              // Action: Terminate end user's service, send STR termination request
+              // New State: PENDING STR
+
+              setState(ClientRxSessionState.PENDING_STR);
+              try {
+                dispatchEvent(localEvent.getRequest());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
+
+               */
+
+
+            /*
+            case RECEIVE_RAR:
+              deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
+              break;
+            case SEND_RAA:
+              try {
+                dispatchEvent(localEvent.getAnswer());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
+              break;
+
+
+             */
+
             case SEND_DER:
               try {
                 dispatchEvent(localEvent.getRequest());
@@ -584,12 +558,20 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
   }
 
   @Override
-  public void sendDiameterEAPRequest(SWmDiameterEAPRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void sendDiameterEAPRequest(SWmDiameterEAPRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     this.handleEvent(new Event(Event.Type.SEND_DER, request, null));
   }
 
   @Override
-  public void sendAbortSessionAnswer(SWmAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  public void sendDiameterAARequest(SWmDiameterAARequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_AAR, request, null));
+  }
+
+  @Override
+  public void sendAbortSessionAnswer(SWmAbortSessionAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     this.handleEvent(new Event(Event.Type.SEND_ASA, null, answer));
   }
 
@@ -606,6 +588,14 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       listener.doDiameterEAPAnswer(this, request, answer);
     } catch (Exception e) {
       logger.debug("Failure delivering DEA", e);
+    }
+  }
+
+  protected void deliverDiameterAAAnswer(SWmDiameterAARequest request, SWmDiameterAAAnswer answer) {
+    try {
+      listener.doDiameterAAAnswer(this, request, answer);
+    } catch (Exception e) {
+      logger.warn("Failure delivering AAA", e);
     }
   }
 
@@ -721,15 +711,16 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       try {
         switch (request.getCommandCode()) {
           case SWmDiameterEAPAnswer.code:
-            final SWmDiameterEAPRequest _DERequest = factory.createDiameterEAPRequest(request);
-            final SWmDiameterEAPAnswer _DEAnswer = factory.createDiameterEAPAnswer(answer);
-            handleEvent(new Event(false, _DERequest, _DEAnswer));
+            final SWmDiameterEAPRequest myDERequest = factory.createDiameterEAPRequest(request);
+            final SWmDiameterEAPAnswer myDEAnswer = factory.createDiameterEAPAnswer(answer);
+            handleEvent(new Event(false, myDERequest, myDEAnswer));
             break;
-          //case RxAAAnswer.code:
-          //final RxAARequest myAARequest = factory.createAARequest(request);
-          //final RxAAAnswer myAAAnswer = factory.createAAAnswer(answer);
-          //handleEvent(new org.jdiameter.client.impl.app.rx.Event(false, myAARequest, myAAAnswer));
-          //break;
+
+          case SWmDiameterAAAnswer.code:
+            final SWmDiameterAARequest myAARequest = factory.createDiameterAARequest(request);
+            final SWmDiameterAAAnswer myAAAnswer = factory.createDiameterAAAnswer(answer);
+            handleEvent(new Event(false, myAARequest, myAAAnswer));
+            break;
           //case RxSessionTermAnswer.code:
           //final RxSessionTermRequest mySTRequest = factory.createSessionTermRequest(request);
           //final RxSessionTermAnswer mySTAnswer = factory.createSessionTermAnswer(answer);

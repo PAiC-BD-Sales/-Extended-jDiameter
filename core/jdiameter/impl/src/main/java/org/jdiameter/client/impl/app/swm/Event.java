@@ -6,6 +6,8 @@ import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
+import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
+import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 
@@ -13,6 +15,7 @@ public class Event implements StateEvent {
 
   public enum Type {
     SEND_DER, RECEIVE_DEA,
+    SEND_AAR, RECEIVE_AAA,
     SEND_ASA, RECEIVE_ASR,
     SEND_EVENT_REQUEST, RECEIVE_EVENT_ANSWER
   }
@@ -37,16 +40,16 @@ public class Event implements StateEvent {
         case SWmDiameterEAPRequest.code:
           type = Type.SEND_DER;
           break;
+
         case SWmAbortSessionRequest.code:
           type = Type.RECEIVE_ASR;
           break;
-        //case RxReAuthRequest.code:
-        //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_RAR;
-        //break;
-        //case RxAbortSessionRequest.code:
-        //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_ASR;
-        //break;
-        case 5:  //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does Rx do event?
+
+        case SWmDiameterAARequest.code:
+          type = Type.SEND_AAR;
+          break;
+
+        case 5:
           type = Type.SEND_EVENT_REQUEST;
           break;
         default:
@@ -57,19 +60,16 @@ public class Event implements StateEvent {
         case SWmDiameterEAPAnswer.code:
           type = Type.RECEIVE_DEA;
           break;
+
         case SWmAbortSessionAnswer.code:
           type = Type.SEND_ASA;
           break;
 
-                    /*
-                    case RxReAuthAnswer.code:
-                    type = org.jdiameter.client.impl.app.rx.Event.Type.SEND_RAA;
-                    break;
-                case RxAbortSessionAnswer.code:
-                    type = org.jdiameter.client.impl.app.rx.Event.Type.SEND_ASA;
+        case SWmDiameterAAAnswer.code:
+          type = Type.RECEIVE_AAA;
+          break;
 
-                     */
-        case 6: //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does Rx do event?
+        case 6:
           type = Type.RECEIVE_EVENT_ANSWER;
           break;
         default:

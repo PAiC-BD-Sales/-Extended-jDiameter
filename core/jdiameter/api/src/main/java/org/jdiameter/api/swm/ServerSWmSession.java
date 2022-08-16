@@ -24,7 +24,7 @@ public interface ServerSWmSession extends AppSession, StateMachine {
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
 
   void sendDiameterAAAnswer(SWmDiameterAAAnswer answer)
-          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
 
   void sendAbortSessionRequest(SWmAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;

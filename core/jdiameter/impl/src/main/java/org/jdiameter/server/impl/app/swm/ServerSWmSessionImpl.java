@@ -23,6 +23,8 @@ import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 import org.jdiameter.client.api.ISessionFactory;
 import org.jdiameter.common.api.app.IAppSessionState;
 import org.jdiameter.common.api.app.swm.ISWmMessageFactory;
@@ -132,15 +134,12 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               dispatchEvent(localEvent.getAnswer());
               break;
             case RECEIVE_AAR:
-              listener.doDiameterAARequest(this, (SWmDiameterAARequest) localEvent.getRequest());
-              break;
-
             case RECEIVE_EVENT_REQUEST:
               // Current State: IDLE
               // Event: AA event request received and successfully processed
               // Action: Send AA event answer
               // New State: IDLE
-              //listener.doAARequest(this, (RxAARequest) localEvent.getRequest());
+              listener.doDiameterAARequest(this, (SWmDiameterAARequest) localEvent.getRequest());
               break;
 
             case SEND_EVENT_ANSWER:
@@ -251,16 +250,14 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               break;
 
             case RECEIVE_RAA:
-              //listener.doReAuthAnswer(this, (RxReAuthRequest) localEvent.getRequest(), (RxReAuthAnswer) localEvent.getAnswer());
+              listener.doReAuthAnswer(this, (SWmReAuthRequest) localEvent.getRequest(), (SWmReAuthAnswer) localEvent.getAnswer());
               break;
             case SEND_RAR:
-              //dispatchEvent(localEvent.getRequest());
+            case SEND_ASR:
+              dispatchEvent(localEvent.getRequest());
               break;
             case RECEIVE_ASA:
               listener.doAbortSessionAnswer(this, (SWmAbortSessionRequest) localEvent.getRequest(), (SWmAbortSessionAnswer) localEvent.getAnswer());
-              break;
-            case SEND_ASR:
-              dispatchEvent(localEvent.getRequest());
               break;
           } //end switch eventtype
           break;
@@ -298,6 +295,12 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
   public void sendAbortSessionRequest(SWmAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     send(Event.Type.SEND_ASR, request, null);
+  }
+
+  @Override
+  public void sendReAuthRequest(SWmReAuthRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    send(Event.Type.SEND_RAR, request, null);
   }
 
   protected void send(Event.Type type, AppRequestEvent request, AppAnswerEvent answer)
@@ -425,6 +428,7 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
           case SWmDiameterAARequest.code:
             handleEvent(new Event(true, factory.createDiameterAARequest(request), null));
             break;
+
                         /*
                     case RxSessionTermRequest.code:
                         handleEvent(new org.jdiameter.server.impl.app.rx.Event(true, factory.createSessionTermRequest(request), null));
@@ -453,13 +457,12 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
         // FIXME: baranowb: add message validation here!!!
         // We handle CCR, STR, ACR, ASR other go into extension
         switch (request.getCommandCode()) {
-                    /*
-                    case RxReAuthRequest.code:
-                        handleEvent(new org.jdiameter.server.impl.app.rx.Event(org.jdiameter.server.impl.app.rx.Event.Type.RECEIVE_RAA,
-                        factory.createReAuthRequest(request), factory.createReAuthAnswer(answer)));
-                        break;
 
-                     */
+          case SWmReAuthRequest.code:
+            handleEvent(new Event(Event.Type.RECEIVE_RAA,
+                    factory.createReAuthRequest(request), factory.createReAuthAnswer(answer)));
+            break;
+
           case SWmAbortSessionRequest.code:
             handleEvent(new Event(Event.Type.RECEIVE_ASA, factory.createAbortSessionRequest(request), factory.createAbortSessionAnswer(answer)));
             break;

@@ -24,6 +24,8 @@ import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 import org.jdiameter.client.api.IContainer;
 import org.jdiameter.client.api.IMessage;
 import org.jdiameter.client.api.ISessionFactory;
@@ -382,9 +384,11 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               // New State: PENDING_AAR
               eventQueue.add(localEvent);
               break;
+               */
             case RECEIVE_RAR:
-              deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
+              deliverReAuthRequest((SWmReAuthRequest) localEvent.getRequest());
               break;
+
             case SEND_RAA:
               // Current State: PENDING_U
               // Event: RAR received
@@ -396,9 +400,6 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
                 handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
               }
               break;
-
-               */
-
 
             case RECEIVE_ASR:
               deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
@@ -490,20 +491,18 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
                */
 
 
-            /*
             case RECEIVE_RAR:
-              deliverReAuthRequest((RxReAuthRequest) localEvent.getRequest());
+              deliverReAuthRequest((SWmReAuthRequest) localEvent.getRequest());
               break;
+
             case SEND_RAA:
+            case SEND_ASA:
               try {
                 dispatchEvent(localEvent.getAnswer());
               } catch (Exception e) {
                 handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
               }
               break;
-
-
-             */
 
             case SEND_DER:
               try {
@@ -519,13 +518,6 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
 
             case RECEIVE_ASR:
               deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
-              break;
-            case SEND_ASA:
-              try {
-                dispatchEvent(localEvent.getAnswer());
-              } catch (Exception e) {
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
               break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -575,6 +567,12 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
     this.handleEvent(new Event(Event.Type.SEND_ASA, null, answer));
   }
 
+  @Override
+  public void sendReAuthAnswer(SWmReAuthAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_RAA, null, answer));
+  }
+
   protected void deliverAbortSessionRequest(SWmAbortSessionRequest request) {
     try {
       listener.doAbortSessionRequest(this, request);
@@ -596,6 +594,14 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       listener.doDiameterAAAnswer(this, request, answer);
     } catch (Exception e) {
       logger.warn("Failure delivering AAA", e);
+    }
+  }
+
+  protected void deliverReAuthRequest(SWmReAuthRequest request) {
+    try {
+      listener.doReAuthRequest(this, request);
+    } catch (Exception e) {
+      logger.debug("Failure delivering RAR", e);
     }
   }
 
@@ -684,9 +690,9 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
     public void run() {
       try {
         switch (request.getCommandCode()) {
-          //case RxReAuthRequest.code:
-          //handleEvent(new org.jdiameter.client.impl.app.rx.Event(org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_RAR, factory.createReAuthRequest(request), null));
-          //break;
+          case SWmReAuthRequest.code:
+            handleEvent(new Event(Event.Type.RECEIVE_RAR, factory.createReAuthRequest(request), null));
+            break;
           case SWmAbortSessionRequest.code:
             handleEvent(new Event(Event.Type.RECEIVE_ASR, factory.createAbortSessionRequest(request), null));
             break;

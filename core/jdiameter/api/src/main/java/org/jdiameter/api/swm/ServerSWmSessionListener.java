@@ -11,6 +11,8 @@ import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 
 public interface ServerSWmSessionListener {
   void doDiameterEAPRequest(ServerSWmSession session, SWmDiameterEAPRequest request)
@@ -20,6 +22,9 @@ public interface ServerSWmSessionListener {
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
   void doAbortSessionAnswer(ServerSWmSession session, SWmAbortSessionRequest request, SWmAbortSessionAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+
+  void doReAuthAnswer(ServerSWmSession session, SWmReAuthRequest request, SWmReAuthAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
   void doOtherEvent(AppSession session, AppRequestEvent request, AppAnswerEvent answer)

@@ -9,6 +9,8 @@ import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmAbortSessionRequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 
 /**
  * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
@@ -47,9 +49,9 @@ public class Event implements StateEvent {
         case SWmAbortSessionRequest.code:
           type = Type.SEND_ASR;
           break;
-        //case RxReAuthRequest.code:
-        //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_RAR;
-        //break;
+        case SWmReAuthRequest.code:
+          type = Type.SEND_RAR;
+          break;
         //case RxAbortSessionRequest.code:
         //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_ASR;
         //break;
@@ -67,11 +69,11 @@ public class Event implements StateEvent {
         case SWmAbortSessionAnswer.code:
           type = Type.RECEIVE_ASA;
           break;
+        case SWmReAuthAnswer.code:
+          type = Type.RECEIVE_RAA;
+          break;
 
                     /*
-                    case RxReAuthAnswer.code:
-                    type = org.jdiameter.client.impl.app.rx.Event.Type.SEND_RAA;
-                    break;
                 case RxAbortSessionAnswer.code:
                     type = org.jdiameter.client.impl.app.rx.Event.Type.SEND_ASA;
 

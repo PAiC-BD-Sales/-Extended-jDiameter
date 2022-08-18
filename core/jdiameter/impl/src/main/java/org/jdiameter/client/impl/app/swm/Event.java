@@ -10,6 +10,8 @@ import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 
 public class Event implements StateEvent {
 
@@ -17,6 +19,7 @@ public class Event implements StateEvent {
     SEND_DER, RECEIVE_DEA,
     SEND_AAR, RECEIVE_AAA,
     SEND_ASA, RECEIVE_ASR,
+    SEND_RAA, RECEIVE_RAR,
     SEND_EVENT_REQUEST, RECEIVE_EVENT_ANSWER
   }
 
@@ -49,6 +52,10 @@ public class Event implements StateEvent {
           type = Type.SEND_AAR;
           break;
 
+        case SWmReAuthRequest.code:
+          type = Type.RECEIVE_RAR;
+          break;
+
         case 5:
           type = Type.SEND_EVENT_REQUEST;
           break;
@@ -67,6 +74,10 @@ public class Event implements StateEvent {
 
         case SWmDiameterAAAnswer.code:
           type = Type.RECEIVE_AAA;
+          break;
+
+        case SWmReAuthAnswer.code:
+          type = Type.SEND_RAA;
           break;
 
         case 6:

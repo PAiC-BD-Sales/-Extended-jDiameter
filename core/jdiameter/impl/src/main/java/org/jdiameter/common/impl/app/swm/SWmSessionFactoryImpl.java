@@ -23,6 +23,8 @@ import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 import org.jdiameter.client.api.ISessionFactory;
 import org.jdiameter.client.impl.app.swm.ClientSWmSessionImpl;
 import org.jdiameter.client.impl.app.swm.IClientSWmSessionData;
@@ -105,6 +107,12 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
   }
 
   @Override
+  public void doReAuthRequest(ClientSWmSession session, SWmReAuthRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
   public void doDiameterEAPRequest(ServerSWmSession session, SWmDiameterEAPRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
@@ -118,6 +126,12 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
 
   @Override
   public void doAbortSessionAnswer(ServerSWmSession session, SWmAbortSessionRequest request, SWmAbortSessionAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
+  public void doReAuthAnswer(ServerSWmSession session, SWmReAuthRequest request, SWmReAuthAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
@@ -158,6 +172,16 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
   @Override
   public SWmDiameterEAPAnswer createDiameterEAPAnswer(Answer answer) {
     return new SWmDiameterEAPAnswerImpl(answer);
+  }
+
+  @Override
+  public SWmReAuthRequest createReAuthRequest(Request request) {
+    return new SWmReAuthRequestImpl(request);
+  }
+
+  @Override
+  public SWmReAuthAnswer createReAuthAnswer(Answer answer) {
+    return new SWmReAuthAnswerImpl(answer);
   }
 
   @Override

@@ -8,6 +8,8 @@ import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
+import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmReAuthRequest;
 
 
 /**
@@ -28,6 +30,10 @@ public interface ISWmMessageFactory {
   SWmDiameterEAPRequest createDiameterEAPRequest(Request request);
 
   SWmDiameterEAPAnswer createDiameterEAPAnswer(Answer answer);
+
+  SWmReAuthRequest createReAuthRequest(Request request);
+
+  SWmReAuthAnswer createReAuthAnswer(Answer answer);
 
   long[] getApplicationIds();
 }

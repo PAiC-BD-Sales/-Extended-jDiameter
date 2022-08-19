@@ -65,10 +65,12 @@ import org.jdiameter.common.api.app.ro.IRoSessionData;
 import org.jdiameter.common.api.app.rx.IRxSessionData;
 import org.jdiameter.common.api.app.s13.IS13SessionData;
 import org.jdiameter.common.api.app.sh.IShSessionData;
+import org.jdiameter.common.api.app.zh.IZhSessionData;
 import org.jdiameter.common.api.data.ISessionDatasource;
 import org.jdiameter.common.impl.data.LocalDataSource;
 import org.jdiameter.common.api.app.slh.ISLhSessionData;
 import org.jdiameter.common.api.app.slg.ISLgSessionData;
+import org.mobicents.diameter.impl.ha.common.zh.ZhReplicatedSessionDataFactory;
 import org.restcomm.cache.FqnWrapper;
 import org.restcomm.cache.MobicentsCache;
 import org.restcomm.cluster.DataRemovalListener;
@@ -154,7 +156,7 @@ public class ReplicatedSessionDatasource implements ISessionDatasource, DataRemo
     appSessionDataFactories.put(IS13SessionData.class, new S13ReplicatedSessionDataFactory(this));
     appSessionDataFactories.put(ISLhSessionData.class, new SLhReplicatedSessionDataFactory(this));
     appSessionDataFactories.put(ISLgSessionData.class, new SLgReplicatedSessionDataFactory(this));
-
+    appSessionDataFactories.put(IZhSessionData.class, new ZhReplicatedSessionDataFactory(this));
   }
 
   @Override

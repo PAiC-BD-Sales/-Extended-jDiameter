@@ -6,7 +6,9 @@ import org.jdiameter.api.zh.ServerZhSession;
 import org.jdiameter.common.api.app.IAppSessionDataFactory;
 import org.jdiameter.common.api.app.zh.IZhSessionData;
 import org.jdiameter.common.api.data.ISessionDatasource;
+import org.mobicents.diameter.impl.ha.client.zh.ClientZhSessionDataReplicatedImpl;
 import org.mobicents.diameter.impl.ha.data.ReplicatedSessionDatasource;
+import org.mobicents.diameter.impl.ha.server.zh.ServerZhSessionDataReplicatedImpl;
 import org.restcomm.cluster.MobicentsCluster;
 
 /**
@@ -28,9 +30,13 @@ public class ZhReplicatedSessionDataFactory implements IAppSessionDataFactory<IZ
   @Override
   public IZhSessionData getAppSessionData(Class<? extends AppSession> clazz, String sessionId) {
     if (clazz.equals(ClientZhSession.class)) {
-
+      ClientZhSessionDataReplicatedImpl data = new ClientZhSessionDataReplicatedImpl(sessionId, this.mobicentsCluster,
+              this.replicatedSessionDataSource.getContainer());
+      return data;
     } else if (clazz.equals(ServerZhSession.class)) {
-
+      ServerZhSessionDataReplicatedImpl data = new ServerZhSessionDataReplicatedImpl(sessionId, this.mobicentsCluster,
+              this.replicatedSessionDataSource.getContainer());
+      return data;
     }
     throw new IllegalArgumentException();
   }

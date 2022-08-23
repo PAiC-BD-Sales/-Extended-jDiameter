@@ -14,7 +14,10 @@ import org.jdiameter.api.zh.ClientZhSession;
 import org.jdiameter.api.zh.ClientZhSessionListener;
 import org.jdiameter.api.zh.events.MultimediaAuthRequest;
 import org.jdiameter.client.api.ISessionFactory;
+import org.jdiameter.client.impl.app.slh.SLhClientSessionImpl;
 import org.jdiameter.common.api.app.zh.IZhMessageFactory;
+import org.jdiameter.common.api.app.zh.ZhSessionState;
+import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.jdiameter.common.impl.app.zh.ZhSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,10 @@ public class ZhClientSessionImpl extends ZhSession
 
   @Override
   public Answer processRequest(Request request) {
+    RequestDelivery rd = new RequestDelivery();
+    rd.session = this;
+    rd.request = request;
+    super.scheduler.execute(rd);
     return null;
   }
   @Override
@@ -73,7 +80,7 @@ public class ZhClientSessionImpl extends ZhSession
   }
   @Override
   public <E> E getState(Class<E> stateType) {
-    return null;
+    return stateType == ZhSessionState.class ? (E) sessionData.getZhSessionState() : null;
   }
   @Override
   public void sendMultimediaAuthRequest(MultimediaAuthRequest request)
@@ -81,5 +88,29 @@ public class ZhClientSessionImpl extends ZhSession
   }
   @Override
   public void onTimer(String timerName) {
+  }
+
+  private class RequestDelivery implements Runnable {
+    ClientZhSession session;
+    Request request;
+    public void run() {
+      try {
+        switch (request.getCommandCode()) {
+          default:
+            listener.doOtherEvent(session, new AppRequestEventImpl(request), null);
+            break;
+        }
+      } catch (Exception e) {
+        logger.debug("Failed to process request message", e);
+      }
+    }
+  }
+  private class AnswerDelivery implements Runnable {
+    ClientZhSession session;
+    Answer answer;
+    Request request;
+    public void run() {
+
+    }
   }
 }

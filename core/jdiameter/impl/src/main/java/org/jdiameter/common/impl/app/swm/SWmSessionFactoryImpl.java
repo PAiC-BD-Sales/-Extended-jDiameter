@@ -25,6 +25,8 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.api.swm.events.SWmReAuthAnswer;
 import org.jdiameter.api.swm.events.SWmReAuthRequest;
+import org.jdiameter.api.swm.events.SWmSessionTermAnswer;
+import org.jdiameter.api.swm.events.SWmSessionTermRequest;
 import org.jdiameter.client.api.ISessionFactory;
 import org.jdiameter.client.impl.app.swm.ClientSWmSessionImpl;
 import org.jdiameter.client.impl.app.swm.IClientSWmSessionData;
@@ -113,6 +115,12 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
   }
 
   @Override
+  public void doSessionTermAnswer(ClientSWmSession session, SWmSessionTermRequest request, SWmSessionTermAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
   public void doDiameterEAPRequest(ServerSWmSession session, SWmDiameterEAPRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
@@ -132,6 +140,12 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
 
   @Override
   public void doReAuthAnswer(ServerSWmSession session, SWmReAuthRequest request, SWmReAuthAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
+  public void doSessionTermRequest(ServerSWmSession session, SWmSessionTermRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
 
   }
@@ -182,6 +196,16 @@ public class SWmSessionFactoryImpl implements ISWmSessionFactory, ClientSWmSessi
   @Override
   public SWmReAuthAnswer createReAuthAnswer(Answer answer) {
     return new SWmReAuthAnswerImpl(answer);
+  }
+
+  @Override
+  public SWmSessionTermRequest createSessionTermRequest(Request request) {
+    return new SWmSessionTermRequestImpl(request);
+  }
+
+  @Override
+  public SWmSessionTermAnswer createSessionTermAnswer(Answer answer) {
+    return new SWmSessionTermAnswerImpl(answer);
   }
 
   @Override

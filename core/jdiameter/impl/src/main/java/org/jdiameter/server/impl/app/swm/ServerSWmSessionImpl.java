@@ -25,6 +25,8 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.api.swm.events.SWmReAuthAnswer;
 import org.jdiameter.api.swm.events.SWmReAuthRequest;
+import org.jdiameter.api.swm.events.SWmSessionTermAnswer;
+import org.jdiameter.api.swm.events.SWmSessionTermRequest;
 import org.jdiameter.client.api.ISessionFactory;
 import org.jdiameter.common.api.app.IAppSessionState;
 import org.jdiameter.common.api.app.swm.ISWmMessageFactory;
@@ -162,7 +164,8 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
                 // New State: OPEN
                 if (isSuccess(resultCode)) {
                   newState = ServerSWmSessionState.OPEN;
-                } // Current State: IDLE
+                }
+                // Current State: IDLE
                 // Event: AA initial request received but not successfully processed
                 // Action: Send AA initial answer with Result-Code != SUCCESS
                 // New State: IDLE
@@ -194,10 +197,10 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
               break;
 
             case SEND_AAA:
-              SWmDiameterAAAnswer answer = (SWmDiameterAAAnswer) localEvent.getAnswer();
+              SWmDiameterAAAnswer diameterAAAnswer = (SWmDiameterAAAnswer) localEvent.getAnswer();
               try {
-                if (isSuccess(answer.getResultCodeAvp().getUnsigned32())) {
-                  logger.info("Sending AAA with result code " + answer.getResultCodeAvp().getUnsigned32());
+                if (isSuccess(diameterAAAnswer.getResultCodeAvp().getUnsigned32())) {
+                  logger.info("Sending AAA with result code " + diameterAAAnswer.getResultCodeAvp().getUnsigned32());
                   // Current State: OPEN
                   // Event: AA update request received and successfully processed
                   // Action: Send AA update answer
@@ -217,36 +220,32 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
 
               break;
             case RECEIVE_STR:
-              // listener.doSessionTermRequest(this, (RxSessionTermRequest) localEvent.getRequest());
+              listener.doSessionTermRequest(this, (SWmSessionTermRequest) localEvent.getRequest());
               break;
             case SEND_STA:
-                            /*
-                            RxSessionTermAnswer STA = (RxSessionTermAnswer) localEvent.getAnswer();
-                            try {
-                                if (isSuccess(STA.getResultCodeAvp().getUnsigned32())) {
-                                    // Current State: OPEN
-                                    // Event: AA update request received and successfully processed
-                                    // Action: Send AA update answer
-                                    // New State: OPEN
-                                }
-                                else {
-                                    // Current State: OPEN
-                                    // Event: AA update request received but not successfully processed
-                                    // Action: Send AA update answer with Result-Code != SUCCESS
-                                    // New State: IDLE
-                                    // It's a failure, we wait for Tcc to fire -- FIXME: Alexandre: Should we?
-                                    newState = ServerRxSessionState.IDLE;
-                                }
-                            }
-                            catch (AvpDataException e) {
-                                throw new InternalException(e);
-                            }
-                            finally {
-                                newState = ServerRxSessionState.IDLE;
-                            }
-                            dispatchEvent(localEvent.getAnswer());
+              SWmSessionTermAnswer sessionTermAnswer = (SWmSessionTermAnswer) localEvent.getAnswer();
+              try {
+                if (isSuccess(sessionTermAnswer.getResultCodeAvp().getUnsigned32())) {
+                  logger.info("Sending STA with result code " + sessionTermAnswer.getResultCodeAvp().getUnsigned32());
+                  // Current State: OPEN
+                  // Event: AA update request received and successfully processed
+                  // Action: Send AA update answer
+                  // New State: OPEN
+                } else {
+                  // Current State: OPEN
+                  // Event: AA update request received but not successfully processed
+                  // Action: Send AA update answer with Result-Code != SUCCESS
+                  // New State: IDLE
+                  // It's a failure, we wait for Tcc to fire -- FIXME: Alexandre: Should we?
+                  newState = ServerSWmSessionState.IDLE;
+                }
+              } catch (AvpDataException e) {
+                throw new InternalException(e);
+              } finally {
+                newState = ServerSWmSessionState.IDLE;
+              }
+              dispatchEvent(localEvent.getAnswer());
 
-                             */
               break;
 
             case RECEIVE_RAA:
@@ -287,6 +286,12 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
 
   @Override
   public void sendDiameterAAAnswer(SWmDiameterAAAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+    handleEvent(new Event(false, null, answer));
+  }
+
+  @Override
+  public void sendSessionTermAnswer(SWmSessionTermAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
     handleEvent(new Event(false, null, answer));
   }
@@ -429,12 +434,10 @@ public class ServerSWmSessionImpl extends AppSWmSessionImpl implements ServerSWm
             handleEvent(new Event(true, factory.createDiameterAARequest(request), null));
             break;
 
-                        /*
-                    case RxSessionTermRequest.code:
-                        handleEvent(new org.jdiameter.server.impl.app.rx.Event(true, factory.createSessionTermRequest(request), null));
-                        break;
+          case SWmSessionTermRequest.code:
+            handleEvent(new Event(true, factory.createSessionTermRequest(request), null));
+            break;
 
-                     */
           default:
             listener.doOtherEvent(session, new AppRequestEventImpl(request), null);
             break;

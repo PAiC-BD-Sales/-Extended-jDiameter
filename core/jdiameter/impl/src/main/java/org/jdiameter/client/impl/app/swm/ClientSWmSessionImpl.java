@@ -26,6 +26,8 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.api.swm.events.SWmReAuthAnswer;
 import org.jdiameter.api.swm.events.SWmReAuthRequest;
+import org.jdiameter.api.swm.events.SWmSessionTermAnswer;
+import org.jdiameter.api.swm.events.SWmSessionTermRequest;
 import org.jdiameter.client.api.IContainer;
 import org.jdiameter.client.api.IMessage;
 import org.jdiameter.client.api.ISessionFactory;
@@ -269,47 +271,40 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
           break;
 
         case PENDING_EVENT:
-          switch (eventType) {
-            case RECEIVE_EVENT_ANSWER:
-              AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
-              try {
-                long resultCode = answer.getResultCodeAvp().getUnsigned32();
-                if (isSuccess(resultCode)) {
-                  // Current State: PENDING_EVENT
-                  // Event: Successful AA event answer received
-                  // Action: Grant service to end user
-                  // New State: IDLE
-                  setState(ClientSWmSessionState.IDLE, false);
-                }
-                if (isProvisional(resultCode) || isFailure(resultCode)) {
-                  handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
-                }
-                deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
-              } catch (AvpDataException e) {
-                logger.debug("Failure handling received answer event", e);
+          if (eventType == Event.Type.RECEIVE_EVENT_ANSWER) {
+            AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
+            try {
+              long resultCode = answer.getResultCodeAvp().getUnsigned32();
+              if (isSuccess(resultCode)) {
+                // Current State: PENDING_EVENT
+                // Event: Successful AA event answer received
+                // Action: Grant service to end user
+                // New State: IDLE
                 setState(ClientSWmSessionState.IDLE, false);
               }
-              break;
-            default:
-              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-              break;
+              if (isProvisional(resultCode) || isFailure(resultCode)) {
+                handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
+              }
+              deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
+            } catch (AvpDataException e) {
+              logger.debug("Failure handling received answer event", e);
+              setState(ClientSWmSessionState.IDLE, false);
+            }
+          } else {
+            logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
           }
           break;
 
         case PENDING_BUFFERED:
-          switch (eventType) {
-            case RECEIVE_EVENT_ANSWER:
-              // Current State: PENDING_B
-              // Event: Successful CC answer received
-              // Action: Delete request
-              // New State: IDLE
-              setState(ClientSWmSessionState.IDLE, false);
-              buffer = null;
-              deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
-              break;
-            default:
-              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-              break;
+          if (eventType == Event.Type.RECEIVE_EVENT_ANSWER) {// Current State: PENDING_B
+            // Event: Successful CC answer received
+            // Action: Delete request
+            // New State: IDLE
+            setState(ClientSWmSessionState.IDLE, false);
+            buffer = null;
+            deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
+          } else {
+            logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
           }
           break;
 
@@ -368,11 +363,7 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               deliverDiameterAAAnswer((SWmDiameterAARequest) localEvent.getRequest(), (SWmDiameterAAAnswer) localEvent.getAnswer());
               break;
             case SEND_AAR:
-              eventQueue.add(localEvent);
-              break;
-
-              /*
-              case SEND_STR:
+            case SEND_STR:
               // Current State: PENDING_AAR
               // Event: User service terminated
               // Action: Queue termination event
@@ -384,12 +375,12 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               // New State: PENDING_AAR
               eventQueue.add(localEvent);
               break;
-               */
             case RECEIVE_RAR:
               deliverReAuthRequest((SWmReAuthRequest) localEvent.getRequest());
               break;
 
             case SEND_RAA:
+            case SEND_ASA:
               // Current State: PENDING_U
               // Event: RAR received
               // Action: Send RAA
@@ -404,13 +395,6 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
             case RECEIVE_ASR:
               deliverAbortSessionRequest((SWmAbortSessionRequest) localEvent.getRequest());
               break;
-            case SEND_ASA:
-              try {
-                dispatchEvent(localEvent.getAnswer());
-              } catch (Exception e) {
-                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
-              }
-              break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
               break;
@@ -421,21 +405,20 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
         case PENDING_STR:
           AppAnswerEvent stanswer = (AppAnswerEvent) localEvent.getAnswer();
           switch (eventType) {
-            /*
             case RECEIVE_STA:
               long resultCode = stanswer.getResultCodeAvp().getUnsigned32();
               if (isSuccess(resultCode)) {
                 // Current State: PENDING_STR
                 // Event: Successful ST answer received
                 // New State: IDLE
-                setState(ClientRxSessionState.IDLE, false);
+                setState(ClientSWmSessionState.IDLE, false);
               } else if (isProvisional(resultCode) || isFailure(resultCode)) {
                 handleFailureMessage(stanswer, (AppRequestEvent) localEvent.getRequest(), eventType);
               }
-              deliverRxSessionTermAnswer((RxSessionTermRequest) localEvent.getRequest(), (RxSessionTermAnswer) localEvent.getAnswer());
+              deliverSessionTermAnswer((SWmSessionTermRequest) localEvent.getRequest(), (SWmSessionTermAnswer) localEvent.getAnswer());
               break;
 
-             */
+
             case SEND_AAR:
               try {
                 // Current State: PENDING_STR
@@ -473,22 +456,18 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
               break;
 
 
-              /*
             case SEND_STR:
               // Current State: OPEN
               // Event: Session Termination event request received to be sent
               // Action: Terminate end user's service, send STR termination request
               // New State: PENDING STR
-
-              setState(ClientRxSessionState.PENDING_STR);
+              setState(ClientSWmSessionState.PENDING_STR);
               try {
                 dispatchEvent(localEvent.getRequest());
               } catch (Exception e) {
                 handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
               }
               break;
-
-               */
 
 
             case RECEIVE_RAR:
@@ -552,13 +531,18 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
   @Override
   public void sendDiameterEAPRequest(SWmDiameterEAPRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-    this.handleEvent(new Event(Event.Type.SEND_DER, request, null));
+    this.handleEvent(new Event(true, request, null));
   }
 
   @Override
   public void sendDiameterAARequest(SWmDiameterAARequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-    this.handleEvent(new Event(Event.Type.SEND_AAR, request, null));
+    this.handleEvent(new Event(true, request, null));
+  }
+
+  @Override
+  public void sendSessionTermRequest(SWmSessionTermRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(true, request, null));
   }
 
   @Override
@@ -572,6 +556,7 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     this.handleEvent(new Event(Event.Type.SEND_RAA, null, answer));
   }
+
 
   protected void deliverAbortSessionRequest(SWmAbortSessionRequest request) {
     try {
@@ -602,6 +587,14 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
       listener.doReAuthRequest(this, request);
     } catch (Exception e) {
       logger.debug("Failure delivering RAR", e);
+    }
+  }
+
+  protected void deliverSessionTermAnswer(SWmSessionTermRequest request, SWmSessionTermAnswer answer) {
+    try {
+      listener.doSessionTermAnswer(this, request, answer);
+    } catch (Exception e) {
+      logger.warn("Failure delivering STA", e);
     }
   }
 
@@ -727,11 +720,11 @@ public class ClientSWmSessionImpl extends AppSWmSessionImpl implements ClientSWm
             final SWmDiameterAAAnswer myAAAnswer = factory.createDiameterAAAnswer(answer);
             handleEvent(new Event(false, myAARequest, myAAAnswer));
             break;
-          //case RxSessionTermAnswer.code:
-          //final RxSessionTermRequest mySTRequest = factory.createSessionTermRequest(request);
-          //final RxSessionTermAnswer mySTAnswer = factory.createSessionTermAnswer(answer);
-          //handleEvent(new org.jdiameter.client.impl.app.rx.Event(false, mySTRequest, mySTAnswer));
-          //break;
+          case SWmSessionTermAnswer.code:
+            final SWmSessionTermRequest mySTRequest = factory.createSessionTermRequest(request);
+            final SWmSessionTermAnswer mySTAnswer = factory.createSessionTermAnswer(answer);
+            handleEvent(new Event(false, mySTRequest, mySTAnswer));
+            break;
           default:
             listener.doOtherEvent(session, new AppRequestEventImpl(request), new AppAnswerEventImpl(answer));
             break;

@@ -10,6 +10,7 @@ import org.jdiameter.api.swm.events.SWmAbortSessionAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.api.swm.events.SWmReAuthAnswer;
+import org.jdiameter.api.swm.events.SWmSessionTermRequest;
 
 
 /**
@@ -34,4 +35,6 @@ public interface ClientSWmSession extends AppSession, StateMachine {
   void sendReAuthAnswer(final SWmReAuthAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
+  void sendSessionTermRequest(final SWmSessionTermRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 }

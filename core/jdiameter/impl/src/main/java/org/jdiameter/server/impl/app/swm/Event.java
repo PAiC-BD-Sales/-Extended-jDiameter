@@ -11,6 +11,8 @@ import org.jdiameter.api.swm.events.SWmDiameterEAPAnswer;
 import org.jdiameter.api.swm.events.SWmDiameterEAPRequest;
 import org.jdiameter.api.swm.events.SWmReAuthAnswer;
 import org.jdiameter.api.swm.events.SWmReAuthRequest;
+import org.jdiameter.api.swm.events.SWmSessionTermAnswer;
+import org.jdiameter.api.swm.events.SWmSessionTermRequest;
 
 /**
  * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
@@ -52,9 +54,9 @@ public class Event implements StateEvent {
         case SWmReAuthRequest.code:
           type = Type.SEND_RAR;
           break;
-        //case RxAbortSessionRequest.code:
-        //type = org.jdiameter.client.impl.app.rx.Event.Type.RECEIVE_ASR;
-        //break;
+        case SWmSessionTermRequest.code:
+          type = Type.RECEIVE_STR;
+          break;
         case 5:  //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does Rx do event?
           type = Type.RECEIVE_EVENT_REQUEST;
           break;
@@ -72,12 +74,9 @@ public class Event implements StateEvent {
         case SWmReAuthAnswer.code:
           type = Type.RECEIVE_RAA;
           break;
-
-                    /*
-                case RxAbortSessionAnswer.code:
-                    type = org.jdiameter.client.impl.app.rx.Event.Type.SEND_ASA;
-
-                     */
+        case SWmSessionTermAnswer.code:
+          type = Type.SEND_STA;
+          break;
         case 6: //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does Rx do event?
           type = Type.SEND_EVENT_ANSWER;
           break;

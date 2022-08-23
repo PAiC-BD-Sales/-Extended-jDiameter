@@ -10,7 +10,7 @@ import org.jdiameter.api.app.StateEvent;
  */
 public class Event implements StateEvent {
   enum Type {
-    SEND_MESSAGE, TIMEOUT_EXPIRES, RECEIVE_MAR;
+    SEND_MESSAGE, TIMEOUT_EXPIRES, RECEIVE_MAR, RECEIVE_MAA;
   }
   AppEvent request;
   AppEvent answer;

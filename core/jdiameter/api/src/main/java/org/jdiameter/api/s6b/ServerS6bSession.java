@@ -6,6 +6,7 @@ import org.jdiameter.api.OverloadException;
 import org.jdiameter.api.RouteException;
 import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.app.StateMachine;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 
 /**
@@ -17,6 +18,9 @@ import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 public interface ServerS6bSession extends AppSession, StateMachine {
 
   void sendSessionTerminationAnswer(S6bSessionTerminationAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+
+  void sendDiameterEAPAnswer(S6bDiameterEAPAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
 }

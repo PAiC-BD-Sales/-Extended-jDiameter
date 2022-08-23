@@ -2,9 +2,12 @@ package org.jdiameter.common.impl.app.s6b;
 
 import org.jdiameter.api.Answer;
 import org.jdiameter.api.ApplicationId;
+import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
 import org.jdiameter.api.Message;
+import org.jdiameter.api.OverloadException;
 import org.jdiameter.api.Request;
+import org.jdiameter.api.RouteException;
 import org.jdiameter.api.SessionFactory;
 import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppRequestEvent;
@@ -14,6 +17,8 @@ import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.api.s6b.ClientS6bSessionListener;
 import org.jdiameter.api.s6b.ServerS6bSession;
 import org.jdiameter.api.s6b.ServerS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.client.api.ISessionFactory;
@@ -285,6 +290,16 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
   @Override
   public void doSessionTerminationAnswer(ClientS6bSession session, S6bSessionTerminationRequest request, S6bSessionTerminationAnswer answer)
           throws InternalException {
+  }
+
+  @Override
+  public void doDiameterEAPAnswer(ClientS6bSession session, S6bDiameterEAPRequest request, S6bDiameterEAPAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+  }
+
+  @Override
+  public void doDiameterEAPRequest(ServerS6bSession session, S6bDiameterEAPRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
   }
 
   @Override

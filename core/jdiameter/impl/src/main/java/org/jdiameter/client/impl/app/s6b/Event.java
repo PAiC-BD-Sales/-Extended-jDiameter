@@ -5,6 +5,7 @@ import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
 import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.StateEvent;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
@@ -64,9 +65,9 @@ public class Event implements StateEvent {
       }
     } else {
       switch (answer.getCommandCode()) {
-//        case RxAAAnswer.code:
-//          type = Type.RECEIVE_AAA;
-//          break;
+        case S6bDiameterEAPAnswer.code:
+          type = Type.RECEIVE_DEA;
+          break;
         case S6bSessionTerminationAnswer.code:
           type = Type.RECEIVE_STA;
           break;

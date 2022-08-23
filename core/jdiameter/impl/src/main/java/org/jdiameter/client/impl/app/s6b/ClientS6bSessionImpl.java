@@ -18,6 +18,7 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.api.s6b.ClientS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.client.api.IContainer;
@@ -117,6 +118,11 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     } catch (AvpDataException e) {
       throw new InternalException(e);
     }
+  }
+
+  @Override
+  public void sendDiameterEAPRequest(S6bDiameterEAPRequest request) throws InternalException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_DER, request, null));
   }
 
   @Override
@@ -274,7 +280,12 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
           break;
         case OPEN:
           switch (eventType) {
-            case SEND_AAR:
+            case SEND_DER:
+              try {
+                dispatchEvent(localEvent.getRequest());
+              } catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
               break;
             case SEND_STR:
               // Current State: OPEN

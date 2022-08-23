@@ -5,6 +5,7 @@ import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
 import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.StateEvent;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 
@@ -18,6 +19,7 @@ public class Event implements StateEvent {
     SEND_STR, RECEIVE_STA,
     SEND_RAA, RECEIVE_RAR,
     SEND_ASA, RECEIVE_ASR,
+    SEND_DER, RECEIVE_DEA,
     SEND_EVENT_REQUEST, RECEIVE_EVENT_ANSWER;
   }
 
@@ -42,9 +44,9 @@ public class Event implements StateEvent {
 
     if (isRequest) {
       switch (request.getCommandCode()) {
-//        case RxAARequest.code:
-//          type = Type.SEND_AAR;
-//          break;
+        case S6bDiameterEAPRequest.code:
+          type = Type.SEND_DER;
+          break;
         case S6bSessionTerminationRequest.code:
           type = Type.SEND_STR;
           break;

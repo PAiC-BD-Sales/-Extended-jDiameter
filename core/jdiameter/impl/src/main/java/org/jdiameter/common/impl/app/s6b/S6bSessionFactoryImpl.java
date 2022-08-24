@@ -317,6 +317,16 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
     return new S6bSessionTerminationAnswerImpl(answer);
   }
 
+  @Override
+  public S6bDiameterEAPRequest createDiameterEAPRequest(Request request) {
+    return new S6bDiameterEAPRequestImpl(request);
+  }
+
+  @Override
+  public S6bDiameterEAPAnswer createDiameterEAPAnswer(Answer answer) {
+    return new S6bDiameterEAPAnswerImpl(answer);
+  }
+
   // Context Methods ----------------------------------------------------------
   @Override
   public void stateChanged(Enum oldState, Enum newState) {

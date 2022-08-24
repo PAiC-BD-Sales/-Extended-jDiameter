@@ -18,6 +18,7 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.api.s6b.ClientS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
@@ -529,6 +530,11 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
             final S6bSessionTerminationRequest mySTRequest = factory.createSessionTermRequest(request);
             final S6bSessionTerminationAnswer mySTAnswer = factory.createSessionTermAnswer(answer);
             handleEvent(new Event(false, mySTRequest, mySTAnswer));
+            break;
+          case S6bDiameterEAPAnswer.code:
+            final S6bDiameterEAPRequest _DERequest = factory.createDiameterEAPRequest(request);
+            final S6bDiameterEAPAnswer _DEAnswer = factory.createDiameterEAPAnswer(answer);
+            handleEvent(new Event(false, _DERequest, _DEAnswer));
             break;
           default:
             listener.doOtherEvent(session, new AppRequestEventImpl(request), new AppAnswerEventImpl(answer));

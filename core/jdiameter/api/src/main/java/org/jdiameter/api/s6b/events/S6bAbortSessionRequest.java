@@ -1,6 +1,6 @@
 package org.jdiameter.api.s6b.events;
 
-import org.jdiameter.api.app.AppAnswerEvent;
+import org.jdiameter.api.app.AppRequestEvent;
 
 
 /**
@@ -9,7 +9,7 @@ import org.jdiameter.api.app.AppAnswerEvent;
  *
  * @author <a href="mailto:enmanuelcalero61@gmail.com"> Enmanuel Calero </a>
  */
-public interface S6bAbortSessionRequest extends AppAnswerEvent {
+public interface S6bAbortSessionRequest extends AppRequestEvent {
 
   String _SHORT_NAME = "ASR";
   String _LONG_NAME = "Abort-Session-Request";

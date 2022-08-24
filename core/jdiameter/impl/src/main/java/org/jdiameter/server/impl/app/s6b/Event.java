@@ -4,6 +4,8 @@ import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
 import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.StateEvent;
+import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
+import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 
@@ -44,6 +46,9 @@ public class Event implements StateEvent {
         case S6bSessionTerminationRequest.code:
           type = Type.RECEIVE_STR;
           break;
+        case S6bAbortSessionRequest.code:
+          type = Event.Type.SEND_ASR;
+          break;
         case 5: //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does S6b do event?
           type = Type.RECEIVE_EVENT_REQUEST;
           break;
@@ -54,6 +59,9 @@ public class Event implements StateEvent {
       switch (answer.getCommandCode()) {
         case S6bSessionTerminationAnswer.code:
           type = Type.SEND_STA;
+          break;
+        case S6bAbortSessionAnswer.code:
+          type = Type.RECEIVE_ASA;
           break;
         case 6:  //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does S6b do event?
           type = Type.SEND_EVENT_ANSWER;

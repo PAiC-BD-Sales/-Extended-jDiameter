@@ -18,6 +18,8 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.api.s6b.ClientS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
+import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
@@ -124,6 +126,11 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
   @Override
   public void sendDiameterEAPRequest(S6bDiameterEAPRequest request) throws InternalException, OverloadException {
     this.handleEvent(new Event(Event.Type.SEND_DER, request, null));
+  }
+
+  @Override
+  public void sendAbortSessionAnswer(S6bAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_ASA, null, answer));
   }
 
   @Override
@@ -248,8 +255,15 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
             case SEND_RAA:
               break;
             case RECEIVE_ASR:
+              deliverS6bAbortSessionRequest((S6bAbortSessionRequest) localEvent.getRequest());
               break;
             case SEND_ASA:
+              try {
+                dispatchEvent(localEvent.getAnswer());
+              }
+              catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
               break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -306,8 +320,15 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
             case SEND_RAA:
               break;
             case RECEIVE_ASR:
+              deliverS6bAbortSessionRequest((S6bAbortSessionRequest) localEvent.getRequest());
               break;
             case SEND_ASA:
+              try {
+                dispatchEvent(localEvent.getAnswer());
+              }
+              catch (Exception e) {
+                handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
+              }
               break;
             default:
               logger.warn("Session Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -450,6 +471,15 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     }
   }
 
+  protected void deliverS6bAbortSessionRequest(S6bAbortSessionRequest request) {
+    try {
+      listener.doAbortSessionRequest(this, request);
+    }
+    catch (Exception e) {
+      logger.debug("Failure delivering ASR", e);
+    }
+  }
+
   protected void dispatchEvent(AppEvent event) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     session.send(event.getMessage(), this);
   }
@@ -506,6 +536,9 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     public void run() {
       try {
         switch (request.getCommandCode()) {
+          case S6bAbortSessionRequest.code:
+            handleEvent(new Event(Event.Type.RECEIVE_ASR, factory.createAbortSessionRequest(request), null));
+            break;
           default:
             listener.doOtherEvent(session, new AppRequestEventImpl(request), null);
             break;

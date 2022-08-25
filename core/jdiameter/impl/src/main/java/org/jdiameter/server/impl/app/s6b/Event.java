@@ -4,6 +4,8 @@ import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
 import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.StateEvent;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
@@ -15,6 +17,7 @@ import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 public class Event implements StateEvent {
 
   public enum Type {
+    SEND_DEA, RECEIVE_DER,
     SEND_AAA, RECEIVE_AAR,
     SEND_STA, RECEIVE_STR,
     SEND_RAR, RECEIVE_RAA,
@@ -43,6 +46,9 @@ public class Event implements StateEvent {
 
     if (isRequest) {
       switch (request.getCommandCode()) {
+        case S6bDiameterEAPRequest.code:
+          type = Type.RECEIVE_DER;
+          break;
         case S6bSessionTerminationRequest.code:
           type = Type.RECEIVE_STR;
           break;
@@ -57,6 +63,9 @@ public class Event implements StateEvent {
       }
     } else {
       switch (answer.getCommandCode()) {
+        case S6bDiameterEAPAnswer.code:
+          type = Type.SEND_DEA;
+          break;
         case S6bSessionTerminationAnswer.code:
           type = Type.SEND_STA;
           break;

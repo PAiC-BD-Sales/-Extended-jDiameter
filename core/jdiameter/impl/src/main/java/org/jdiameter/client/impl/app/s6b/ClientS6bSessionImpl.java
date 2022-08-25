@@ -113,7 +113,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     super.addStateChangeNotification(stLst);
   }
 
-
   @Override
   public void sendSessionTerminationRequest(S6bSessionTerminationRequest request) throws InternalException, OverloadException {
     try {
@@ -160,7 +159,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
       Event localEvent = (Event) event;
       Event.Type eventType = (Event.Type) localEvent.getType();
       switch (state) {
-
         case IDLE:
           switch (eventType) {
             case SEND_EVENT_REQUEST:
@@ -301,6 +299,9 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               } catch (Exception e) {
                 handleSendFailure(e, eventType, localEvent.getRequest().getMessage());
               }
+              break;
+            case RECEIVE_DEA:
+              deliverDiameterEAPAnswer((S6bDiameterEAPRequest) localEvent.getRequest(), (S6bDiameterEAPAnswer) localEvent.getAnswer());
               break;
             case SEND_STR:
               // Current State: OPEN
@@ -460,6 +461,14 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
           logger.error("Failure handling queued event", e);
         }
       }
+    }
+  }
+
+  protected void deliverDiameterEAPAnswer(S6bDiameterEAPRequest request, S6bDiameterEAPAnswer answer) {
+    try {
+      listener.doDiameterEAPAnswer(this, request, answer);
+    } catch (Exception e) {
+      logger.debug("Failure delivering DEA", e);
     }
   }
 

@@ -3,12 +3,10 @@ package org.jdiameter.server.impl.app.s6b;
 import org.jdiameter.api.Answer;
 import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.EventListener;
-import org.jdiameter.api.IllegalDiameterStateException;
 import org.jdiameter.api.InternalException;
 import org.jdiameter.api.NetworkReqListener;
 import org.jdiameter.api.OverloadException;
 import org.jdiameter.api.Request;
-import org.jdiameter.api.RouteException;
 import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
 import org.jdiameter.api.app.AppRequestEvent;
@@ -20,6 +18,7 @@ import org.jdiameter.api.s6b.ServerS6bSessionListener;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
+import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.client.api.ISessionFactory;
@@ -78,8 +77,8 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
   }
 
   @Override
-  public void sendDiameterEAPAnswer(S6bDiameterEAPAnswer answer) throws InternalException, IllegalDiameterStateException,
-          RouteException, OverloadException {
+  public void sendDiameterEAPAnswer(S6bDiameterEAPAnswer answer) throws InternalException, OverloadException {
+    handleEvent(new Event(false, null, answer));
   }
 
   @Override
@@ -116,15 +115,18 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
       switch (state) {
         case IDLE:
           switch (eventType) {
+            case RECEIVE_DER:
+              listener.doDiameterEAPRequest(this, (S6bDiameterEAPRequest) localEvent.getRequest());
+              break;
+            case SEND_DEA:
+              dispatchEvent(localEvent.getAnswer());
+              break;
             case RECEIVE_AAR:
               break;
-
             case RECEIVE_EVENT_REQUEST:
               break;
-
             case SEND_EVENT_ANSWER:
               break;
-
             case SEND_AAA:
               break;
             default:
@@ -135,9 +137,14 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
 
         case OPEN:
           switch (eventType) {
+            case RECEIVE_DER:
+              listener.doDiameterEAPRequest(this, (S6bDiameterEAPRequest) localEvent.getRequest());
+              break;
+            case SEND_DEA:
+              dispatchEvent(localEvent.getAnswer());
+              break;
             case RECEIVE_AAR:
               break;
-
             case SEND_AAA:
               break;
             case RECEIVE_STR:
@@ -166,7 +173,6 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
               }
               dispatchEvent(localEvent.getAnswer());
               break;
-
             case RECEIVE_RAA:
               break;
             case SEND_RAR:
@@ -204,7 +210,6 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
   @Override
   public Answer processRequest(Request request) {
     RequestDelivery rd = new RequestDelivery();
-    //rd.session = (ServerS6bSession) LocalDataSource.INSTANCE.getSession(request.getSessionId());
     rd.session = this;
     rd.request = request;
     super.scheduler.execute(rd);
@@ -316,6 +321,9 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
     public void run() {
       try {
         switch (request.getCommandCode()) {
+          case S6bDiameterEAPRequest.code:
+            handleEvent(new Event(true, factory.createDiameterEAPRequest(request), null));
+            break;
           case S6bSessionTerminationRequest.code:
             handleEvent(new Event(true, factory.createSessionTermRequest(request), null));
             break;

@@ -7,6 +7,8 @@ import org.jdiameter.api.RouteException;
 import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.AppSession;
+import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
+import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 
@@ -41,5 +43,8 @@ public interface ServerS6bSessionListener {
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
   void doDiameterEAPRequest(ServerS6bSession session, S6bDiameterEAPRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
+
+  void doAbortSessionAnswer(ServerS6bSession session, S6bAbortSessionRequest request, S6bAbortSessionAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 }

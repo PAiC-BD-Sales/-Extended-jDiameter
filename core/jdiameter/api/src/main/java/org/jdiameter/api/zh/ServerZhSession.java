@@ -10,7 +10,7 @@ import org.jdiameter.api.zh.events.MultimediaAuthAnswer;
 
 public interface ServerZhSession extends AppSession, StateMachine {
     /**
-     * Send MultimediaAuthRequest to the server
+     * Send MultimediaAuthAnswer to the server
      *
      * @param answer MultimediaAuthAnswer event instance
      * @throws InternalException The InternalException signals that internal error is occurred.

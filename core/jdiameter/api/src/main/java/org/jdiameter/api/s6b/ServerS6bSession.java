@@ -8,6 +8,7 @@ import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.app.StateMachine;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
+import org.jdiameter.api.s6b.events.S6bReAuthAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 
 /**
@@ -28,4 +29,15 @@ public interface ServerS6bSession extends AppSession, StateMachine {
   void sendAbortSessionRequest(S6bAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 
+  /**
+   * Send S6bReAuthAnswer to the server
+   *
+   * @param answer S6bReAuthAnswer event instance
+   * @throws InternalException The InternalException signals that internal error is occurred.
+   * @throws IllegalDiameterStateException The IllegalStateException signals that session has incorrect state (invalid).
+   * @throws RouteException The NoRouteException signals that no route exist for a given realm.
+   * @throws OverloadException The OverloadException signals that destination host is overloaded.
+   */
+  void sendReAuthAnswer(S6bReAuthAnswer answer)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
 }

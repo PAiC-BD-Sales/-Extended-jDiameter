@@ -6,6 +6,8 @@ import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
+import org.jdiameter.api.s6b.events.S6bReAuthAnswer;
+import org.jdiameter.api.s6b.events.S6bReAuthRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 
@@ -29,5 +31,6 @@ public interface IS6bMessageFactory {
   S6bAbortSessionAnswer createAbortSessionAnswer(Answer answer);
 
   long[] getApplicationIds();
-
+  S6bReAuthRequest createReAuthRequest(Request request);
+  S6bReAuthAnswer createReAuthAnswer(Answer answer);
 }

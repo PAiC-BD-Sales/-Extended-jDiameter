@@ -2,6 +2,8 @@ package org.jdiameter.common.api.app.s6b;
 
 import org.jdiameter.api.Answer;
 import org.jdiameter.api.Request;
+import org.jdiameter.api.s6b.events.S6bAAAnswer;
+import org.jdiameter.api.s6b.events.S6bAARequest;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
@@ -33,4 +35,6 @@ public interface IS6bMessageFactory {
   long[] getApplicationIds();
   S6bReAuthRequest createReAuthRequest(Request request);
   S6bReAuthAnswer createReAuthAnswer(Answer answer);
+  S6bAAAnswer createAAAnswer(Answer answer);
+  S6bAARequest createAARequest(Request request);
 }

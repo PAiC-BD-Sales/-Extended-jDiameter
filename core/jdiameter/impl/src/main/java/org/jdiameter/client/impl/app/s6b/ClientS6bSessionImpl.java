@@ -38,7 +38,6 @@ import org.jdiameter.common.api.app.s6b.IS6bMessageFactory;
 import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.jdiameter.common.impl.app.s6b.AppS6bSessionImpl;
-import org.jdiameter.server.impl.app.s6b.ServerS6bSessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,12 +141,13 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
 
   @Override
   public void sendAARequest(S6bAARequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-
+    this.handleEvent(new Event(Event.Type.SEND_AAR, request, null));
   }
 
   @Override
-  public void sendAbortSessionRequest(S6bAbortSessionRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
-
+  public void sendAbortSessionRequest(S6bAbortSessionRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_ASR, request, null));
   }
 
   @Override

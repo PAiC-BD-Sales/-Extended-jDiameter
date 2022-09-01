@@ -1,11 +1,11 @@
 package org.jdiameter.client.impl.app.s6b;
 
-import org.jdiameter.common.api.app.AppSessionDataLocalImpl;
 import org.jdiameter.common.api.app.s6b.ClientS6bSessionState;
 import org.jdiameter.common.impl.app.s6b.S6bLocalSessionDataImpl;
 
 /**
  * @author <a href="mailto:giokast90@gmail.com"> Giovanni Castillo </a>
+ * @author <a href="mailto:kennymendieta89@gmail.com"> Kenny Mendieta </a>
  */
 public class ClientS6bSessionDataLocalImpl extends S6bLocalSessionDataImpl implements IClientS6bSessionData {
 

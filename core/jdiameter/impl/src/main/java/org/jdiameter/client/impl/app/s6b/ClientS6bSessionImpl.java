@@ -18,10 +18,12 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.api.s6b.ClientS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bAARequest;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
+import org.jdiameter.api.s6b.events.S6bReAuthRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.client.api.IContainer;
@@ -36,6 +38,7 @@ import org.jdiameter.common.api.app.s6b.IS6bMessageFactory;
 import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.jdiameter.common.impl.app.s6b.AppS6bSessionImpl;
+import org.jdiameter.server.impl.app.s6b.ServerS6bSessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,6 +133,21 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
   @Override
   public void sendAbortSessionAnswer(S6bAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     this.handleEvent(new Event(Event.Type.SEND_ASA, null, answer));
+  }
+
+  @Override
+  public void sendReAuthRequest(S6bReAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+    this.handleEvent(new Event(Event.Type.SEND_RAR, request, null));
+  }
+
+  @Override
+  public void sendAARequest(S6bAARequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
+  public void sendAbortSessionRequest(S6bAbortSessionRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
   }
 
   @Override
@@ -249,7 +267,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               eventQueue.add(localEvent);
               break;
             case RECEIVE_RAR:
-              break;
             case SEND_RAA:
               break;
             case RECEIVE_ASR:
@@ -317,7 +334,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
               }
               break;
             case RECEIVE_RAR:
-              break;
             case SEND_RAA:
               break;
             case RECEIVE_ASR:

@@ -3,7 +3,7 @@ package org.jdiameter.common.impl.app.s6b;
 import org.jdiameter.api.Request;
 import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.s6b.events.S6bReAuthRequest;
-import org.jdiameter.common.impl.app.AppAnswerEventImpl;
+import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="mailto:kennymendieta89@gmail.com"> Kenny Mendieta </a>
  */
-public class S6bReAuthRequestImpl extends AppAnswerEventImpl implements S6bReAuthRequest {
+public class S6bReAuthRequestImpl extends AppRequestEventImpl implements S6bReAuthRequest {
   private static final long serialVersionUID = 1L;
   protected static final Logger logger = LoggerFactory.getLogger(S6bReAuthRequestImpl.class);
 

@@ -1,8 +1,8 @@
 package org.jdiameter.api.s6b.events;
 
-import org.jdiameter.api.app.AppAnswerEvent;
+import org.jdiameter.api.app.AppRequestEvent;
 
-public interface S6bAARequest extends AppAnswerEvent {
+public interface S6bAARequest extends AppRequestEvent {
   String _SHORT_NAME = "AAR";
   String _LONG_NAME = "AA-Request"; // AA-Request-S6b-PMIPv6
 

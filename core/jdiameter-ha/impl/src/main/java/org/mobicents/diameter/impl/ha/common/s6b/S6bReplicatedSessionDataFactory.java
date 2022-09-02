@@ -1,4 +1,4 @@
-package org.mobicents.diameter.impl.ha.client.s6b;
+package org.mobicents.diameter.impl.ha.common.s6b;
 
 import org.jdiameter.api.app.AppSession;
 import org.jdiameter.api.s6b.ClientS6bSession;
@@ -6,6 +6,8 @@ import org.jdiameter.api.s6b.ServerS6bSession;
 import org.jdiameter.common.api.app.IAppSessionDataFactory;
 import org.jdiameter.common.api.app.s6b.IS6bSessionData;
 import org.jdiameter.common.api.data.ISessionDatasource;
+import org.mobicents.diameter.impl.ha.client.s6b.ClientS6bSessionDataReplicatedImpl;
+import org.mobicents.diameter.impl.ha.server.s6b.ServerS6bSessionDataReplicatedImpl;
 import org.mobicents.diameter.impl.ha.data.ReplicatedSessionDatasource;
 import org.restcomm.cluster.MobicentsCluster;
 

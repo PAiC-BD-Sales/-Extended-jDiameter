@@ -4,7 +4,6 @@ import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.client.api.IContainer;
 import org.jdiameter.common.api.app.s6b.ClientS6bSessionState;
 import org.jdiameter.client.impl.app.s6b.IClientS6bSessionData;
-import org.mobicents.diameter.impl.ha.common.AppSessionDataReplicatedImpl;
 import org.mobicents.diameter.impl.ha.data.ReplicatedSessionDatasource;
 import org.restcomm.cache.FqnWrapper;
 import org.restcomm.cluster.MobicentsCluster;
@@ -12,14 +11,14 @@ import org.restcomm.cluster.MobicentsCluster;
 /**
  * @author <a href="mailto:giokast90@gmail.com"> Giovanni Castillo </a>
  */
-public class ClientS6bSessionDataReplicatedImpl extends AppSessionDataReplicatedImpl implements IClientS6bSessionData {
+public class ClientS6bSessionDataReplicatedImpl extends S6bSessionDataReplicatedImpl implements IClientS6bSessionData {
 
   private static final String EVENT_BASED = "EVENT_BASED";
   private static final String REQUEST_TYPE = "REQUEST_TYPE";
   private static final String STATE = "STATE";
 
   public ClientS6bSessionDataReplicatedImpl(FqnWrapper nodeFqnWrapper, MobicentsCluster mobicentsCluster, IContainer container) {
-    super(nodeFqnWrapper, mobicentsCluster);
+    super(nodeFqnWrapper, mobicentsCluster, container);
 
     if (super.create()) {
       setAppSessionIface(this, ClientS6bSession.class);

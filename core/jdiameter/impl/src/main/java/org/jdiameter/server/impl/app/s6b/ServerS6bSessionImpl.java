@@ -17,10 +17,12 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ServerS6bSession;
 import org.jdiameter.api.s6b.ServerS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bAAAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
+import org.jdiameter.api.s6b.events.S6bReAuthAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.client.api.ISessionFactory;
@@ -87,6 +89,21 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
   public void sendAbortSessionRequest(S6bAbortSessionRequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
     send(Event.Type.SEND_ASR, request, null);
+  }
+
+  @Override
+  public void sendAbortSessionAnswer(S6bAbortSessionAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
+  public void sendReAuthAnswer(S6bReAuthAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
+  }
+
+  @Override
+  public void sendAAAnswer(S6bAAAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException {
+
   }
 
   @Override

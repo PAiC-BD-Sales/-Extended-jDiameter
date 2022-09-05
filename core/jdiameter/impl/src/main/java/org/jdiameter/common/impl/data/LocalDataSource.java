@@ -120,6 +120,7 @@ public class LocalDataSource implements ISessionDatasource {
     appSessionDataFactories.put(ISLgSessionData.class, new SLgLocalSessionDataFactory());
     appSessionDataFactories.put(IZhSessionData.class, new ZhLocalSessionDataFactory());
     appSessionDataFactories.put(ISWmSessionData.class, new SWmLocalSessionDataFactory());
+    appSessionDataFactories.put(IS6bSessionData.class, new S6bLocalSessionDataFactory());
   }
 
   public LocalDataSource(IContainer container) {

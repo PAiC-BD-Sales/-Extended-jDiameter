@@ -13,6 +13,7 @@ import org.restcomm.cluster.MobicentsCluster;
 
 /**
  * @author <a href="mailto:giokast90@gmail.com"> Giovanni Castillo </a>
+ * @author <a href="mailto:kennymendieta89@gmail.com"> Kenny Mendieta </a>
  */
 public class S6bReplicatedSessionDataFactory implements IAppSessionDataFactory<IS6bSessionData> {
 
@@ -30,7 +31,7 @@ public class S6bReplicatedSessionDataFactory implements IAppSessionDataFactory<I
     if (clazz.equals(ClientS6bSession.class)) {
       return new ClientS6bSessionDataReplicatedImpl(sessionId, this.mobicentsCluster, this.replicatedSessionDataSource.getContainer());
     } else if (clazz.equals(ServerS6bSession.class)) {
-      ServerS6bSessionDataReplicatedImpl data = new ServerS6bSessionDataReplicatedImpl(sessionId, this.mobicentsCluster);
+      ServerS6bSessionDataReplicatedImpl data = new ServerS6bSessionDataReplicatedImpl(sessionId, this.mobicentsCluster, this.replicatedSessionDataSource.getContainer());
       return data;
     }
     throw new IllegalArgumentException();

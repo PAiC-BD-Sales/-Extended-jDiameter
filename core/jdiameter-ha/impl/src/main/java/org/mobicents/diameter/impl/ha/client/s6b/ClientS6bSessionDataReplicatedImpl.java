@@ -5,6 +5,7 @@ import org.jdiameter.client.api.IContainer;
 import org.jdiameter.common.api.app.s6b.ClientS6bSessionState;
 import org.jdiameter.client.impl.app.s6b.IClientS6bSessionData;
 import org.mobicents.diameter.impl.ha.data.ReplicatedSessionDatasource;
+import org.mobicents.diameter.impl.ha.common.s6b.S6bSessionDataReplicatedImpl;
 import org.restcomm.cache.FqnWrapper;
 import org.restcomm.cluster.MobicentsCluster;
 

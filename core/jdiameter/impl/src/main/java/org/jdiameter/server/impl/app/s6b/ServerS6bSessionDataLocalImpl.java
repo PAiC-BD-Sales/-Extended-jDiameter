@@ -1,6 +1,5 @@
 package org.jdiameter.server.impl.app.s6b;
 
-import org.jdiameter.common.api.app.AppSessionDataLocalImpl;
 import org.jdiameter.common.api.app.s6b.ServerS6bSessionState;
 import org.jdiameter.common.impl.app.s6b.S6bLocalSessionDataImpl;
 

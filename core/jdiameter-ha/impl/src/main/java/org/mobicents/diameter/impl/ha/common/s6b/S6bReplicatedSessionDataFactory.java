@@ -31,7 +31,10 @@ public class S6bReplicatedSessionDataFactory implements IAppSessionDataFactory<I
     if (clazz.equals(ClientS6bSession.class)) {
       return new ClientS6bSessionDataReplicatedImpl(sessionId, this.mobicentsCluster, this.replicatedSessionDataSource.getContainer());
     } else if (clazz.equals(ServerS6bSession.class)) {
-      ServerS6bSessionDataReplicatedImpl data = new ServerS6bSessionDataReplicatedImpl(sessionId, this.mobicentsCluster, this.replicatedSessionDataSource.getContainer());
+      ServerS6bSessionDataReplicatedImpl data = new ServerS6bSessionDataReplicatedImpl(
+              sessionId,
+              this.mobicentsCluster,
+              this.replicatedSessionDataSource.getContainer());
       return data;
     }
     throw new IllegalArgumentException();

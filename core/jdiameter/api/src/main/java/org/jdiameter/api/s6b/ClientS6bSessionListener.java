@@ -43,6 +43,8 @@ public interface ClientS6bSessionListener {
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
   void doReAuthAnswerEvent(ClientS6bSession session, S6bReAuthRequest request, S6bReAuthAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
+  void doReAuthRequestEvent(ClientS6bSession session, S6bReAuthRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
   void doAAAnswerEvent(ClientS6bSession session, S6bAARequest request, S6bAAAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
   void doOtherEvent(AppSession session,

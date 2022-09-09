@@ -338,6 +338,13 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
   }
 
   @Override
+  public void doReAuthRequestEvent(ClientS6bSession session, S6bReAuthRequest request) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+    logger.info(
+            "Diameter S6b Session Factory :: doReAuthRequestEvent :: session[{}], Request[{}]",
+            new Object[] { session, request });
+  }
+
+  @Override
   public void doAAAnswerEvent(ClientS6bSession session, S6bAARequest request, S6bAAAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
     logger.info(
@@ -367,6 +374,13 @@ public class S6bSessionFactoryImpl implements IS6bSessionFactory, ClientS6bSessi
     logger.info(
             "Diameter S6b Session Factory :: doReAuthRequestEvent :: session[{}], Request[{}]",
             new Object[] { session, request });
+  }
+
+  @Override
+  public void doReAuthAnswerEvent(ServerS6bSession session, S6bReAuthRequest request, S6bReAuthAnswer answer) throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException {
+    logger.info(
+            "Diameter S6b Session Factory :: doAbortSessionAnswer :: session[{}], Request[{}], Answer[{}]",
+            new Object[] { session, request, answer });
   }
 
   @Override

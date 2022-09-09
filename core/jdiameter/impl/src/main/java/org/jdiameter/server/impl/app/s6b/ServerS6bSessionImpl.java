@@ -18,11 +18,13 @@ import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ServerS6bSession;
 import org.jdiameter.api.s6b.ServerS6bSessionListener;
 import org.jdiameter.api.s6b.events.S6bAAAnswer;
+import org.jdiameter.api.s6b.events.S6bAARequest;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPAnswer;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bReAuthAnswer;
+import org.jdiameter.api.s6b.events.S6bReAuthRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 import org.jdiameter.client.api.ISessionFactory;
@@ -143,10 +145,27 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
             case RECEIVE_AAR:
               break;
             case RECEIVE_EVENT_REQUEST:
+              listener.doAARequestEvent(this, (S6bAARequest) localEvent.getRequest());
               break;
             case SEND_EVENT_ANSWER:
               break;
             case SEND_AAA:
+              S6bAAAnswer answer = (S6bAAAnswer) localEvent.getAnswer();
+              try {
+                long resultCode = answer.getResultCodeAvp().getUnsigned32();
+                // Current State: IDLE
+                // Event: AA initial request received and successfully processed
+                // Action: Send AAinitial answer
+                // New State: OPEN
+                if (isSuccess(resultCode)) {
+                  newState = ServerS6bSessionState.OPEN;
+                } else {
+                  newState = ServerS6bSessionState.IDLE;
+                }
+                dispatchEvent(localEvent.getAnswer());
+              } catch (AvpDataException e) {
+                throw new InternalException(e);
+              }
               break;
             default:
               throw new InternalException("Wrong state: " + ServerS6bSessionState.IDLE + " one event: " + eventType + " " + localEvent.getRequest() + " " +
@@ -163,8 +182,21 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
               dispatchEvent(localEvent.getAnswer());
               break;
             case RECEIVE_AAR:
+              listener.doAARequestEvent(this, (S6bAARequest) localEvent.getRequest());
               break;
             case SEND_AAA:
+              S6bAAAnswer answer = (S6bAAAnswer) localEvent.getAnswer();
+              try {
+                if (isSuccess(answer.getResultCodeAvp().getUnsigned32())) {
+                  logger.info("Sending AAA with result code " + answer.getResultCodeAvp().getUnsigned32());
+                  newState = ServerS6bSessionState.OPEN;
+                } else {
+                  newState = ServerS6bSessionState.IDLE;
+                }
+              } catch (AvpDataException e) {
+                throw new InternalException(e);
+              }
+              dispatchEvent(localEvent.getAnswer());
               break;
             case RECEIVE_STR:
               listener.doSessionTerminationRequest(this, (S6bSessionTerminationRequest) localEvent.getRequest());
@@ -193,12 +225,12 @@ public class ServerS6bSessionImpl extends AppS6bSessionImpl implements ServerS6b
               dispatchEvent(localEvent.getAnswer());
               break;
             case RECEIVE_RAA:
-              break;
-            case SEND_RAR:
+              listener.doReAuthAnswerEvent(this, (S6bReAuthRequest) localEvent.getRequest(), (S6bReAuthAnswer) localEvent.getAnswer());
               break;
             case RECEIVE_ASA:
               listener.doAbortSessionAnswer(this, (S6bAbortSessionRequest) localEvent.getRequest(), (S6bAbortSessionAnswer) localEvent.getAnswer());
               break;
+            case SEND_RAR:
             case SEND_ASR:
               dispatchEvent(localEvent.getRequest());
               break;

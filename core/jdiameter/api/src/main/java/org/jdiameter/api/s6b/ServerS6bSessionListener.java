@@ -12,6 +12,7 @@ import org.jdiameter.api.s6b.events.S6bAARequest;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
 import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
+import org.jdiameter.api.s6b.events.S6bReAuthAnswer;
 import org.jdiameter.api.s6b.events.S6bReAuthRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 
@@ -48,6 +49,8 @@ public interface ServerS6bSessionListener {
   void doAbortSessionAnswer(ServerS6bSession session, S6bAbortSessionRequest request, S6bAbortSessionAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException;
   void doReAuthRequestEvent(ServerS6bSession session, S6bReAuthRequest request)
+          throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
+  void doReAuthAnswerEvent(ServerS6bSession session, S6bReAuthRequest request, S6bReAuthAnswer answer)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;
   void doAARequestEvent(ServerS6bSession session, S6bAARequest request)
           throws InternalException, IllegalDiameterStateException, RouteException, OverloadException, AvpDataException;

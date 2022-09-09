@@ -2,9 +2,7 @@ package org.jdiameter.client.impl.app.s6b;
 
 import org.jdiameter.api.AvpDataException;
 import org.jdiameter.api.InternalException;
-import org.jdiameter.api.app.AppAnswerEvent;
 import org.jdiameter.api.app.AppEvent;
-import org.jdiameter.api.app.AppRequestEvent;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.events.S6bAAAnswer;
 import org.jdiameter.api.s6b.events.S6bAARequest;

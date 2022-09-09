@@ -27,8 +27,6 @@ import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bReAuthRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
-import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
-import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.client.api.IContainer;
 import org.jdiameter.client.api.IMessage;
 import org.jdiameter.client.api.ISessionFactory;
@@ -38,7 +36,6 @@ import org.jdiameter.common.api.app.IAppSessionState;
 import org.jdiameter.common.api.app.s6b.ClientS6bSessionState;
 import org.jdiameter.common.api.app.s6b.IClientS6bSessionContext;
 import org.jdiameter.common.api.app.s6b.IS6bMessageFactory;
-import org.jdiameter.common.api.app.swm.ClientSWmSessionState;
 import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.jdiameter.common.impl.app.s6b.AppS6bSessionImpl;
@@ -641,6 +638,9 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     public void run() {
       try {
         switch (request.getCommandCode()) {
+          case S6bReAuthRequest.code:
+            handleEvent(new Event(Event.Type.RECEIVE_RAR, factory.createReAuthRequest(request), null));
+            break;
           case S6bAbortSessionRequest.code:
             handleEvent(new Event(Event.Type.RECEIVE_ASR, factory.createAbortSessionRequest(request), null));
             break;
@@ -664,15 +664,20 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     public void run() {
       try {
         switch (request.getCommandCode()) {
-          case S6bSessionTerminationAnswer.code:
-            final S6bSessionTerminationRequest mySTRequest = factory.createSessionTermRequest(request);
-            final S6bSessionTerminationAnswer mySTAnswer = factory.createSessionTermAnswer(answer);
-            handleEvent(new Event(false, mySTRequest, mySTAnswer));
-            break;
           case S6bDiameterEAPAnswer.code:
             final S6bDiameterEAPRequest _DERequest = factory.createDiameterEAPRequest(request);
             final S6bDiameterEAPAnswer _DEAnswer = factory.createDiameterEAPAnswer(answer);
             handleEvent(new Event(false, _DERequest, _DEAnswer));
+            break;
+          case S6bAAAnswer.code:
+            final S6bAARequest _AARequest = factory.createAARequest(request);
+            final S6bAAAnswer _AAAnswer = factory.createAAAnswer(answer);
+            handleEvent(new Event(false, _AARequest, _AAAnswer));
+            break;
+          case S6bSessionTerminationAnswer.code:
+            final S6bSessionTerminationRequest mySTRequest = factory.createSessionTermRequest(request);
+            final S6bSessionTerminationAnswer mySTAnswer = factory.createSessionTermAnswer(answer);
+            handleEvent(new Event(false, mySTRequest, mySTAnswer));
             break;
           default:
             listener.doOtherEvent(session, new AppRequestEventImpl(request), new AppAnswerEventImpl(answer));

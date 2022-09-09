@@ -201,14 +201,6 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
           break;
 
         case PENDING_EVENT:
-          switch (eventType) {
-            case RECEIVE_EVENT_ANSWER:
-              break;
-            default:
-              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
-              break;
-          }
-          break;
         case PENDING_BUFFERED:
           switch (eventType) {
             case RECEIVE_EVENT_ANSWER:

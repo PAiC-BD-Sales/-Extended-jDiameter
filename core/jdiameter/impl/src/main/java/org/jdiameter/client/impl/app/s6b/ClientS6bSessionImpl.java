@@ -174,11 +174,28 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     try {
       sendAndStateLock.lock();
       final ClientS6bSessionState state = this.sessionData.getClientS6bSessionState();
+      ClientS6bSessionState newState = null;
       Event localEvent = (Event) event;
       Event.Type eventType = (Event.Type) localEvent.getType();
       switch (state) {
         case IDLE:
           switch (eventType) {
+            case RECEIVE_ASR:
+              this.sessionData.setBuffer( (Request) ((AppEvent) event.getData()).getMessage());
+              newState = ClientS6bSessionState.MESSAGE_SENT_RECEIVED;
+              setState(newState);
+              break;
+            case RECEIVE_AAR:
+              this.sessionData.setBuffer( (Request) ((AppEvent) event.getData()).getMessage());
+              newState = ClientS6bSessionState.MESSAGE_SENT_RECEIVED;
+              setState(newState);
+              break;
+            case RECEIVE_DER:
+              break;
+            case RECEIVE_RAR:
+              break;
+            case RECEIVE_STR:
+              break;
             case SEND_EVENT_REQUEST:
               // Current State: IDLE
               // Event: Client or device requests a one-time service

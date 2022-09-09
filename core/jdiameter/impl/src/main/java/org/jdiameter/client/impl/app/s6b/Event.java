@@ -23,12 +23,12 @@ import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
 public class Event implements StateEvent {
 
   public enum Type {
-    SEND_AAR, RECEIVE_AAA,
-    SEND_STR, RECEIVE_STA,
+    SEND_AAR, RECEIVE_AAA, RECEIVE_AAR,
+    SEND_STR, RECEIVE_STA, RECEIVE_STR,
     SEND_RAA, RECEIVE_RAR,
     SEND_RAR, SEND_ASR, RECEIVE_RAA,
     SEND_ASA, RECEIVE_ASR, RECEIVE_ASA,
-    SEND_DER, RECEIVE_DEA,
+    SEND_DER, RECEIVE_DEA, RECEIVE_DER,
     SEND_EVENT_REQUEST, RECEIVE_EVENT_ANSWER;
   }
 
@@ -53,22 +53,21 @@ public class Event implements StateEvent {
 
     if (isRequest) {
       switch (request.getCommandCode()) {
-        case S6bAARequest.code:
-          type = Type.SEND_AAR;
-          break;
-        case S6bAbortSessionRequest.code:
-          type = Type.SEND_ASR;
-          break;
         case S6bDiameterEAPRequest.code:
           type = Type.SEND_DER;
           break;
+        case S6bAbortSessionRequest.code:
+          type = Type.RECEIVE_ASR;
+          break;
+        case S6bAARequest.code:
+          type = Type.SEND_AAR;
+          break;
         case S6bReAuthRequest.code:
-          type = Type.SEND_RAR;
+          type = Type.RECEIVE_RAR;
           break;
         case S6bSessionTerminationRequest.code:
           type = Type.SEND_STR;
           break;
-
         case 5:  //BUG FIX How do we know this is an event and not a session? Do we need to fix this? Does S6b do event?
           type = Type.SEND_EVENT_REQUEST;
           break;
@@ -77,17 +76,17 @@ public class Event implements StateEvent {
       }
     } else {
       switch (answer.getCommandCode()) {
-        case S6bAAAnswer.code:
-          type = Type.RECEIVE_AAA;
-          break;
-        case S6bAbortSessionAnswer.code:
-          type = Type.RECEIVE_ASA;
-          break;
         case S6bDiameterEAPAnswer.code:
           type = Type.RECEIVE_DEA;
           break;
+        case S6bAbortSessionAnswer.code:
+          type = Type.SEND_ASA;
+          break;
+        case S6bAAAnswer.code:
+          type = Type.RECEIVE_AAA;
+          break;
         case S6bReAuthAnswer.code:
-          type = Type.RECEIVE_RAA;
+          type = Type.SEND_RAA;
           break;
         case S6bSessionTerminationAnswer.code:
           type = Type.RECEIVE_STA;

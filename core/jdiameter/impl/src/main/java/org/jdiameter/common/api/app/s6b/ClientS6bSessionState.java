@@ -14,7 +14,8 @@ public enum ClientS6bSessionState implements IAppSessionState<ClientS6bSessionSt
   PENDING_STR(2),
   PENDING_EVENT(3),
   PENDING_BUFFERED(4),
-  OPEN(5);
+  OPEN(5),
+  MESSAGE_SENT_RECEIVED(100);
   private int stateValue = -1;
 
   ClientS6bSessionState(int stateV) {
@@ -36,6 +37,8 @@ public enum ClientS6bSessionState implements IAppSessionState<ClientS6bSessionSt
         return PENDING_BUFFERED;
       case 5:
         return OPEN;
+      case 100:
+        return MESSAGE_SENT_RECEIVED;
       default:
         throw new IllegalArgumentException("Illegal value of int representation!!!!");
     }

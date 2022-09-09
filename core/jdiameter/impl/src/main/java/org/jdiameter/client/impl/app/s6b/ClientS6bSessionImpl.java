@@ -18,6 +18,7 @@ import org.jdiameter.api.app.StateChangeListener;
 import org.jdiameter.api.app.StateEvent;
 import org.jdiameter.api.s6b.ClientS6bSession;
 import org.jdiameter.api.s6b.ClientS6bSessionListener;
+import org.jdiameter.api.s6b.events.S6bAAAnswer;
 import org.jdiameter.api.s6b.events.S6bAARequest;
 import org.jdiameter.api.s6b.events.S6bAbortSessionAnswer;
 import org.jdiameter.api.s6b.events.S6bAbortSessionRequest;
@@ -26,6 +27,8 @@ import org.jdiameter.api.s6b.events.S6bDiameterEAPRequest;
 import org.jdiameter.api.s6b.events.S6bReAuthRequest;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationAnswer;
 import org.jdiameter.api.s6b.events.S6bSessionTerminationRequest;
+import org.jdiameter.api.swm.events.SWmDiameterAAAnswer;
+import org.jdiameter.api.swm.events.SWmDiameterAARequest;
 import org.jdiameter.client.api.IContainer;
 import org.jdiameter.client.api.IMessage;
 import org.jdiameter.client.api.ISessionFactory;
@@ -35,6 +38,7 @@ import org.jdiameter.common.api.app.IAppSessionState;
 import org.jdiameter.common.api.app.s6b.ClientS6bSessionState;
 import org.jdiameter.common.api.app.s6b.IClientS6bSessionContext;
 import org.jdiameter.common.api.app.s6b.IS6bMessageFactory;
+import org.jdiameter.common.api.app.swm.ClientSWmSessionState;
 import org.jdiameter.common.impl.app.AppAnswerEventImpl;
 import org.jdiameter.common.impl.app.AppRequestEventImpl;
 import org.jdiameter.common.impl.app.s6b.AppS6bSessionImpl;
@@ -174,28 +178,11 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     try {
       sendAndStateLock.lock();
       final ClientS6bSessionState state = this.sessionData.getClientS6bSessionState();
-      ClientS6bSessionState newState = null;
       Event localEvent = (Event) event;
       Event.Type eventType = (Event.Type) localEvent.getType();
       switch (state) {
         case IDLE:
           switch (eventType) {
-            case RECEIVE_ASR:
-              this.sessionData.setBuffer( (Request) ((AppEvent) event.getData()).getMessage());
-              newState = ClientS6bSessionState.MESSAGE_SENT_RECEIVED;
-              setState(newState);
-              break;
-            case RECEIVE_AAR:
-              this.sessionData.setBuffer( (Request) ((AppEvent) event.getData()).getMessage());
-              newState = ClientS6bSessionState.MESSAGE_SENT_RECEIVED;
-              setState(newState);
-              break;
-            case RECEIVE_DER:
-              break;
-            case RECEIVE_RAR:
-              break;
-            case RECEIVE_STR:
-              break;
             case SEND_EVENT_REQUEST:
               // Current State: IDLE
               // Event: Client or device requests a one-time service
@@ -218,15 +205,42 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
           break;
 
         case PENDING_EVENT:
-        case PENDING_BUFFERED:
           switch (eventType) {
             case RECEIVE_EVENT_ANSWER:
+              AppAnswerEvent answer = (AppAnswerEvent) localEvent.getAnswer();
+              try {
+                long resultCode = answer.getResultCodeAvp().getUnsigned32();
+                if (isSuccess(resultCode)) {
+                  // Current State: PENDING_EVENT
+                  // Event: Successful AA event answer received
+                  // Action: Grant service to end user
+                  // New State: IDLE
+                  setState(ClientS6bSessionState.IDLE, false);
+                }
+                if (isProvisional(resultCode) || isFailure(resultCode)) {
+                  handleFailureMessage(answer, (AppRequestEvent) localEvent.getRequest(), eventType);
+                }
+                deliverS6bAAAnswer((S6bAARequest) localEvent.getRequest(), (S6bAAAnswer) localEvent.getAnswer());
+              } catch (AvpDataException e) {
+                logger.debug("Failure handling received answer event", e);
+                setState(ClientS6bSessionState.IDLE, false);
+              }
               break;
             default:
               logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
               break;
           }
-          break;
+        case PENDING_BUFFERED:
+          switch (eventType) {
+            case RECEIVE_EVENT_ANSWER:
+              setState(ClientS6bSessionState.IDLE, false);
+              buffer = null;
+              deliverS6bAAAnswer((S6bAARequest) localEvent.getRequest(), (S6bAAAnswer) localEvent.getAnswer());
+              break;
+            default:
+              logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
+              break;
+          }
 
         default:
           logger.warn("Event Based Handling - Wrong event type ({}) on state {}", eventType, state);
@@ -511,6 +525,15 @@ public class ClientS6bSessionImpl extends AppS6bSessionImpl implements ClientS6b
     }
     catch (Exception e) {
       logger.debug("Failure delivering ASR", e);
+    }
+  }
+
+  protected void deliverS6bAAAnswer(S6bAARequest request, S6bAAAnswer answer) {
+    try {
+      listener.doAAAnswerEvent(this, request, answer);
+    }
+    catch (Exception e) {
+      logger.debug("Failure delivering AAA", e);
     }
   }
 

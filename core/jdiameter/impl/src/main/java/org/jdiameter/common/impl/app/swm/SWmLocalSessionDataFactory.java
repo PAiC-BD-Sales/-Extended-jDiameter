@@ -1,8 +1,8 @@
 package org.jdiameter.common.impl.app.swm;
 
 import org.jdiameter.api.app.AppSession;
-import org.jdiameter.api.rx.ServerRxSession;
 import org.jdiameter.api.swm.ClientSWmSession;
+import org.jdiameter.api.swm.ServerSWmSession;
 import org.jdiameter.client.impl.app.swm.ClientSWmSessionDataLocalImpl;
 import org.jdiameter.common.api.app.IAppSessionDataFactory;
 import org.jdiameter.common.api.app.swm.ISWmSessionData;
@@ -21,7 +21,7 @@ public class SWmLocalSessionDataFactory implements IAppSessionDataFactory<ISWmSe
       ClientSWmSessionDataLocalImpl data = new ClientSWmSessionDataLocalImpl();
       data.setSessionId(sessionId);
       return data;
-    } else if (clazz.equals(ServerRxSession.class)) {
+    } else if (clazz.equals(ServerSWmSession.class)) {
       logger.info("EJD -> is Server session");
       ServerSWmSessionDataLocalImpl data = new ServerSWmSessionDataLocalImpl();
       data.setSessionId(sessionId);

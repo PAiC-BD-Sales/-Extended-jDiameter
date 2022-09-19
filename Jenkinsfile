@@ -15,7 +15,7 @@ pipeline {
 
 	stages {
 
-		stage("Build") {
+		stage ("Build") {
 			steps {
 				echo "Building application..."
 				script {
@@ -26,16 +26,16 @@ pipeline {
 				echo "Maven build completed."
 			}
 		}
-    	stage('Set Version') {
-      		steps{
+    	stage ('Set Version') {
+      		steps {
 				sh "mvn versions:set -DnewVersion=${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER} clean install -DskipTests"
       		}
     	}
-		stage("Release") {
+		stage ("Release") {
 			steps {
 				echo "Building a release version of #${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
-        		withAnt(installation: 'Ant1.10') {
-          			dir('release') {
+        		withAnt (installation: 'Ant1.10') {
+          			dir ('release') {
           			    sh "rm -rf restcomm-diameter*.zip"
             			sh "ant -f build.xml -Ddiameter.release.version=${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
  					}
@@ -44,7 +44,7 @@ pipeline {
 			}
 		}
 
-		stage('Save Artifacts') {
+		stage ('Save Artifacts') {
 			//when { anyOf { branch 'master'; branch 'release' } }
         	steps {
           		echo "Archiving Extended jDiameter version ${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
@@ -52,21 +52,21 @@ pipeline {
         	}
     	}
 
-    	stage('Push Artifacts') {
-            when{ anyOf { branch 'master'; branch 'release'}}
-            steps{
-                script{
+    	stage ('Push Artifacts') {
+            when { anyOf { branch 'master'; branch 'release' } }
+            steps {
+                script {
                     ROOT_PATH = "/var/www/html/PAIC_Extended/extended_jdiameter/${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}/"
                 }
-                sshagent(['ssh_grafana']) {
+                sshagent (['ssh_grafana']) {
                     sh "ssh root@45.79.17.57 \"mkdir -p ${ROOT_PATH}\""
                     sh "scp -r release/*.zip root@45.79.17.57:${ROOT_PATH}"
                 }
             }
     	}
 
-        stage('Push to jFrog') {
-            when {anyOf {branch 'master'; branch 'release'}}
+        stage ('Push to jFrog') {
+            when { anyOf { branch 'master'; branch 'release' } }
             steps {
                 sh 'mvn deploy -DskipTests'
             }

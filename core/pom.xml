@@ -20,12 +20,12 @@
     <module>jdiameter-ha</module>
     <module>mux</module>
   </modules>
-
+  
   <properties>
     <slf4j.version>1.7.2</slf4j.version>
     <picocontainer.version>2.13.5</picocontainer.version>
     <commons-pool.version>1.5.5</commons-pool.version>
-    <extended-sctp.version>2.0.2-13</extended-sctp.version>
+    <extended-sctp.version>1.7.2-4</extended-sctp.version>
     <netty-all.version>4.0.36.Final</netty-all.version>
     <commons-hex-tools.vesion>1.0.0.CR1</commons-hex-tools.vesion>
   </properties>

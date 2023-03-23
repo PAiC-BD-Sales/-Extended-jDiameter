@@ -91,7 +91,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 
 import org.jdiameter.api.ApplicationId;
 import org.jdiameter.api.Avp;
@@ -1020,9 +1019,11 @@ public class PeerImpl extends AbstractPeer implements IPeer {
           } else {
             logger.debug("CEA did not contained appId, therefore set local appids to common-appid field");
             commonApplications.clear();
-            commonApplications.addAll(metaData.getLocalPeer().getCommonApplications().stream()
-                    .filter(application -> (applications.isEmpty() || applications.contains(String.valueOf(application.getAppId()))))
-                    .collect(Collectors.toList()));
+            for (ApplicationId application : metaData.getLocalPeer().getCommonApplications()) {
+              if (applications.isEmpty() || applications.contains(String.valueOf(application.getAppId()))) {
+                commonApplications.add(application);
+              }
+            }
           }
 
           if (firmWare == 0 && frmId != null) {

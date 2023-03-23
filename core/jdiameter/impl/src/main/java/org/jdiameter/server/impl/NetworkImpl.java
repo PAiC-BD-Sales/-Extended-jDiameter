@@ -45,6 +45,7 @@ package org.jdiameter.server.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jdiameter.api.ApplicationAlreadyUseException;
@@ -262,9 +263,15 @@ public class NetworkImpl implements INetwork  {
     ConcurrentHashMap<ApplicationId, Object> filterAppId = new ConcurrentHashMap<>();
     if (peerApplications != null && peerApplications.length > 0) {
       filter = true;
-      appIdToNetListener.entrySet().stream()
-              .filter(applicationId -> Arrays.asList(peerApplications).contains(String.valueOf(applicationId.getKey().getAppId())))
-              .forEach(applicationIdObjectEntry -> filterAppId.put(applicationIdObjectEntry.getKey(), applicationIdObjectEntry.getValue()));
+      for (Map.Entry<ApplicationId, Object> applicationIdObjectEntry : appIdToNetListener.entrySet()) {
+        Arrays.asList(peerApplications).contains(String.valueOf(applicationIdObjectEntry.getKey().getAppId()));
+      }
+
+      for (Map.Entry<ApplicationId, Object> entry : appIdToNetListener.entrySet()) {
+        if (Arrays.asList(peerApplications).contains(String.valueOf(entry.getKey().getAppId()))) {
+          filterAppId.put(entry.getKey(), entry.getValue());
+        }
+      }
     }
 
     if (appIdToNetListener.containsKey(commonAuthAppId)) {

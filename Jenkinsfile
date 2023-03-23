@@ -34,12 +34,11 @@ pipeline {
 		stage ("Release") {
 			steps {
 				echo "Building a release version of #${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
-        		withAnt (installation: 'Ant1.10') {
-          			dir ('release') {
-          			    sh "rm -rf restcomm-diameter*.zip"
-            			sh "ant -f build.xml -Ddiameter.release.version=${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
- 					}
-				}
+				sh "ant -version"
+				dir ('release') {
+                    sh "rm -rf restcomm-diameter*.zip"
+                    sh "ant -f build.xml -Ddiameter.release.version=${params.EXT_DIAMETER_MAJOR_VERSION_NUMBER}-${BUILD_NUMBER}"
+                }
 				echo "Building a release version completed."
 			}
 		}

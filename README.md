@@ -9,11 +9,13 @@ All Restcomm [docs](https://www.restcomm.com/docs/) and [downloads](https://www.
 # jdiameter
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjdiameter.svg?type=shield)](https://app.fossa.io/projects/git%2Bhttps%3A%2F%2Fgithub.com%2FRestComm%2Fjdiameter?ref=badge_shield)
 
-RestComm jDiameter Stack and Services
+> jDiameter is an open-source Java implementation of the Diameter standard for telecommunications AAA (Authentication, Authorization, and Accounting). It supports critical applications, boasts extensibility, advanced features like high-availability, and seamless SIP integration. Perfect for core telco platforms and IMS development.
 
-## Introduction
-
-RestComm jDiameter provides an Open Source Java implementation of the Diameter standard for Authentication, Authorization, and Accounting (AAA). Implementing the Base Protocol as well as some of the most important and widely used applications, RestComm Diameter allows a fast development of IMS components, such as Application Server (AS), Home Subscriber Server (HSS), Call Session Control Function (CSCF), Subscriber Location Function (SLF), etc. Featuring an extensible architecture to provide support for new applications, as well as to adapt the core functionalities of the stack to a fully customized solution.
+## Key Features
+* Open-source Java implementation of Diameter standard for AAA.
+* Supports essential applications and extensibility.
+* Advanced features include high-availability and SIP integration.
+* Ideal for core telco platforms and IMS development.
 
 ## Supported Applications
 
